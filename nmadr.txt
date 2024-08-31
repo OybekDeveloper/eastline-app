@@ -1,0 +1,112 @@
+"use client";
+
+import { X } from "lucide-react";
+import Image from "next/image";
+import { Button } from "../../ui/button";
+import { Input } from "../../ui/input";
+import { useRef, useState } from "react";
+import "./fileDnd.css";
+
+function DropTarget() {
+  const [images, setImages] = useState([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef();
+
+  function selectFiles() {
+    fileInputRef.current.click();
+  }
+
+  function onFileSelect(event) {
+    const files = event.target.files;
+    if (files.length === 0) return;
+    for (let i = 0; i < files.length; i++) {
+      if (files[i].type.split("/")[0] !== "image") continue;
+      if (!images.some((e) => e.name === files[i].name)) {
+        setImages((prevImages) => [
+          ...prevImages,
+          {
+            name: files[i].name,
+            url: URL.createObjectURL(files[i]),
+          },
+        ]);
+      }
+    }
+  }
+
+  function deleteImage(index) {
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+  }
+
+  function onDragOver(event) {
+    event.preventDefault();
+    setIsDragging(true);
+    event.dataTransfer.dropEffect = "copy";
+  }
+
+  function onDragLeave(event) {
+    event.preventDefault();
+    setIsDragging(false);
+  }
+
+  function onDrop(event) {
+    event.preventDefault();
+    setIsDragging(false);
+    const files = event.dataTransfer.files;
+    // Handle dropped files here, similar to onFileSelect
+    onFileSelect({ target: { files } });
+  }
+
+  return (
+    <div className="card">
+      <div className="top">
+        <p>Drag & Drop image uploading</p>
+      </div>
+      <div
+        className="drag-area"
+        onDragOver={onDragOver}
+        onDragLeave={onDragLeave}
+        onDrop={onDrop}
+      >
+        {isDragging ? (
+          <span className="select">Drop images here</span>
+        ) : (
+          <>
+            Drag & Drop image here or{" "}
+            <span className="select" onClick={selectFiles}>
+              Browse
+            </span>
+          </>
+        )}
+        <input
+          type="file" // This should be 'file' to allow file selection
+          ref={fileInputRef}
+          onChange={onFileSelect}
+          name="file"
+          className="file"
+          multiple
+        />
+      </div>
+      <div className="container">
+        {images.map((image, index) => (
+          <div key={index} className="image">
+            <span className="delete" onClick={() => deleteImage(index)}>
+              <X size={16} />
+            </span>
+            <Image
+              width={500}
+              height={500}
+              src={image.url}
+              alt={image.name}
+              className="w-full h-full rounded-lg"
+            />
+          </div>
+        ))}
+      </div>
+      <Button type="submit" className="button">
+        Upload
+      </Button>
+    </div>
+  );
+}
+
+export default DropTarget;

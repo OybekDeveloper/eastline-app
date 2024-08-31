@@ -1,0 +1,47 @@
+"use client";
+import axios from "axios";
+import { DataTable } from "@/components/shared/data-table";
+import { topCategory } from "@/components/tableColumns/topCategory";
+import { useEffect, useState } from "react";
+
+export default function GetElements({ param }) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const { data } = await axios.get(
+          `/api/${
+            param.includes("Top")
+              ? param.slice(6).charAt(0).toLowerCase() + param.slice(6).slice(1)
+              : param.slice(6).toLowerCase()
+          }`
+        );
+        setData(data.data || []); // Ensure data is an array
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setData([]); // Set to empty array on error
+      } finally {
+        setLoading(false); // Set loading to false once data is fetched
+      }
+    }
+    fetchData();
+  }, [param]);
+
+  function deleteRow(hello) {
+    setData((prev) => prev.filter((item) => item.id != hello.id));
+  }
+
+  const columns = topCategory({ deleteRow });
+
+  return (
+    <div className="container mx-auto py-10">
+      {loading ? (
+        <p>Loading...</p> // Show loading indicator while fetching data
+      ) : (
+        <DataTable columns={columns} data={data} />
+      )}
+    </div>
+  );
+}
