@@ -130,7 +130,7 @@ const Cards = memo(({ props, variant, currency, getCurrencySum }) => {
           <span className="text-xs bg-black text-white rounded-md px-2 py-1 z-[7]">
             NEW
           </span>
-          <div className="w-full cursor-pointer h-[300px] relative flex justify-center items-center">
+          <div className="w-full cursor-pointer relative flex justify-center items-center">
             <CustomImage
               src={`${image[0]}`}
               className="w-[70%] md:w-[50%] lg:w-[60%] aspect-square"
