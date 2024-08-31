@@ -35,20 +35,15 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   addMeta({ itemRank });
   return itemRank.passed;
 };
-
-// const fuzzySort = (rowA, rowB, columnId) => {
-//   let dir = 0;
-//   if (rowA.columnFiltersMeta[columnId]) {
-//     dir = compareItems(
-//       rowA.columnFiltersMeta[columnId]?.itemRank,
-//       rowB.columnFiltersMeta[columnId]?.itemRank
-//     );
-//   }
-//   return dir === 0 ? sortingFns.alphanumeric(rowA, rowB, columnId) : dir;
-// };
+import { useEvent } from "@/store/event";
 
 export function DataTable({ columns, data, loading }) {
   const router = useRouter();
+  const reflesh = useEvent((state) => state.reflesh); // Listen to the reflesh state
+  const changeTableData = useEvent((state) => state.changeTableData); // Listen to the reflesh state
+  console.log(data, "changeTableData");
+  console.log(changeTableData, "changeTableData1");
+
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -58,7 +53,7 @@ export function DataTable({ columns, data, loading }) {
   const [products, setProducts] = useState([]);
 
   const table = useReactTable({
-    data,
+    data:changeTableData,
     columns,
     filterFns: {
       fuzzy: fuzzyFilter,
@@ -80,13 +75,10 @@ export function DataTable({ columns, data, loading }) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    // initialState: {
-    //   pagination: {
-    //     pageSize: 5, // Set default page size to 5
-    //   },
-    // },
   });
+console.log(table);
 
+  // Fetch data on component mount and whenever reflesh changes
   useEffect(() => {
     async function fetchData() {
       const topCategory = await axios.get(`/api/topCategory`);
@@ -97,11 +89,11 @@ export function DataTable({ columns, data, loading }) {
     }
 
     fetchData();
-  }, []);
+  }, [reflesh]); // reflesh added as a dependency
 
   // Ensure sorting when fuzzy filtering by fullName
   useEffect(() => {
-    if (table.getState().columnFilters[0]?.id === "fullName") {
+    if (table?.getState().columnFilters[0]?.id === "fullName") {
       if (table.getState().sorting[0]?.id !== "fullName") {
         table.setSorting([{ id: "fullName", desc: false }]);
       }
@@ -137,7 +129,7 @@ export function DataTable({ columns, data, loading }) {
           <div className="rounded-md border">
             <Table>
               <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
+                {table?.getHeaderGroups()?.map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
                       return (
@@ -155,8 +147,8 @@ export function DataTable({ columns, data, loading }) {
                 ))}
               </TableHeader>
               <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
+                {table?.getRowModel()?.rows?.length ? (
+                  table?.getRowModel()?.rows?.map((row) => (
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}

@@ -23,8 +23,12 @@ import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { useEvent } from "@/store/event";
 
-const DeleteItem = ({ deleteRow, payment }) => {
+const DeleteItem = ({ payment }) => {
+  const { setReflesh } = useEvent();
+  const { setTableData, changeTableData } = useEvent();
+
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -52,7 +56,18 @@ const DeleteItem = ({ deleteRow, payment }) => {
       console.error(error); // Handle any errors during deletion
     }
   };
-
+  const handleDelete = () => {
+    const callFunction = deleteItem(payment);
+    const filterData = changeTableData.filter((c) => +c.id !== +payment.id);
+    setTableData(filterData);
+    toast.promise(callFunction, {
+      loading: "Данные удаляются...",
+      success: <p>Данные успешно удалены!</p>,
+      error: (
+        <p>Произошла ошибка при удалении данных. Повторите попытку позже.</p>
+      ),
+    });
+  };
   return (
     <Suspense>
       <DropdownMenu>
@@ -101,19 +116,7 @@ const DeleteItem = ({ deleteRow, payment }) => {
 
             <AlertDialogAction
               className="hover:bg-primary"
-              onClick={() => {
-                const callFunction = deleteItem(payment);
-                toast.promise(callFunction, {
-                  loading: "Данные удаляются...",
-                  success: <p>Данные успешно удалены!</p>,
-                  error: (
-                    <p>
-                      Произошла ошибка при удалении данных. Повторите попытку
-                      позже.
-                    </p>
-                  ),
-                });
-              }}
+              onClick={handleDelete}
             >
               Продолжить
             </AlertDialogAction>

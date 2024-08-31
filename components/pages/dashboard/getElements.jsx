@@ -1,6 +1,5 @@
 "use client";
 
-import axios from "axios";
 import { DataTable } from "@/components/shared/data-table";
 import { topCategory } from "@/components/tableColumns/topCategory";
 import { category } from "@/components/tableColumns/category";
@@ -15,21 +14,19 @@ import Admin from "@/components/forms/admin";
 import { banner } from "@/components/tableColumns/banner";
 import { useEffect, useState } from "react";
 import { ApiService } from "@/lib/api.services";
+import { useEvent } from "@/store/event";
 
 function Getelements({ param }) {
+  const { reflesh, setTableData } = useEvent();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [refleshData, setRefleshData] = useState(false);
   const entityName = extractEntityName(param);
-
-  const handleReflesh = () => {
-    setRefleshData(!refleshData);
-  };
 
   useEffect(() => {
     async function getData() {
       try {
         const res = await ApiService.getData(`/api/${entityName}`);
+        setTableData(res);
         setData(res);
       } catch (error) {
         console.log(error);
@@ -38,7 +35,7 @@ function Getelements({ param }) {
       }
     }
     getData();
-  }, [entityName, refleshData]);
+  }, [entityName, reflesh]);
 
   function getColumn(prop) {
     switch (prop) {
@@ -78,12 +75,7 @@ function Getelements({ param }) {
         <Admin />
       ) : (
         <div className="container mx-auto">
-          <DataTable
-            columns={getColumn(param)}
-            data={data}
-            loading={loading}
-            handleReflesh={handleReflesh}
-          />
+          <DataTable columns={getColumn(param)} data={data} loading={loading} />
         </div>
       )}
     </div>
