@@ -24,7 +24,7 @@ const NewsRew = ({ newsItem, reviews }) => {
   const doubleItems = pairItems(newsItem);
 
   return (
-    <Container  className="mt-5 h-full py-6 rounded-xl gap-4 md:w-11/12 md:mx-auto grid md:grid-cols-2 grid-cols-1">
+    <Container className="mt-5 h-full py-6 rounded-xl gap-4 md:w-11/12 md:mx-auto grid md:grid-cols-2 grid-cols-1">
       <div className="py-8 md:rounded-lg bg-primary col-span-1 h-full">
         <div className="px-4 flex justify-between items-center gap-3 mb-5">
           <h1 className="font-medium text-white textNormal4">Новости</h1>
@@ -87,29 +87,29 @@ const NewsRew = ({ newsItem, reviews }) => {
           {reviews.map((item, index) => {
             return (
               <CarouselItem key={index} className="basis-full">
-                <div className="h-auto md:h-[300px] space-y-5 lg:h-[260px] md:bg-white bg-primary text-white md:text-foreground rounded-xl p-4 flex flex-col justify-between gap-4">
-                  <article className="flex flex-col gap-8 px-4">
+                <div className="cursor-pointer h-auto md:h-[300px] space-y-5 lg:h-[260px] md:bg-white bg-primary text-white md:text-foreground rounded-xl p-4 flex flex-col justify-between gap-4">
+                  <article className="flex flex-col gap-8">
                     <p className="textSmall3">
-                      {truncateText(
-                        item.message,
-                        300
-                      )}
+                      {truncateText(item.message, 300)}
                     </p>
                   </article>
                   <aside className="w-full flex justify-start gap-2 items-center">
-                    <div className="w-full">
-                      <h1 className="w-full">
-                        {item.name}{" "}
-                        {/* <span className="textSmall text-green-400">
+                    <div className="w-full flex justify-start items-center gap-2">
+                      <div className="textNormal p-4 rounded-full border">{item.name.slice(0,1)}</div>
+                      <div>
+                        <h1 className="w-full font-medium">
+                          {item.name}{" "}
+                          {/* <span className="textSmall text-green-400">
                           Покупатель
                         </span> */}
-                      </h1>
-                      <p className="textSmall2 w-full flex justify-between">
-                        Город Ташкент{"  "}
-                        {/* <span className="md:text-[#4B3EC4] textSmall underline">
+                        </h1>
+                        <p className="textSmall2 w-full flex justify-between">
+                          Город Ташкент{"  "}
+                          {/* <span className="md:text-[#4B3EC4] textSmall underline">
                           IP камера HIKVISION N77777 V1
                         </span> */}
-                      </p>
+                        </p>
+                      </div>
                     </div>
                   </aside>
                 </div>
