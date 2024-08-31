@@ -61,15 +61,6 @@ const SideBarCategory = ({ topCategoryData, categoryId, topCategoryId }) => {
               </div>
             );
           })}
-          <div>
-            <h1
-              className={`textSmall3  cursor-pointer transition-opacity duration-300 ease-linear ${
-                false ? "opacity-1 font-medium" : "opacity-[0.8]"
-              }`}
-            >
-              Другие...
-            </h1>
-          </div>
         </div>
       </div>
     </div>

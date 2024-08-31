@@ -163,19 +163,6 @@ const Products = ({
                   </DropdownMenuSub>
                 );
               })}
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger
-                  arrow={"ddd"}
-                  className="py-2 px-4 lg:text-sm"
-                >
-                  Другие...
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent side="right">
-                  <DropdownMenuItem asChild>
-                    <div className="textSmall2">Other</div>
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -243,7 +230,9 @@ const Products = ({
             })}
           </>
         ) : (
-          <div className="col-span-4 w-full py-5 flex justify-center items-center">Нет результатов.</div>
+          <div className="col-span-4 w-full py-5 flex justify-center items-center">
+            Нет результатов.
+          </div>
         )}
       </div>
       {/* Pagination */}

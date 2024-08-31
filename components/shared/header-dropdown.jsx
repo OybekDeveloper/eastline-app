@@ -80,23 +80,6 @@ export function HeaderDropdown({ topCategory }) {
             </DropdownMenuSub>
           );
         })}
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger
-            arrow={true}
-            className="py-2 px-4 lg:text-sm"
-          >
-            Другие...
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent side="right">
-              <DropdownMenuItem asChild>
-                <div
-                  className="textSmall2"
-                >
-                 Other
-                </div>
-              </DropdownMenuItem>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
   );

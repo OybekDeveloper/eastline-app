@@ -4,7 +4,6 @@ import CustomImage from "@/components/shared/customImage";
 import {
   Carousel,
   CarouselContent,
-  CarouselCounter,
   CarouselItem,
 } from "@/components/ui/carousel";
 import { f, truncateText } from "@/lib/utils";
