@@ -95,7 +95,9 @@ const NewsRew = ({ newsItem, reviews }) => {
                   </article>
                   <aside className="w-full flex justify-start gap-2 items-center">
                     <div className="w-full flex justify-start items-center gap-2">
-                      <div className="textNormal p-4 rounded-full border">{item.name.slice(0,1)}</div>
+                      <div className="w-12 h-12 rounded-full border-2 flex justify-center items-center">
+                        <h1 className="textNormal">{item.name.slice(0, 1)}</h1>
+                      </div>
                       <div>
                         <h1 className="w-full font-medium">
                           {item.name}{" "}
