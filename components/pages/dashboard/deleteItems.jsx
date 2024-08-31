@@ -32,7 +32,7 @@ const DeleteItem = ({ deleteRow, payment }) => {
   const deleteItem = async (payment) => {
     try {
       const response = await axios.delete(
-        `${"https://eastline-blaa.vercel.app"}/api/${
+        `${"https://eastline-app.vercel.app"}/api/${
           pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
           pathname.split("/")[2].slice(6).slice(1)
         }`,
