@@ -66,13 +66,15 @@ export function HeaderDropdown({ topCategory }) {
                 activeCategory === topCategory.id ? (
                   <div className="pl-4 pt-2 w-full flex flex-col gap-y-1 max-h-[150px] overflow-y-scroll">
                     {topCategory.categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall3 hover:bg-secondary cursor-pointer"
-                        href={`/${topCategory.id}/${category.id}`}
-                      >
-                        {category.name}
-                      </Link>
+                      <DropdownMenuItem asChild key={category.id}>
+                        <Link
+                          key={category.id}
+                          className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall3 hover:bg-secondary cursor-pointer"
+                          href={`/${topCategory.id}/${category.id}`}
+                        >
+                          {category.name}
+                        </Link>
+                      </DropdownMenuItem>
                     ))}
                   </div>
                 ) : null}
