@@ -55,7 +55,7 @@ const OurLicenses = ({ sertificate, license }) => {
               <CarouselNext className="rounded-full p-0" />
             </div>
           </div>
-          <CarouselContent className="h-full lg:h-[300px] max-md:pb-4">
+          <CarouselContent className="h-full max-md:pb-4">
             {license.map((item, index) => {
               return (
                 <CarouselItem
