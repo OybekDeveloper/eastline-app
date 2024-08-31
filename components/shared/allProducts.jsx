@@ -88,7 +88,7 @@ const AllProducts = ({ products, categories, currency }) => {
                   return (
                     <CarouselItem
                       key={i}
-                      className="basis-[70%] sm:basis-[50%] md:basis-[40%]"
+                      className="basis-[90%] sm:basis-[50%] md:basis-[40%]"
                     >
                       <Cards
                         variant={"second"}
@@ -125,29 +125,29 @@ const Cards = memo(({ props, variant, currency, getCurrencySum }) => {
   return (
     <>
       {variant === "second" ? (
-        <article className="border rounded-xl flex flex-col items-center justify-center py-5 gap-4 md:h-[380px]">
-          <p>{truncateText(name,15)}</p>
+        <article className="border rounded-xl flex flex-col items-center justify-center py-5 gap-4 md:h-[400px] 2xl:h-[500px] 4xl:h-[600px]">
+          <p>{truncateText(name, 15)}</p>
           <span className="text-xs bg-black text-white rounded-md px-2 py-1 z-[7]">
             NEW
           </span>
-          <CustomImage
-            src={`${image[0]}`}
-            className="w-[70%] md:w-[50%] lg:w-[60%] aspect-square"
-            width={100}
-            height={100}
-            alt={`${image[0]}`}
-          />
+          <div className="w-full cursor-pointer h-[300px] relative flex justify-center items-center">
+            <CustomImage
+              src={`${image[0]}`}
+              className="w-[70%] md:w-[50%] lg:w-[60%] aspect-square"
+              alt={`${image[0]}`}
+            />
+          </div>
           <p>{f(getCurrencySum(price))} сум</p>
         </article>
       ) : (
-        <article className="border w-full rounded-xl flex items-center justify-center p-5 gap-5 textNormal md:h-[380px]">
-          <CustomImage
-            src={`${image[0]}`}
-            className="md:w-[50%] aspect-square"
-            width={100}
-            height={100}
-            alt={`${image[0]}`}
-          />
+        <article className="border w-full rounded-xl flex items-center justify-center p-5 gap-5 textNormal md:h-[400px] 2xl:h-[500px] 4xl:h-[600px]">
+          <div className="relative w-full flex justify-center items-center">
+            <CustomImage
+              src={`${image[0]}`}
+              className="md:w-[50%] aspect-square"
+              alt={`${image[0]}`}
+            />
+          </div>
           <div className="flex flex-col gap-5 items-start justify-between h-[80%]">
             <p>{name}</p>
             <span className="text-xs bg-black text-white rounded-md px-2 py-1 ">
