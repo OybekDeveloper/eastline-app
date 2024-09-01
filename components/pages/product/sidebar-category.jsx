@@ -16,7 +16,7 @@ const SideBarCategory = ({ topCategoryData, categoryId, topCategoryId }) => {
 
   return (
     <div className="max-md:hidden col-span-2 lg:col-span-1">
-      <div className="bg-secondary mx-auto h-auto p-4 rounded-md">
+      <div className="bg-secondary mx-auto h-auto p-4 rounded-md space-y-3">
         <h1 className="textNormal4 font-bold">Категории</h1>
         <div className="w-full space-y-2">
           {topCategoryData.map((topCategory, idx) => {
