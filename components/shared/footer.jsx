@@ -65,20 +65,38 @@ const Footer = () => {
             </div>
             <ul className="text-xl flex items-center justify-center lg:justify-end gap-2 border-t lg:border-none max-lg:pt-3">
               <li className="lg:border p-2 rounded-full items-block">
-                <a className="w-full h-full" target="_blank" href="https://t.me/ELTprice_bot">
+                <a
+                  className="w-full h-full"
+                  target="_blank"
+                  href="https://t.me/ELTprice_bot"
+                >
                   <FaTelegram />
                 </a>
               </li>
               <li className="lg:border p-2 rounded-full items-block">
-                <a className="w-full h-full" target="_blank" href="https://www.facebook.com/eastlinetelecom">
+                <a
+                  className="w-full h-full"
+                  target="_blank"
+                  href="https://www.facebook.com/eastlinetelecom"
+                >
                   <FaFacebookF />
                 </a>
               </li>
-              {/* <li className="lg:border p-2 rounded-full items-block">
-                <FaInstagram />
-              </li> */}
               <li className="lg:border p-2 rounded-full items-block">
-                <a className="w-full h-full" target="_blank" href="https://www.youtube.com/@AnpArtSer">
+                <a
+                  className="w-full h-full"
+                  target="_blank"
+                  href="https://www.instagram.com/_elt_uz?igsh=dXNnZWt3a3N3ejV6&utm_source=qr"
+                >
+                  <FaInstagram />
+                </a>
+              </li>
+              <li className="lg:border p-2 rounded-full items-block">
+                <a
+                  className="w-full h-full"
+                  target="_blank"
+                  href="https://www.youtube.com/@AnpArtSer"
+                >
                   <FaYoutube />
                 </a>
               </li>

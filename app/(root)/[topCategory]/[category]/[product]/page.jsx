@@ -109,9 +109,15 @@ const Product = async ({ params }) => {
                 <FaFacebookF />
               </a>
             </li>
-            {/* <li className="lg:border p-2 rounded-full items-block">
+            <li className="lg:border p-2 rounded-full items-block">
+              <a
+                className="w-full h-full"
+                target="_blank"
+                href="https://www.instagram.com/_elt_uz?igsh=dXNnZWt3a3N3ejV6&utm_source=qr"
+              >
                 <FaInstagram />
-              </li> */}
+              </a>
+            </li>
             <li className="bg-border lg:border p-2 rounded-full items-block">
               <a
                 className="w-full h-full"
