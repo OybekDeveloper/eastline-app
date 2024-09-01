@@ -38,7 +38,7 @@ export function HeaderDropdown({ topCategory }) {
             <DropdownMenuSub key={idx}>
               <DropdownMenuSubTrigger
                 arrow={topCategory.categories.length}
-                className="py-2 px-4 lg:text-sm"
+                className="py-2 px-4 textSmall"
                 onClick={() => handleSubcategoryToggle(topCategory.id)}
               >
                 {topCategory.name}
@@ -50,7 +50,7 @@ export function HeaderDropdown({ topCategory }) {
                     {topCategory.categories.map((category) => (
                       <DropdownMenuItem asChild key={category.id}>
                         <Link
-                          className="textSmall2"
+                          className="textSmall"
                           href={`/${topCategory.id}/${category.id}`}
                         >
                           {category.name}
@@ -69,7 +69,7 @@ export function HeaderDropdown({ topCategory }) {
                       <DropdownMenuItem asChild key={category.id}>
                         <Link
                           key={category.id}
-                          className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall3 hover:bg-secondary cursor-pointer"
+                          className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall1 hover:bg-secondary cursor-pointer"
                           href={`/${topCategory.id}/${category.id}`}
                         >
                           {category.name}
