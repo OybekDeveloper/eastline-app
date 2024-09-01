@@ -35,7 +35,14 @@ export const metadata = {
   charSet: "utf-8", // Specify the character encoding for global accessibility
 };
 
-export default  function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const productsData = await db.product.findMany();
+  const topCategories = await db.topCategory.findMany({
+    include: {
+      categories: true,
+    },
+  });
+
   return (
     <html lang="en">
       <body
@@ -56,7 +63,7 @@ export default  function RootLayout({ children }) {
             zIndex={999999999}
             showAtBottom={false}
           />
-          <Header  />
+          <Header topCategories={topCategories} productsData={productsData} />
           <div className="grow">{children}</div>
           <Footer />
           {/* <ChatBot /> */}

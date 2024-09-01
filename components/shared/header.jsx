@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, { Suspense } from "react";
 import Image from "next/image";
 import { Logo } from "@/public/img";
 import { Phone } from "lucide-react";
@@ -10,35 +10,24 @@ import SearchComponent from "./searchComponent";
 import { HeaderDropdown } from "./header-dropdown";
 import HeroTitle from "./hero-title";
 import Container from "./container";
-import { ApiService } from "@/lib/api.services";
 
-export default function Home() {
-  const [productsData, setProductsData] = useState([]);
-  const [topCategories, setTopCategories] = useState([]);
+export default function Home({ topCategories, productsData }) {
+  // const [categories, setCategories] = useState([]);
+  // const [topCategories, setTopCategories] = useState([]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const products = await ApiService.getData("/api/product");
-        const topCategories = await ApiService.getData("/api/topCategory");
-        if (products.length > 0) {
-          const filterProducts = await Promise.all(
-            products.map(async (item) => {
-              const getCategories = await ApiService.getData(
-                `/api/category?id=${item.categoryId}`
-              );
-              return { ...item, categories: getCategories[0] };
-            })
-          );
-          setTopCategories(topCategories);
-          setProductsData(filterProducts);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const topCategories = await ApiService.getData("/api/topCategory");
+  //       const categories = await ApiService.getData("/api/category");
+  //       setTopCategories(topCategories);
+  //       setCategories(categories);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <Suspense>
