@@ -44,7 +44,7 @@ export default async function RootLayout({ children }) {
   });
   const productsData = await Promise.all(
     products.map(async (item) => {
-      const getCategories = await db.categories.findMany({
+      const getCategories = await db.category.findMany({
         where: { id: Number(item.categoryId) },
       });
       return { ...item, categories: getCategories[0] };
