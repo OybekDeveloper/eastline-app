@@ -21,7 +21,9 @@ export default function SearchComponent({ productsData }) {
   // Fetch all categories once when component loads
   useEffect(() => {
     const fetchCategories = async () => {
-      const uniqueCategoryIds = [...new Set(productsData.map(item => item.categoryId))];
+      const uniqueCategoryIds = [
+        ...new Set(productsData.map((item) => item.categoryId)),
+      ];
       const categoriesMap = {};
       for (const id of uniqueCategoryIds) {
         try {
@@ -64,15 +66,18 @@ export default function SearchComponent({ productsData }) {
       <ComboboxOptions
         anchor="bottom"
         transition
+        style={{
+          maxHeight: "400px",
+        }}
         className={clsx(
-          "w-[var(--input-width)] h-[400px] rounded-xl border bg-secondary p-1 ",
+          "w-[var(--input-width)] rounded-xl border bg-secondary p-1 mt-1 shadow-md",
           "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-[9999]"
         )}
       >
         {filteredProducts.length <= 0 ? (
-          <div>No data</div>
+          <div className="flex justify-center items-center py-10">Нет результатов.</div>
         ) : (
-          <>
+          <div className="max-h-[400px]">
             {filteredProducts.map((product) => {
               const categoryData = categories[product.categoryId];
               const href = categoryData
@@ -80,7 +85,7 @@ export default function SearchComponent({ productsData }) {
                 : "#";
 
               return (
-                <Link key={product.id} href={href} passHref>
+                <Link key={product.id} href={href}>
                   <ComboboxOption
                     value={product}
                     className="group flex cursor-pointer items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white"
@@ -90,7 +95,7 @@ export default function SearchComponent({ productsData }) {
                 </Link>
               );
             })}
-          </>
+          </div>
         )}
       </ComboboxOptions>
     </Combobox>
