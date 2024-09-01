@@ -11,7 +11,7 @@ import { HeaderDropdown } from "./header-dropdown";
 import HeroTitle from "./hero-title";
 import Container from "./container";
 
-export default function Home({ topCategories, categories }) {
+export default function Home({ topCategories, productsData }) {
   // const [categories, setCategories] = useState([]);
   // const [topCategories, setTopCategories] = useState([]);
 
@@ -56,7 +56,7 @@ export default function Home({ topCategories, categories }) {
               <Link href={"/"}>
                 <Image src={Logo} alt="Logo" className="w-[12vw] min-w-24" />
               </Link>
-              <SearchComponent categories={categories || []} />
+              <SearchComponent productsData={productsData || []} />
             </Container>
           </div>
         </Container>

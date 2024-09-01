@@ -36,13 +36,22 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const categories = await db.category.findMany();
+  const products = await db.product.findMany();
   const topCategories = await db.topCategory.findMany({
     include: {
       categories: true,
     },
   });
+  const productsData = await Promise.all(
+    products.map(async (item) => {
+      const getCategories = await db.categories.findMany({
+        where: { id: Number(item.categoryId) },
+      });
+      return { ...item, categories: getCategories[0] };
+    })
+  );
   
+
   return (
     <html lang="en">
       <body
@@ -63,7 +72,7 @@ export default async function RootLayout({ children }) {
             zIndex={999999999}
             showAtBottom={false}
           />
-          <Header topCategories={topCategories} categories={categories} />
+          <Header topCategories={topCategories} productsData={productsData} />
           <div className="grow">{children}</div>
           <Footer />
           {/* <ChatBot /> */}

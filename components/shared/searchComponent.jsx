@@ -9,26 +9,25 @@ import {
 } from "@headlessui/react";
 import clsx from "clsx";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-export default function SearchComponent({ categories }) {
+export default function SearchComponent({ productsData }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null); // No initial selection
-
   const handleClick = (item) => {
     setSelected(null);
     setQuery("");
   };
-
-  const filteredCategories =
+  const filteredProducts =
     query === ""
-      ? categories
-      : categories.filter((category) => {
+      ? productsData
+      : productsData.filter((category) => {
           return category.name.toLowerCase().includes(query.toLowerCase());
         });
+  console.log(filteredProducts, "filter");
 
   return (
     <Combobox
@@ -58,20 +57,26 @@ export default function SearchComponent({ categories }) {
           "transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0 z-[9999]"
         )}
       >
-        {filteredCategories.map((category) => (
-          <Link
-            key={category.id}
-            href={`/${category.topCategoryId}/${category.id}`}
-          >
-            <ComboboxOption
-              onClick={() => handleClick(category)}
-              value={category}
-              className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white"
-            >
-              <div className="text-sm/6">{category.name}</div>
-            </ComboboxOption>
-          </Link>
-        ))}
+        {filteredProducts.length <= 0 ? (
+          <div>No data</div>
+        ) : (
+          <>
+            {filteredProducts.map((category) => (
+              <Link
+                key={category.id}
+                href={`/${category.topCategoryId}/${category.id}`}
+              >
+                <ComboboxOption
+                  onClick={() => handleClick(category)}
+                  value={category}
+                  className="group flex cursor-default items-center gap-2 rounded-lg py-1.5 px-3 select-none data-[focus]:bg-white"
+                >
+                  <div className="text-sm/6">{category.name}</div>
+                </ComboboxOption>
+              </Link>
+            ))}
+          </>
+        )}
       </ComboboxOptions>
     </Combobox>
   );
