@@ -5,7 +5,12 @@ import ProductCarousel from "@/components/pages/product/products-carusel";
 import { cardsLogoData } from "@/lib/iterationDetails";
 import Image from "next/image";
 import React from "react";
-import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa6";
+import {
+  FaFacebookF,
+  FaInstagram,
+  FaTelegram,
+  FaYoutube,
+} from "react-icons/fa6";
 import BannerProducts from "@/components/pages/product/banner-category";
 import ProductFeature from "@/components/pages/product/product-feature";
 import ProductType from "@/components/pages/product/product-type";
@@ -86,15 +91,39 @@ const Product = async ({ params }) => {
             <li className="ml-4 textSmall">{description}</li>{" "}
           </ul>
           <ul className="text-xl flex gap-3 max-lg:hidden">
-            <li className="bg-border p-2 rounded-full items-block">
-              <FaInstagram />
+            <li className="bg-border lg:border p-2 rounded-full items-block">
+              <a
+                className="w-full h-full"
+                target="_blank"
+                href="https://t.me/ELTprice_bot"
+              >
+                <FaTelegram />
+              </a>
             </li>
-            <li className="bg-border p-2 rounded-full items-block">
-              <FaFacebookF />
+            <li className="bg-border lg:border p-2 rounded-full items-block">
+              <a
+                className="w-full h-full"
+                target="_blank"
+                href="https://www.facebook.com/eastlinetelecom"
+              >
+                <FaFacebookF />
+              </a>
             </li>
-            <li className="bg-border p-2 rounded-full items-block">
-              <FaYoutube />
+            {/* <li className="lg:border p-2 rounded-full items-block">
+                <FaInstagram />
+              </li> */}
+            <li className="bg-border lg:border p-2 rounded-full items-block">
+              <a
+                className="w-full h-full"
+                target="_blank"
+                href="https://www.youtube.com/@AnpArtSer"
+              >
+                <FaYoutube />
+              </a>
             </li>
+            {/* <li className="lg:border p-2 rounded-full items-block">
+                <CiMail />
+              </li> */}
           </ul>
         </div>
         <ProductFeature feature={feature} />
