@@ -71,7 +71,7 @@ export const columns = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => console.log(payment)}>
+            <DropdownMenuItem>
               Copy payment ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />

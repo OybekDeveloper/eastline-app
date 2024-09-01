@@ -81,21 +81,17 @@ const CategoryForm = () => {
           .upload(imageName, imageToUpload);
 
         if (uploadError && uploadError.statusCode == 409) {
-          console.log("Error uploading image:", uploadError);
           const { data: newPublicUrlData } = await supabase.storage
             .from("eastLine_images")
             .getPublicUrl(imageName);
 
-          console.log("Exist URL:", newPublicUrlData.publicUrl);
           uploadedUrl = newPublicUrlData.publicUrl;
         } else {
-          console.log("Image uploaded successfully:", data);
 
           const { data: newPublicUrlData } = await supabase.storage
             .from("eastLine_images")
             .getPublicUrl(imageName);
 
-          console.log("Public URL:", newPublicUrlData.publicUrl);
           uploadedUrl = newPublicUrlData.publicUrl;
         }
       } catch (error) {

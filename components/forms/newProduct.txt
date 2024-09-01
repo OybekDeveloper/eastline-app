@@ -51,7 +51,6 @@ const ProductForm = () => {
         const res = await edgestore.publicFiles.upload({
           file: imageToUpload,
           onProgressChange: (progress) => {
-            console.log("Upload progress:", progress);
           },
         });
         console.log("Image uploaded successfully:", res);

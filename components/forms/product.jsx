@@ -81,16 +81,13 @@ const ProductForm = ({ categories }) => {
           .from("eastLine_images")
           .getPublicUrl(imageName);
 
-        console.log("Exist URL:", newPublicUrlData.publicUrl);
         urlArr.push(newPublicUrlData.publicUrl);
       } else {
-        console.log("Image uploaded successfully:", data);
 
         const { data: newPublicUrlData } = supabase.storage
           .from("eastLine_images")
           .getPublicUrl(imageName);
 
-        console.log("Public URL:", newPublicUrlData.publicUrl);
         urlArr.push(newPublicUrlData.publicUrl);
       }
     }
@@ -113,7 +110,6 @@ const ProductForm = ({ categories }) => {
     try {
       const imagesUpload = await upload();
       if (id) {
-        const updateImages = console.log(imagesUpload, "upload image");
         const res = await axios.patch(`/api/product?id=${id}`, {
           ...values,
           images: imagesUpload,

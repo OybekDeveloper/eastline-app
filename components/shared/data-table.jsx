@@ -41,8 +41,6 @@ export function DataTable({ columns, data, loading }) {
   const router = useRouter();
   const reflesh = useEvent((state) => state.reflesh); // Listen to the reflesh state
   const changeTableData = useEvent((state) => state.changeTableData); // Listen to the reflesh state
-  console.log(data, "changeTableData");
-  console.log(changeTableData, "changeTableData1");
 
   const [sorting, setSorting] = useState([]);
   const [columnFilters, setColumnFilters] = useState([]);
@@ -76,7 +74,6 @@ export function DataTable({ columns, data, loading }) {
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
   });
-console.log(table);
 
   // Fetch data on component mount and whenever reflesh changes
   useEffect(() => {

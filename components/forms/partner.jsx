@@ -64,7 +64,6 @@ const PartnerForm = () => {
         }
         const imageName = sanitizeString(image[0].name);
 
-        console.log(imageToUpload);
         // File doesn't exist, upload it
         const { data, error: uploadError } = await supabase.storage
           .from("eastLine_images")
@@ -76,16 +75,13 @@ const PartnerForm = () => {
             .from("eastLine_images")
             .getPublicUrl(imageName);
 
-          console.log("Exist URL:", newPublicUrlData.publicUrl);
           uploadedUrl = newPublicUrlData.publicUrl;
         } else {
-          console.log("Image uploaded successfully:", data);
 
           const { data: newPublicUrlData } = await supabase.storage
             .from("eastLine_images")
             .getPublicUrl(imageName);
 
-          console.log("Public URL:", newPublicUrlData.publicUrl);
           uploadedUrl = newPublicUrlData.publicUrl;
         }
       } catch (error) {
