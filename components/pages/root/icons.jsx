@@ -7,7 +7,7 @@ import React from "react";
 
 const Icons = () => {
   return (
-    <section className="pt-5 w-[95%] lg:bg-primary rounded-xl xl:w-10/12 lg:mx-auto justify-end items-center md:justify-between mx-auto lg:flex grid grid-cols-2 gap-3 p-4 max-lg:gap-4">
+    <section className="h-full min-h-[400px] pt-5 w-[95%] lg:bg-primary rounded-xl xl:w-10/12 lg:mx-auto justify-end items-center md:justify-between mx-auto lg:flex grid grid-cols-2 gap-3 p-4 max-lg:gap-4">
       {myServiceData.map((item, idx) => {
         return (
           <div
