@@ -35,23 +35,7 @@ export const metadata = {
   charSet: "utf-8", // Specify the character encoding for global accessibility
 };
 
-export default async function RootLayout({ children }) {
-  const products = await db.product.findMany();
-  const topCategories = await db.topCategory.findMany({
-    include: {
-      categories: true,
-    },
-  });
-  const productsData = await Promise.all(
-    products.map(async (item) => {
-      const getCategories = await db.category.findMany({
-        where: { id: Number(item.categoryId) },
-      });
-      return { ...item, categories: getCategories[0] };
-    })
-  );
-  
-
+export default  function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
@@ -72,7 +56,7 @@ export default async function RootLayout({ children }) {
             zIndex={999999999}
             showAtBottom={false}
           />
-          <Header topCategories={topCategories} productsData={productsData} />
+          <Header  />
           <div className="grow">{children}</div>
           <Footer />
           {/* <ChatBot /> */}
