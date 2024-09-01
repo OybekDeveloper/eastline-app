@@ -248,8 +248,9 @@ const Products = ({
           {Array.from({ length: table.getPageCount() }).map((_, idx) => (
             <PaginationItem key={idx}>
               <PaginationLink
+              className={"cursor-pointer hover:bg-secondary"}
                 onClick={() => table.setPageIndex(idx)}
-                active={
+                isActive={
                   idx === table.getState().pagination.pageIndex
                     ? "true"
                     : undefined
