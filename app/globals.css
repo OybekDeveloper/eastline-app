@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 html {
   scroll-behavior: smooth;
 }
@@ -44,8 +49,7 @@ html {
   background-color: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background-color:  #0F508A;
-  ;
+  background-color: #0f508a;
 }
 
 @layer base {
@@ -239,7 +243,7 @@ html {
   display: block;
 }
 
-.accordion input[type="radio"]:checked +label+ .content {
+.accordion input[type="radio"]:checked + label + .content {
   max-height: 100vh; /* Adjust this value as needed */
 }
 
