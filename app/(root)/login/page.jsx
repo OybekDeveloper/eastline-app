@@ -1,7 +1,9 @@
 "use client";
 
 import Container from "@/components/shared/container";
-import CustomFormField, { FormFieldType } from "@/components/shared/customFormField";
+import CustomFormField, {
+  FormFieldType,
+} from "@/components/shared/customFormField";
 import SubmitButton from "@/components/shared/submitButton";
 import { Form } from "@/components/ui/form";
 import { LoginValidate } from "@/lib/validation";
@@ -11,6 +13,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie"; // Import js-cookie
+import Link from "next/link";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +43,7 @@ function Login() {
           "date",
           JSON.stringify({
             expiresAt: Date.now() + 5 * 24 * 60 * 60 * 1000,
-          }),
+          })
         );
         window.location.href = "/dashboard";
       } else {
@@ -57,7 +60,7 @@ function Login() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="max-w-[400px] mx-autoflex-1 space-y-4 w-full"
+          className="max-w-[400px] max-sm:w-10/12 space-y-4 w-full"
         >
           <h1 className="text-primary textNormal5 font-semibold mb-5">
             Вход в систему
@@ -80,6 +83,9 @@ function Login() {
             Входить
           </SubmitButton>
         </form>
+        <Link className="mt-4 font-medium text-primary textSmall4" href={'/'}>
+          Вернуться в главное меню
+        </Link>
       </Form>
     </Container>
   );
