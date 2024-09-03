@@ -38,7 +38,7 @@ function Login() {
       Cookies.set(
         "date",
         JSON.stringify({
-          expiresAt: Date.now() + 5 * 24 * 60 * 60 * 1000,
+          expiresAt: Date.now() + 3 * 24 * 60 * 60 * 1000,
         })
       );
       window.location.href = "/dashboard";
