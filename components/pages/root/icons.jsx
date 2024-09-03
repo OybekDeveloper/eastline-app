@@ -15,8 +15,8 @@ const Icons = () => {
             className={cn(
               "h-full flex gap-4 lg:gap-2 max-lg:bg-secondary max-lg:p-6 rounded-lg md:items-center",
               idx === 0 || idx === 1
-                ? "col-span-1 max-lg:flex-col items-start max-lg:min-h-[200px]"
-                : "col-span-2 items-start max-lg:min-h-[100px]"
+                ? "col-span-1 max-lg:flex-col items-start"
+                : "col-span-2 items-start"
             )}
           >
             <Image
