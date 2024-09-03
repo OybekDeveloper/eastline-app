@@ -10,28 +10,13 @@ import SearchComponent from "./searchComponent";
 import { HeaderDropdown } from "./header-dropdown";
 import HeroTitle from "./hero-title";
 import Container from "./container";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Home({ topCategories, productsData }) {
-  // const [categories, setCategories] = useState([]);
-  // const [topCategories, setTopCategories] = useState([]);
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const topCategories = await ApiService.getData("/api/topCategory");
-  //       const categories = await ApiService.getData("/api/category");
-  //       setTopCategories(topCategories);
-  //       setCategories(categories);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
-
+  const pathname = usePathname();
   return (
     <Suspense>
-      <header className="textSmall">
+      <header className={`textSmall ${pathname === "/login" ? "hidden" : ""}`}>
         <Container className="flex-col w-full bg-primary items-start">
           <div className="flex items-center justify-between w-10/12 mx-auto text-secondary py-2 gap-1 md:gap-5">
             <p className="hidden lg:block">
@@ -61,7 +46,11 @@ export default function Home({ topCategories, productsData }) {
           </div>
         </Container>
       </header>
-      <nav className="text-secondary textSmall bg-primary sticky top-0 z-[999]">
+      <nav
+        className={`${
+          pathname === "/login" ? "hidden" : ""
+        } text-secondary textSmall bg-primary sticky top-0 z-[999]`}
+      >
         <Container>
           <ul className="flex items-center gap-2 md:gap-10">
             {navItems.map((item) => {
@@ -83,11 +72,6 @@ export default function Home({ topCategories, productsData }) {
                 </li>
               );
             })}
-            <li className="h-10 flex items-center justify-center">
-              <Link href={`/dashboard`} className="py-2">
-                Test dashboard
-              </Link>
-            </li>
           </ul>
           <div className="hidden items-center gap-1 md:gap-5 lg:flex">
             <p>info@elt.uz</p>

@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react";
 import Container from "./container";
 import { navItems } from "@/lib/iterationDetails";
@@ -10,11 +12,13 @@ import {
   FaInstagram,
   FaYoutube,
 } from "react-icons/fa6";
-import { CiMail } from "react-icons/ci";
+import { usePathname } from "next/navigation";
 
 const Footer = () => {
+  const pathname = usePathname();
+
   return (
-    <footer className="relative">
+    <footer className={`${pathname === "/login" ? "hidden" : ""} relative`}>
       <div className="absolute w-full h-full bg-secondary -z-10"></div>
       <Container className="w-full lg:w-8/12 items-start max-lg:bg-primary text-secondary lg:text-foreground">
         <div className="flex justify-between w-full items-center lg:items-start lg:flex-row flex-col py-8 max-lg:gap-4">
