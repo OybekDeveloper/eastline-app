@@ -1,8 +1,8 @@
-import React from 'react'
+  import React from 'react'
 
-async function Page() {
-  return (
-    <div>TOp category</div>
-  )
-}
-export default Page
+  async function Page() {
+    return (
+      <div>TOp category</div>
+    )
+  }
+  export default Page

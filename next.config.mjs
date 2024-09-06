@@ -17,10 +17,7 @@ const nextConfig = {
         protocol: "https",
         hostname: "letsenhance.io",
       },
-      {
-        protocol: "https",
-        hostname: "files.edgestore.dev",
-      },
+
       {
         protocol: "https",
         hostname: "elt.uz",

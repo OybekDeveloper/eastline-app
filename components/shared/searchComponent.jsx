@@ -16,27 +16,20 @@ import axios from "axios";
 export default function SearchComponent({ productsData }) {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
-  const [categories, setCategories] = useState({});
+  const [categories, setCategories] = useState([]);
 
   // Fetch all categories once when component loads
   useEffect(() => {
     const fetchCategories = async () => {
-      const uniqueCategoryIds = [
-        ...new Set(productsData.map((item) => item.categoryId)),
-      ];
-      const categoriesMap = {};
-      for (const id of uniqueCategoryIds) {
-        try {
-          const { data } = await axios.get(`/api/category?id=${id}`);
-          categoriesMap[id] = data.data[0];
-        } catch (error) {
-          console.error("Failed to fetch category", id, error);
-        }
+      try {
+        const res = await axios.get("/api/category");
+        setCategories(res.data.data);
+      } catch (error) {
+        console.error("Failed to fetch categories", error);
       }
-      setCategories(categoriesMap);
     };
     fetchCategories();
-  }, [productsData]);
+  }, []);
 
   const filteredProducts =
     query === ""
@@ -75,11 +68,16 @@ export default function SearchComponent({ productsData }) {
         )}
       >
         {filteredProducts.length <= 0 ? (
-          <div className="flex justify-center items-center py-10">Нет результатов.</div>
+          <div className="flex justify-center items-center py-10">
+            Нет результатов.
+          </div>
         ) : (
           <div className="max-h-[400px]">
             {filteredProducts.map((product) => {
-              const categoryData = categories[product.categoryId];
+              const categoryData = categories?.find(
+                (category) => +category.id === +product.categoryId
+              );
+
               const href = categoryData
                 ? `/${categoryData.topCategoryId}/${categoryData.id}/${product.id}`
                 : "#";
