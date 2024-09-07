@@ -18,6 +18,7 @@ const Category = async ({ params }) => {
     });
     return res;
   }
+
   async function getTopCategories() {
     const res = await db.topCategory.findMany({
       include: {
@@ -26,6 +27,7 @@ const Category = async ({ params }) => {
     });
     return res;
   }
+
   async function getCategory() {
     const categoryData = await db.category.findMany({
       where: {
@@ -83,3 +85,4 @@ const Category = async ({ params }) => {
 };
 
 export default Category;
+  

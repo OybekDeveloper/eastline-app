@@ -35,7 +35,7 @@ const Banner = ({ productData, categories }) => {
                 delay: 3000,
               }),
             ]}
-            className="w-full text-secondary"
+            className="w-full text-secondary " 
           >
             <CarouselContent className="mb-2">
               {productData.map((item, i) => {
@@ -128,7 +128,6 @@ const Banner = ({ productData, categories }) => {
                 );
               })}
             </CarouselContent>
-            <CarouselCounter classNameCounter="bg-primary" className={""} />
           </Carousel>
         </div>
       </section>

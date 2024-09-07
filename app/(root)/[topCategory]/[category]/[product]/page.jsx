@@ -1,9 +1,6 @@
 import db from "@/db/db";
-import { Button } from "@/components/ui/button";
-import { f, getRandomItems, truncateText } from "@/lib/utils";
+import { f, getRandomItems } from "@/lib/utils";
 import ProductCarousel from "@/components/pages/product/products-carusel";
-import { cardsLogoData } from "@/lib/iterationDetails";
-import Image from "next/image";
 import React from "react";
 import {
   FaFacebookF,
@@ -15,13 +12,12 @@ import BannerProducts from "@/components/pages/product/banner-category";
 import ProductFeature from "@/components/pages/product/product-feature";
 import ProductType from "@/components/pages/product/product-type";
 
-const currency = await db.currency.findMany();
-const products1 = await db.product.findMany();
-
-const randomProducts = getRandomItems(products1);
 
 const Product = async ({ params }) => {
   const { product } = params;
+  const currency = await db.currency.findMany();
+  const products1 = await db.product.findMany();
+  const randomProducts = getRandomItems(products1);
 
   const getCurrencySum = (dollar) => {
     if (currency.length) {
@@ -46,7 +42,6 @@ const Product = async ({ params }) => {
 
   const productData = (await getProduct()).products;
   const categoryData = (await getProduct()).category;
-
   const { name, price, brand, description, feature } = productData[0];
 
   return (
@@ -64,7 +59,7 @@ const Product = async ({ params }) => {
             <ProductCarousel item={productData[0]} />
           </div>
           <ul className="list-disc space-y-2 max-lg:hidden">
-            <li className="ml-4 textSmall">{description}</li>{" "}
+            <li className="ml-4 textSmall">{description}</li>
           </ul>
           <div className="flex gap-4">
             <p className="textSmall bg-primary rounded-md px-2 py-1 text-white">
@@ -75,9 +70,6 @@ const Product = async ({ params }) => {
             </p>
           </div>
           <ul className="textSmall2 space-y-2">
-            {/* <li>
-              <strong>Код товара: </strong>HIKDS-2CD24
-            </li> */}
             <li>
               <strong>Категория: </strong>
               {categoryData[0].name}
@@ -88,7 +80,7 @@ const Product = async ({ params }) => {
             </li>
           </ul>
           <ul className="list-disc space-y-2 lg:hidden">
-            <li className="ml-4 textSmall">{description}</li>{" "}
+            <li className="ml-4 textSmall">{description}</li>
           </ul>
           <ul className="text-xl flex gap-3 max-lg:hidden">
             <li className="bg-border lg:border p-2 rounded-full items-block">
@@ -127,9 +119,6 @@ const Product = async ({ params }) => {
                 <FaYoutube />
               </a>
             </li>
-            {/* <li className="lg:border p-2 rounded-full items-block">
-                <CiMail />
-              </li> */}
           </ul>
         </div>
         <ProductFeature feature={feature} />

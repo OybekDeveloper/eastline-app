@@ -10,7 +10,9 @@ import Getelements from "@/components/pages/dashboard/getElements";
 import db from "@/db/db";
 import React from "react";
 
-async function Create({ params }) {
+// If you're using Next.js app directory, use this function to handle server-side data fetching
+const Create = async ({ params }) => {
+  // Fetch data here for pre-rendering
   const topCategories = await db.topCategory.findMany({
     include: {
       categories: true,
@@ -22,6 +24,8 @@ async function Create({ params }) {
     },
   });
   const products = await db.product.findMany();
+
+  // Handle the page rendering based on params.details
   const renderPage = () => {
     switch (params.details) {
       case "createTopCategory":
@@ -41,17 +45,13 @@ async function Create({ params }) {
       case "createNews":
         return <NewsForm />;
       case "createBanner":
-        return (
-          <BannerForm
-            products={products}
-            categories={categories}
-          />
-        );
-
+        return <BannerForm products={products} categories={categories} />;
       default:
         return <Getelements param={params.details} />;
     }
   };
+
   return <>{renderPage()}</>;
-}
+};
+
 export default Create;
