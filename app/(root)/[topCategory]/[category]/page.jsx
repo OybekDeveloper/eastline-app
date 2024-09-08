@@ -85,4 +85,3 @@ const Category = async ({ params }) => {
 };
 
 export default Category;
-  
