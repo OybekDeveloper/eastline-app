@@ -131,13 +131,14 @@ const CategoryForm = () => {
     async function updateData() {
       try {
         const res = await axios.get(`/api/category?id=${id}`);
+        const categoryData = res.data.data[0]
         if (res) {
-          form.setValue("name", res.data.data[0].name);
-          form.setValue("topCategoryId", res.data.data[0].topCategoryId);
+          form.setValue("name", categoryData?.name);
+          form.setValue("topCategoryId", categoryData?.topCategoryId);
           setImage([
             {
-              url: res.data.data[0].image,
-              name: res.data.data[0].image,
+              url: categoryData?.image,
+              name: categoryData?.image,
             },
           ]);
         }
