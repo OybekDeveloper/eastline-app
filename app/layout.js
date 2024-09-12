@@ -37,7 +37,7 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
-  const productsData = await ApiService.getData("/api/product", "product");
+  const productsData = await ApiService.getData("/api/product", " ");
   // const productsData = await db.product.findMany();
   // const topCategories = await db.topCategory.findMany({
   //   include: {
