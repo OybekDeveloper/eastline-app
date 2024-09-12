@@ -9,6 +9,8 @@ import db from "@/db/db";
 import { getLastItems, getRandomItems } from "@/lib/utils";
 import { Suspense } from "react";
 
+export const revalidate = 0; // Disable cache revalidation
+
 async function Home() {
   const products = await db.product.findMany();
   const categories = await db.category.findMany({
