@@ -83,7 +83,6 @@ const ProductForm = ({ categories }) => {
 
         urlArr.push(newPublicUrlData.publicUrl);
       } else {
-
         const { data: newPublicUrlData } = supabase.storage
           .from("eastLine_images")
           .getPublicUrl(imageName);
@@ -116,7 +115,7 @@ const ProductForm = ({ categories }) => {
         });
         if (res) {
           toast.success("Товар изменена успешно!");
-          router.back()
+          router.back();
         }
       } else {
         await axios.post("/api/product", { ...values, images: imagesUpload });
@@ -134,14 +133,20 @@ const ProductForm = ({ categories }) => {
     }
   };
 
-  
   useEffect(() => {
     async function updateData() {
       try {
         const res = await axios.get(`/api/product?id=${id}`);
         if (res) {
-          const { name, description, feature, brand, price, categoryId, image } =
-            res.data.data[0];
+          const {
+            name,
+            description,
+            feature,
+            brand,
+            price,
+            categoryId,
+            image,
+          } = res.data.data[0];
           form.setValue("name", name);
           form.setValue("description", description);
           form.setValue("feature", feature);
@@ -164,7 +169,6 @@ const ProductForm = ({ categories }) => {
     if (id) {
       updateData();
     }
-
   }, [id, form]);
 
   return (
@@ -238,7 +242,7 @@ const ProductForm = ({ categories }) => {
               </CustomFormField>
             </div>
             <div className="my-6">
-              <DropTarget images={images} setImages={setImages} />
+              <DropTarget images={images} setImages={setImages} limitImg={3} />
             </div>
 
             <SubmitButton isLoading={isLoading} className="w-full">

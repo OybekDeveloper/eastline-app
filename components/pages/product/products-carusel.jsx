@@ -24,8 +24,7 @@ const ProductCarousel = ({ item }) => {
     }
   };
 
-  useEffect(() => {
-  }, [mainImage]);
+  useEffect(() => {}, [mainImage]);
 
   return (
     <main>
@@ -42,11 +41,15 @@ const ProductCarousel = ({ item }) => {
         {remainingImages.length > 0 && (
           <div className="w-full flex gap-4 mt-2">
             {remainingImages.map((image, index) => (
-              <div className="relative w-full" onClick={() => handleClick(image)} key={index}>
+              <div
+                className="border-2  rounded-md relative h-[100px] w-[100px] m-2 overflow-hidden"
+                onClick={() => handleClick(image)}
+                key={index}
+              >
                 <CustomImage
                   src={image}
                   alt={item.name}
-                  className="border-2 rounded-xl p-1 cursor-pointer"
+                  className="w-full rounded-xl cursor-pointer"
                 />
               </div>
             ))}
@@ -61,12 +64,13 @@ const ProductCarousel = ({ item }) => {
           <CarouselPrevious className="absolute left-2 top-1/2 rounded-full p-0 z-50" />
           <CarouselContent className="min-h-[300px] lg:h-full">
             {item.image.map((c, idx) => (
-              <CarouselItem key={idx} className="bg-white rounded-md basis-full">
-                <CustomImage
-                  src={c}
-                  alt={item.name}
-                  className="w-full h-full"
-                />
+              <CarouselItem
+                key={idx}
+                className="bg-white rounded-md basis-full flex justify-center items-center p-2"
+              >
+                <div className="relative max-h-[400px] overflow-hidden">
+                  <CustomImage src={c} alt={item.name} className="w-full rounded-md" />
+                </div>
               </CarouselItem>
             ))}
           </CarouselContent>

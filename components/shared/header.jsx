@@ -1,5 +1,4 @@
 "use client";
-
 import React, { Suspense } from "react";
 import Image from "next/image";
 import { Logo } from "@/public/img";
