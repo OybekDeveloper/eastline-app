@@ -37,7 +37,7 @@ const DeleteItem = ({ payment }) => {
   const deleteItem = async (payment) => {
     try {
       const response = await axios.delete(
-        `${"https://eastline-app.vercel.app"}/api/${
+        `/api/${
           pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
           pathname.split("/")[2].slice(6).slice(1)
         }`,
@@ -58,7 +58,12 @@ const DeleteItem = ({ payment }) => {
     }
   };
   const handleDelete = () => {
-    revalidatePath("home");
+    revalidatePath(
+      `${
+        pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
+        pathname.split("/")[2].slice(6).slice(1)
+      }`
+    );
     const callFunction = deleteItem(payment);
     const filterData = changeTableData.filter((c) => +c.id !== +payment.id);
     setTableData(filterData);

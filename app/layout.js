@@ -18,13 +18,13 @@ export const metadata = {
     title: "EAST LINE",
     description: "EAST LINE TELEKOM", // Use the same description here or a unique one
     url: "https://eastline-app.vercel.app/", // Replace with your actual website URL
-    image: "https://eastline-app.vercel.app//logo.svg", // Replace with the URL of your website's main image
+    image: "https://eastline-app.vercel.app/logo.svg", // Replace with the URL of your website's main image
   },
   twitter: {
     card: "summary_large_image",
     title: "EAST LINE",
     description: "EAST LINE TELEKOM", // Use the same description here or a unique one
-    image: "https://eastline-app.vercel.app//logo.svg", // Replace with the URL of your website's main image
+    image: "https://eastline-app.vercel.app/logo.svg", // Replace with the URL of your website's main image
   },
   // Additional meta tags for SEO, indexing, and customization (optional)
   keywords: ["east line", "east line telecom" /* Add more relevant keywords */], // Define relevant keywords
@@ -36,8 +36,8 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const topCategories = await ApiService.getData("/api/topCategory", "home");
-  const productsData = await ApiService.getData("/api/product", "home");
+  const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
+  const productsData = await ApiService.getData("/api/product", "product");
   // const productsData = await db.product.findMany();
   // const topCategories = await db.topCategory.findMany({
   //   include: {
