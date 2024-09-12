@@ -6,17 +6,17 @@ import AllCategories from "@/components/shared/allCategories";
 import AllProducts from "@/components/shared/allProducts";
 import Banner from "@/components/shared/banner";
 import db from "@/db/db";
+import { ApiService } from "@/lib/api.services";
+import { revalidatePath } from "@/lib/revalidate";
 import { getLastItems, getRandomItems } from "@/lib/utils";
 import { Suspense } from "react";
 
 async function Home() {
   const products = await db.product.findMany();
-  const categories = await db.category.findMany({
-    include: {
-      products: true,
-    },
-  });
-  const topCategories = await db.topCategory.findMany();
+
+  const categories = await ApiService.getData("/api/category", "home");
+  const topCategories = await ApiService.getData("/api/topCategory", "home");
+
   const sertificate = await db.sertificate.findMany();
   const license = await db.license.findMany();
   const partner = await db.partner.findMany();
@@ -32,7 +32,7 @@ async function Home() {
       });
       return { ...item, product: getProducts[0] };
     })
-  )
+  );
 
   const randomLicense = getRandomItems(license);
   const randomReviews = getRandomItems(reviews);

@@ -87,7 +87,6 @@ const CategoryForm = () => {
 
           uploadedUrl = newPublicUrlData.publicUrl;
         } else {
-
           const { data: newPublicUrlData } = await supabase.storage
             .from("eastLine_images")
             .getPublicUrl(imageName);
@@ -107,7 +106,7 @@ const CategoryForm = () => {
           image: uploadedUrl ? uploadedUrl : image[0].url,
         });
         toast.success("Категория изменена успешно!");
-        router.back()
+        router.back();
       } else {
         await axios.post("/api/category", {
           ...values,
@@ -119,6 +118,7 @@ const CategoryForm = () => {
       form.reset();
       setImage([]);
       revalidatePath("changeCategory");
+      revalidatePath("home");
     } catch (error) {
       console.error("Error creating category:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");

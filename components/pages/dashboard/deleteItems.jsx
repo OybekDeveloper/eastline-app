@@ -58,6 +58,7 @@ const DeleteItem = ({ payment }) => {
     }
   };
   const handleDelete = () => {
+    revalidatePath("home");
     const callFunction = deleteItem(payment);
     const filterData = changeTableData.filter((c) => +c.id !== +payment.id);
     setTableData(filterData);
