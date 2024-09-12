@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import ChatBot from "@/components/shared/chat-bot";
 import { ApiService } from "@/lib/api.services";
 import { revalidateTag } from "next/cache";
+import { revalidatePath } from "@/lib/revalidate";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,7 +40,7 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   const topCategories = await ApiService.getData("/api/topCategory", "home");
   const productsData = await ApiService.getData("/api/product", "home");
-
+  revalidatePath("home");
   // const productsData = await db.product.findMany();
   // const topCategories = await db.topCategory.findMany({
   //   include: {
