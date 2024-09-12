@@ -3,9 +3,9 @@ import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
-import db from "@/db/db";
 import { Toaster } from "react-hot-toast";
 import ChatBot from "@/components/shared/chat-bot";
+import { ApiService } from "@/lib/api.services";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -36,12 +36,15 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const productsData = await db.product.findMany();
-  const topCategories = await db.topCategory.findMany({
-    include: {
-      categories: true,
-    },
-  });
+  const topCategories = await ApiService.getData("/api/topCategory", "home");
+  const productsData = await ApiService.getData("/api/product", "home");
+
+  // const productsData = await db.product.findMany();
+  // const topCategories = await db.topCategory.findMany({
+  //   include: {
+  //     categories: true,
+  //   },
+  // });
 
   return (
     <html lang="en">
