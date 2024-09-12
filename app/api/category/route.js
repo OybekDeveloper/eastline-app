@@ -9,7 +9,11 @@ export async function GET(req) {
     });
     return Response.json({ data: getTopCategroies });
   } else {
-    const getTopCategroies = await db.category.findMany();
+    const getTopCategroies = await db.category.findMany({
+      include: {
+        products: true,
+      },
+    });
     return Response.json({ data: getTopCategroies });
   }
 }

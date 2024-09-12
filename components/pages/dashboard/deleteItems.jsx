@@ -24,6 +24,7 @@ import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useEvent } from "@/store/event";
+import { revalidatePath } from "@/lib/revalidate";
 
 const DeleteItem = ({ payment }) => {
   const { setReflesh } = useEvent();

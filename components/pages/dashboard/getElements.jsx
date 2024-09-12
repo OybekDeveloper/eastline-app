@@ -13,8 +13,8 @@ import CurrencySum from "@/components/forms/currency";
 import Admin from "@/components/forms/admin";
 import { banner } from "@/components/tableColumns/banner";
 import { useEffect, useState } from "react";
-import { ApiService } from "@/lib/api.services";
 import { useEvent } from "@/store/event";
+import axios from "axios";
 
 function Getelements({ param }) {
   const { reflesh, setTableData } = useEvent();
@@ -25,9 +25,11 @@ function Getelements({ param }) {
   useEffect(() => {
     async function getData() {
       try {
-        const res = await ApiService.getData(`/api/${entityName}`);
-        setTableData(res);
-        setData(res);
+        const res = await axios.get(`/api/${entityName}`, {
+          next: { tags: [`${param}`] },
+        });
+        setTableData(res.data.data);
+        setData(res.data.data);
       } catch (error) {
         console.log(error);
       } finally {
