@@ -1,22 +1,46 @@
+import { NextResponse } from "next/server";
 import db from "@/db/db";
 
-export async function GET(req) {
-  const id = await req.nextUrl.searchParams.get("id");
 
-  if (id) {
-    const getTopCategroies = await db.category.findMany({
-      where: { id: Number(id) },
+export async function GET(req) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    let getTopCategories;
+
+    if (id) {
+      getTopCategories = await db.category.findMany({
+        where: { id: Number(id) },
+      });
+
+      if (getTopCategories.length === 0) {
+        return new NextResponse(JSON.stringify({ error: "Category not found" }), {
+          status: 404,
+          headers: { "Cache-Control": "no-store, max-age=0" }, // Prevent caching
+        });
+      }
+    } else {
+      getTopCategories = await db.category.findMany({
+        include: {
+          products: true,
+        },
+      });
+    }
+
+    return new NextResponse(JSON.stringify({ data: getTopCategories }), {
+      status: 200,
+      headers: { "Cache-Control": "no-store, max-age=0" }, // Prevent caching
     });
-    return Response.json({ data: getTopCategroies });
-  } else {
-    const getTopCategroies = await db.category.findMany({
-      include: {
-        products: true,
-      },
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return new NextResponse(JSON.stringify({ error: "Internal Server Error" }), {
+      status: 500,
+      headers: { "Cache-Control": "no-store, max-age=0" }, // Prevent caching
     });
-    return Response.json({ data: getTopCategroies });
   }
 }
+
 
 export async function DELETE(req) {
   try {

@@ -118,7 +118,7 @@ const CategoryForm = () => {
       form.reset();
       setImage([]);
       revalidatePath("changeCategory");
-      revalidatePath("home");
+      revalidatePath("category");
     } catch (error) {
       console.error("Error creating category:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
@@ -131,14 +131,14 @@ const CategoryForm = () => {
     async function updateData() {
       try {
         const res = await axios.get(`/api/category?id=${id}`);
-        const categoryData = res.data.data[0]
+        const { name, topCategoryId, image } = res.data.data[0];
         if (res) {
-          form.setValue("name", categoryData?.name);
-          form.setValue("topCategoryId", categoryData?.topCategoryId);
+          form.setValue("name", name);
+          form.setValue("topCategoryId", topCategoryId);
           setImage([
             {
-              url: categoryData?.image,
-              name: categoryData?.image,
+              url: image,
+              name: image,
             },
           ]);
         }

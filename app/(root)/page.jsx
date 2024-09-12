@@ -7,15 +7,14 @@ import AllProducts from "@/components/shared/allProducts";
 import Banner from "@/components/shared/banner";
 import db from "@/db/db";
 import { ApiService } from "@/lib/api.services";
-import { revalidatePath } from "@/lib/revalidate";
 import { getLastItems, getRandomItems } from "@/lib/utils";
 import { Suspense } from "react";
 
 async function Home() {
-  const products = await ApiService.getData("/api/product", "home");
+  const products = await ApiService.getData("/api/product", "product");
 
-  const categories = await ApiService.getData("/api/category", "home");
-  const topCategories = await ApiService.getData("/api/topCategory", "home");
+  const categories = await ApiService.getData("/api/category", "category");
+  const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
 
   const sertificate = await db.sertificate.findMany();
   const license = await db.license.findMany();

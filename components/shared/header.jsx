@@ -1,5 +1,4 @@
 "use client";
-
 import React, { Suspense, useEffect } from "react";
 import Image from "next/image";
 import { Logo } from "@/public/img";
@@ -10,7 +9,7 @@ import SearchComponent from "./searchComponent";
 import { HeaderDropdown } from "./header-dropdown";
 import HeroTitle from "./hero-title";
 import Container from "./container";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Home({ topCategories, productsData }) {
 

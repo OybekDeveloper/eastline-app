@@ -43,8 +43,7 @@ const TopCategoryForm = () => {
       }
 
       revalidatePath("changeTopCategory");
-      revalidatePath("home");
-
+      revalidatePath("topCategory");
       form.reset();
       setIsLoading(false);
     } catch (error) {
