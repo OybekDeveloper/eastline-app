@@ -6,10 +6,13 @@ import AllCategories from "@/components/shared/allCategories";
 import AllProducts from "@/components/shared/allProducts";
 import Banner from "@/components/shared/banner";
 import db from "@/db/db";
+import { revalidatePath } from "@/lib/revalidate";
 import { getLastItems, getRandomItems } from "@/lib/utils";
 import { Suspense } from "react";
 
 async function Home() {
+  revalidatePath();
+
   const products = await db.product.findMany();
   const categories = await db.category.findMany({
     include: {
@@ -32,7 +35,7 @@ async function Home() {
       });
       return { ...item, product: getProducts[0] };
     })
-  )
+  );
 
   const randomLicense = getRandomItems(license);
   const randomReviews = getRandomItems(reviews);

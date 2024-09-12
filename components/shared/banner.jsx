@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Container from "./container";
 import { Button } from "../ui/button";
 import {
@@ -13,13 +13,16 @@ import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import { truncateText } from "@/lib/utils";
 import CustomImage from "./customImage";
+import { revalidatePath } from "@/lib/revalidate";
 
 const Banner = ({ productData, categories }) => {
   const findTopCategoryId = (categoryId) => {
     const category = categories.find((cat) => cat.id === categoryId);
     return category ? category.id : null;
   };
-
+  useEffect(() => {
+    revalidatePath();
+  }, []);
   return (
     <Container
       className={
@@ -35,7 +38,7 @@ const Banner = ({ productData, categories }) => {
                 delay: 3000,
               }),
             ]}
-            className="w-full text-secondary " 
+            className="w-full text-secondary "
           >
             <CarouselContent className="mb-2">
               {productData.map((item, i) => {
