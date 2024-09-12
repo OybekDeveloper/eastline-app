@@ -84,7 +84,7 @@ const NewsRew = ({ newsItem, reviews }) => {
           </div>
         </div>
         <CarouselContent className="md:h-full">
-          {reviews.slice(0.4).map((item, index) => {
+          {reviews.map((item, index) => {
             return (
               <CarouselItem key={index} className="basis-full">
                 <div className="cursor-pointer h-auto md:h-[300px] space-y-5 lg:h-[260px] md:bg-white bg-primary text-white md:text-foreground rounded-xl p-4 flex flex-col justify-between gap-4">
