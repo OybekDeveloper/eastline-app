@@ -7,7 +7,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import React from "react";
 
 const OurLicenses = ({ sertificate, license }) => {
   return (

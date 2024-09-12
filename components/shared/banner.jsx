@@ -13,16 +13,12 @@ import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import { truncateText } from "@/lib/utils";
 import CustomImage from "./customImage";
-import { revalidatePath } from "@/lib/revalidate";
 
 const Banner = ({ productData, categories }) => {
   const findTopCategoryId = (categoryId) => {
     const category = categories.find((cat) => cat.id === categoryId);
     return category ? category.id : null;
   };
-  useEffect(() => {
-    revalidatePath();
-  }, []);
   return (
     <Container
       className={

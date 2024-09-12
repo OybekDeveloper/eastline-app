@@ -8,11 +8,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Services1 } from "@/public/img";
-import Image from "next/image";
-import React from "react";
 
-const Partners = ({partner}) => {
+const Partners = ({ partner }) => {
   return (
     <Container className="mt-5 space-y-3 md:bg-primary w-[95%] py-6 rounded-xl flex-col lg:w-10/12 lg:mx-auto justify-end items-start md:justify-center mx-auto gap-3">
       <div className="px-6 w-full flex justify-between items-center gap-2">

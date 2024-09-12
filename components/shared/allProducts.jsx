@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 "use client";
-import React, { memo, useCallback, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import Container from "./container";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import { Button } from "../ui/button";

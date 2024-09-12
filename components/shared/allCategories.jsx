@@ -1,13 +1,9 @@
-"use client"
-
-import React from "react";
 import Container from "./container";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import Link from "next/link";
 import CustomImage from "./customImage";
 
 const AllCategories = ({ categories }) => {
-
   return (
     <Container className="pt-5 w-[95%] flex-col lg:w-10/12 lg:mx-auto justify-end items-start md:justify-center mx-0 ml-auto">
       <p className="textNormal4 font-semibold">Каталог товаров</p>

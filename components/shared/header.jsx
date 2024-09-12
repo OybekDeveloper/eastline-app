@@ -10,13 +10,8 @@ import { HeaderDropdown } from "./header-dropdown";
 import HeroTitle from "./hero-title";
 import Container from "./container";
 import { usePathname, useRouter } from "next/navigation";
-import { revalidatePath } from "@/lib/revalidate";
 
 export default function Home({ topCategories, productsData }) {
-  
-  useEffect(() => {
-    revalidatePath();
-  }, []);
 
   const pathname = usePathname();
   return (
