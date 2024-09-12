@@ -1,5 +1,3 @@
-export const revalidate = 0; // sahifani har safar dinamik render qilish
-
 import Icons from "@/components/pages/root/icons";
 import NewsRew from "@/components/pages/root/news-rew";
 import OurLicenses from "@/components/pages/root/our-licenses";
@@ -34,7 +32,8 @@ async function Home() {
       });
       return { ...item, product: getProducts[0] };
     })
-  );
+  )
+
   const randomLicense = getRandomItems(license);
   const randomReviews = getRandomItems(reviews);
 
