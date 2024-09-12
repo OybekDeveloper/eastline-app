@@ -37,8 +37,6 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  revalidateTag("home");
-
   const topCategories = await ApiService.getData("/api/topCategory", "home");
   const productsData = await ApiService.getData("/api/product", "home");
 
