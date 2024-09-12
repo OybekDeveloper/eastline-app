@@ -6,51 +6,33 @@ import AllCategories from "@/components/shared/allCategories";
 import AllProducts from "@/components/shared/allProducts";
 import Banner from "@/components/shared/banner";
 import db from "@/db/db";
-import { ApiService } from "@/lib/api.services";
 import { getLastItems, getRandomItems } from "@/lib/utils";
-import axios from "axios";
 import { Suspense } from "react";
 
 async function Home() {
-  // const products = await db.product.findMany();
-  const products = await ApiService.getData("/api/product", "home");
-  // const categories = await db.category.findMany({
-  //   include: {
-  //     products: true,
-  //   },
-  // });
-  const categories = await ApiService.getData("/api/category", "home");
+  const products = await db.product.findMany();
+  const categories = await db.category.findMany({
+    include: {
+      products: true,
+    },
+  });
   const topCategories = await db.topCategory.findMany();
-  // const topCategories = await ApiService.getData("/api/topCategory", "home");
+  const sertificate = await db.sertificate.findMany();
+  const license = await db.license.findMany();
+  const partner = await db.partner.findMany();
+  const newsData = await db.news.findMany();
+  const reviews = await db.reviews.findMany();
+  const currency = await db.currency.findMany();
 
-  // const sertificate = await db.sertificate.findMany();
-  const sertificate = await ApiService.getData("/api/sertificate", "home");
-  // const license = await db.license.findMany();
-  const license = await ApiService.getData("/api/license", "home");
-  // const partner = await db.partner.findMany();
-  const partner = await ApiService.getData("/api/partner", "home");
-  // const newsData = await db.news.findMany();
-  const newsData = await ApiService.getData("/api/news", "home");
-  // const reviews = await db.reviews.findMany();
-  const reviews = await ApiService.getData("/api/reviews", "home");
-  // const currency = await db.currency.findMany();
-  const currency = await ApiService.getData("/api/currency", "home");
-
-  // const banner = await db.banner.findMany();
-  const banner = await ApiService.getData("/api/banner", "home");
-
+  const banner = await db.banner.findMany();
   const bannerProduct = await Promise.all(
     banner.map(async (item) => {
-      // const getProducts = await db.product.findMany({
-      //   where: { id: Number(item.productId) },
-      // });
-      const getProducts = ApiService.getData(
-        `/api/product?id=${Number(item.productId) }`,
-        "home"
-      );
+      const getProducts = await db.product.findMany({
+        where: { id: Number(item.productId) },
+      });
       return { ...item, product: getProducts[0] };
     })
-  );
+  )
 
   const randomLicense = getRandomItems(license);
   const randomReviews = getRandomItems(reviews);
