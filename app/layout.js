@@ -66,7 +66,7 @@ export default async function RootLayout({ children }) {
         <div className="grow">{children}</div>
         <Footer />
         <ChatBot />
-        <Toaster position="bottom-right" reverseOrder={false} />
+        <Toaster position="bottom-left" reverseOrder={false} />
       </body>
     </html>
   );

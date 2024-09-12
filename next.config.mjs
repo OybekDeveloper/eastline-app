@@ -14,10 +14,9 @@ const nextConfig = {
         hostname: "bxdxvaioiunezestlkri.supabase.co",
       },
       {
-        protocol: "https",
+        protocol: "https",  
         hostname: "letsenhance.io",
       },
-
       {
         protocol: "https",
         hostname: "elt.uz",
