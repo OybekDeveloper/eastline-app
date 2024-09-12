@@ -12,7 +12,7 @@ import { getLastItems, getRandomItems } from "@/lib/utils";
 import { Suspense } from "react";
 
 async function Home() {
-  const products = await db.product.findMany();
+  const products = await ApiService.getData("/api/product", "home");
 
   const categories = await ApiService.getData("/api/category", "home");
   const topCategories = await ApiService.getData("/api/topCategory", "home");
