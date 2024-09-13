@@ -84,40 +84,48 @@ const NewsRew = ({ newsItem, reviews }) => {
           </div>
         </div>
         <CarouselContent className="md:h-full">
-          {reviews.map((item, index) => {
-            return (
-              <CarouselItem key={index} className="basis-full">
-                <div className="cursor-pointer h-auto md:h-[300px] space-y-5 lg:h-[260px] md:bg-white bg-primary text-white md:text-foreground rounded-xl p-4 flex flex-col justify-between gap-4">
-                  <article className="flex flex-col gap-8">
-                    <p className="textSmall3">
-                      {truncateText(item.message, 300)}
-                    </p>
-                  </article>
-                  <aside className="w-full flex justify-start gap-2 items-center">
-                    <div className="w-full flex justify-start items-center gap-2">
-                      <div className="w-12 h-12 rounded-full border-2 flex justify-center items-center">
-                        <h1 className="textNormal">{item.name.slice(0, 1)}</h1>
-                      </div>
-                      <div>
-                        <h1 className="w-full font-medium">
-                          {item.name}{" "}
-                          {/* <span className="textSmall text-green-400">
+          {reviews.length > 0 ? (
+            <>
+              {reviews.map((item, index) => {
+                return (
+                  <CarouselItem key={index} className="basis-full">
+                    <div className="cursor-pointer h-auto md:h-[300px] space-y-5 lg:h-[260px] md:bg-white bg-primary text-white md:text-foreground rounded-xl p-4 flex flex-col justify-between gap-4">
+                      <article className="flex flex-col gap-8">
+                        <p className="textSmall3">
+                          {truncateText(item.message, 300)}
+                        </p>
+                      </article>
+                      <aside className="w-full flex justify-start gap-2 items-center">
+                        <div className="w-full flex justify-start items-center gap-2">
+                          <div className="w-12 h-12 rounded-full border-2 flex justify-center items-center">
+                            <h1 className="textNormal">
+                              {item.name.slice(0, 1)}
+                            </h1>
+                          </div>
+                          <div>
+                            <h1 className="w-full font-medium">
+                              {item.name}{" "}
+                              {/* <span className="textSmall text-green-400">
                           Покупатель
                         </span> */}
-                        </h1>
-                        <p className="textSmall2 w-full flex justify-between">
-                          Город Ташкент{"  "}
-                          {/* <span className="md:text-[#4B3EC4] textSmall underline">
+                            </h1>
+                            <p className="textSmall2 w-full flex justify-between">
+                              Город Ташкент{"  "}
+                              {/* <span className="md:text-[#4B3EC4] textSmall underline">
                           IP камера HIKVISION N77777 V1
                         </span> */}
-                        </p>
-                      </div>
+                            </p>
+                          </div>
+                        </div>
+                      </aside>
                     </div>
-                  </aside>
-                </div>
-              </CarouselItem>
-            );
-          })}
+                  </CarouselItem>
+                );
+              })}
+            </>
+          ) : (
+            <h1 className="p-4 rounded-md md:h-[300px] space-y-5 lg:h-[260px] flex justify-center items-center w-full h-full md:bg-white bg-primary text-white md:text-foreground font-medium">Нет отзывов клиентов</h1>
+          )}
         </CarouselContent>
         <CarouselCounter
           className="md:hidden pb-1"

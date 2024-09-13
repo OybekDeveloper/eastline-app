@@ -4,6 +4,7 @@ import LicenseForm from "@/components/forms/license";
 import NewsForm from "@/components/forms/news";
 import PartnerForm from "@/components/forms/partner";
 import ProductForm from "@/components/forms/product";
+import SelectReview from "@/components/forms/selectReview";
 import SertificateForm from "@/components/forms/sertificate";
 import TopCategoryForm from "@/components/forms/topCategory";
 import Getelements from "@/components/pages/dashboard/getElements";
@@ -46,6 +47,8 @@ const Create = async ({ params }) => {
         return <NewsForm />;
       case "createBanner":
         return <BannerForm products={products} categories={categories} />;
+      case "selectReview":
+        return <SelectReview products={products} categories={categories} />;
       default:
         return <Getelements param={params.details} />;
     }

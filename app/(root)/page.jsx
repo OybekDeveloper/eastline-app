@@ -20,7 +20,7 @@ async function Home() {
   const license = await db.license.findMany();
   const partner = await db.partner.findMany();
   const newsData = await db.news.findMany();
-  const reviews = await db.reviews.findMany();
+  const reviews = await db.selectReview.findMany();
   const currency = await db.currency.findMany();
 
   const banner = await db.banner.findMany();
@@ -34,7 +34,6 @@ async function Home() {
   );
 
   const randomLicense = getRandomItems(license);
-  const randomReviews = getRandomItems(reviews);
 
   const lastProducts = getLastItems(products, 4);
   const lastNews = getLastItems(newsData, 10);
@@ -56,7 +55,7 @@ async function Home() {
         <Icons />
         <OurLicenses sertificate={sertificate} license={randomLicense} />
         <Partners partner={partner} />
-        <NewsRew newsItem={lastNews} reviews={randomReviews} />
+        <NewsRew newsItem={lastNews} reviews={reviews} />
       </Suspense>
     </div>
   );

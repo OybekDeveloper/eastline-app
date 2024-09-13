@@ -112,3 +112,13 @@ model Banner {
   createdAt     DateTime @default(now())
   updateAt      DateTime @updatedAt
 }
+
+model SelectReview {
+  id        Int      @id @default(autoincrement())
+  reviewId  Int?
+  name      String
+  phone     String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}

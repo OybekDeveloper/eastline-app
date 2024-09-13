@@ -16,6 +16,12 @@ async function Dashboard() {
             {item.title}
           </Link>
         ))}
+        <Link
+          href={`/dashboard/selectReview`}
+          className="col-span-2 w-full text-center border rounded-md py-5 hover:bg-secondary/80"
+        >
+          Просмотр запросов
+        </Link>
       </div>
     </Container>
   );

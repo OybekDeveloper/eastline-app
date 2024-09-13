@@ -1,21 +1,25 @@
 import db from "@/db/db";
 
 export async function GET() {
-  const getReviews = await db.reviews.findMany();
-  return Response.json({ data: getReviews });
+  const getSelectReviews = await db.selectReview.findMany();
+  return Response.json({ data: getSelectReviews });
 }
 export async function POST(req) {
   const data = await req.json();
-  const createReview = await db.reviews.create({
-    data,
+  console.log(data.updatedReviews);
+  
+  const createSelectReview = await db.selectReview.createMany({
+    data: data.updatedReviews,
+    skipDuplicates: true,
   });
-  return Response.json({ data: createReview });
+
+  return Response.json({ data: createSelectReview });
 }
 
 export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
-    const deleteReview = await db.reviews.delete({
+    const deleteReview = await db.selectReview.delete({
       where: { id: Number(id) },
     });
 
