@@ -61,8 +61,8 @@ const DeleteItemReview = ({ payment, path }) => {
     } else if (path === "selectReview") {
       const filterData = tableSelectReview.filter((c) => +c.id !== +payment.id);
       setTableReview(tableReview, filterData);
+      setReflesh();
     }
-    setReflesh();
     toast.promise(callFunction, {
       loading: "Данные удаляются...",
       success: <p>Данные успешно удалены!</p>,
