@@ -14,7 +14,7 @@ const nextConfig = {
         hostname: "bxdxvaioiunezestlkri.supabase.co",
       },
       {
-        protocol: "https",  
+        protocol: "https",
         hostname: "letsenhance.io",
       },
       {
@@ -28,6 +28,10 @@ const nextConfig = {
       {
         source: "/api/:path*",
         headers: [
+          {
+            key: "Cache-Control",
+            value: "no-store",
+          },
           { key: "Access-Control-Allow-Credentials", value: "true" },
           { key: "Access-Control-Allow-Origin", value: "*" },
           {
