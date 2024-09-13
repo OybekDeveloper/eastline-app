@@ -50,7 +50,7 @@ const Admin = () => {
           className="cursor-pointer w-8 h-8 lg:w-12 lg:h-12"
           onClick={() => router.back()}
         />
-        <p>{id? "Изменить" : "Создать"} админ</p>
+        <p>Изменить админ</p>
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 w-full">
