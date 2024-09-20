@@ -137,7 +137,7 @@ const Cards = memo(({ props, variant, currency, getCurrencySum }) => {
               alt={`${image[0]}`}
             />
           </div>
-          <p>{f(getCurrencySum(price))} сум</p>
+          {/* <p>{f(getCurrencySum(price))} сум</p> */}
         </article>
       ) : (
         <article className="border w-full rounded-xl flex items-center justify-center p-5 gap-5 textNormal md:h-[400px] 2xl:h-[500px] 4xl:h-[600px]">
@@ -153,7 +153,7 @@ const Cards = memo(({ props, variant, currency, getCurrencySum }) => {
             <span className="text-xs bg-black text-white rounded-md px-2 py-1 ">
               NEW
             </span>
-            <p>{f(getCurrencySum(price))} сум</p>
+            {/* <p>{f(getCurrencySum(price))} сум</p> */}
           </div>
         </article>
       )}

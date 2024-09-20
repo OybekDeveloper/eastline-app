@@ -52,9 +52,9 @@ const Product = async ({ params }) => {
         </div>
         <div className="col-span-3 space-y-3">
           <h1 className="font-bold textNormal4">{name}</h1>
-          <p className="font-bold textNormal3">
+          {/* <p className="font-bold textNormal3">
             {f(getCurrencySum(price))} сум
-          </p>
+          </p> */}
           <div className="lg:hidden col-span-4">
             <ProductCarousel item={productData[0]} />
           </div>

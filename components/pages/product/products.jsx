@@ -167,7 +167,7 @@ const Products = ({
           </DropdownMenu>
         </div>
         {/* Price Sorting Dropdown */}
-        <DropdownMenu>
+        {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex gap-3 max-md:bg-white bg-secondary px-2 text-xs lg:text-base py-1 outline-none rounded-md justify-between">
               <h1>Цена</h1> <ChevronDown className="size-4 lg:size-6" />
@@ -193,7 +193,7 @@ const Products = ({
               </button>
             </DropdownMenuItem>
           </DropdownMenuContent>
-        </DropdownMenu>
+        </DropdownMenu> */}
       </div>
 
       {/* Products Grid */}
@@ -222,7 +222,7 @@ const Products = ({
                       {truncateText(item.name, 50)}
                     </h1>
                     <p className="flex justify-between w-full">
-                      Цена:<span>{f(getCurrencySum(+item.price))} сум</span>
+                      {/* Цена:<span>{f(getCurrencySum(+item.price))} сум</span> */}
                     </p>
                   </div>
                 </Link>

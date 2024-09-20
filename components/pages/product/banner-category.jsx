@@ -80,10 +80,10 @@ const BannerProducts = ({ randomProducts, currency }) => {
                         className={`w-[70%] mx-auto aspect-square object-contain mb-5`}
                       />
                     </div>
-                    <p className="textSmall4 font-bold">
+                    {/* <p className="textSmall4 font-bold">
                       {" "}
                       {f(getCurrencySum(item.price))} сум
-                    </p>
+                    </p> */}
                     <p className="textSmall">
                       {truncateText(item.description, 20)}
                     </p>
