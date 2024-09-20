@@ -33,7 +33,7 @@ export default function Home({ topCategories, productsData }) {
             </div>
             <p className="ml-auto text-right w-[40%]">
               Режим работы: ПН, ВТ, СР, ЧТ, ПТ | с 09:00 - 18:00 Выходной:
-              ПТ
+              СБ, ВС
             </p>
           </div>
           <div className="w-full bg-secondary py-4">

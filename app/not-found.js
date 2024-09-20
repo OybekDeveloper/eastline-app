@@ -1,4 +1,3 @@
-"use client"
 
 import NotFoundComponent from '@/components/not-found/not-found'
 import React from 'react'
