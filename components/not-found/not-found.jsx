@@ -31,7 +31,7 @@ export default function NotFoundComponent() {
             <div className="screen_out">
               <div className="screen_out1">
                 <div className="screen">
-                  <span className="notfound_text"></span>
+                  <span className="notfound_text">Сайт находится в разработке</span>
                 </div>
               </div>
             </div>
