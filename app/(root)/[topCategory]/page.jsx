@@ -1,3 +1,7 @@
+import NotFoundComponent from "@/components/not-found/not-found";
+
 export default function Page() {
-  return <div>TOp category</div>;
+  return <div>
+      <NotFoundComponent/>
+  </div>;
 }
