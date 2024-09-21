@@ -22,6 +22,7 @@ import uzumNasiya from "./paypal.svg";
 import payme from "./payme-01.svg";
 import Click from "./Click-01.svg";
 import productImage from "./productImage.svg";
+import ErrorImg from './errorImg.jpg'
 export {
   Logo,
   AboutBanner,
@@ -46,5 +47,6 @@ export {
   uzumNasiya,
   payme,
   Click,
-  productImage
+  productImage,
+  ErrorImg
 };
