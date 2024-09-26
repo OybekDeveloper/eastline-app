@@ -51,7 +51,7 @@ export function DataTable({ columns, data, loading }) {
   const [products, setProducts] = useState([]);
 
   const table = useReactTable({
-    data:changeTableData,
+    data: changeTableData,
     columns,
     filterFns: {
       fuzzy: fuzzyFilter,

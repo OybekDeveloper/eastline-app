@@ -33,17 +33,14 @@ export const metadata = {
   canonical: "https://eastline-app.vercel.app/", // Set the canonical URL to prevent duplicate content issues
   viewport: "width=device-width, initial-scale=1", // Ensure proper responsiveness across devices
   charSet: "utf-8", // Specify the character encoding for global accessibility
+  // Add new meta tags here
+  "google-site-verification": "C3o3vKTwERqa9wb0mxW-jzSXaYZzoj8bv14Vj7JoPKc", // Google verification
+  "yandex-verification": "e332936c74782e28", // Yandex verification
 };
 
 export default async function RootLayout({ children }) {
   const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
   const productsData = await ApiService.getData("/api/product", "product");
-  // const productsData = await db.product.findMany();
-  // const topCategories = await db.topCategory.findMany({
-  //   include: {
-  //     categories: true,
-  //   },
-  // });
 
   return (
     <html lang="en">
