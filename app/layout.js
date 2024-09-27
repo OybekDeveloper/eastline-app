@@ -41,7 +41,8 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
   const productsData = await ApiService.getData("/api/product", "product");
-
+  console.log("Product data:" + productsData);
+  
   return (
     <html lang="en">
       <body
