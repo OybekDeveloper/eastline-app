@@ -14,7 +14,6 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie"; // Import js-cookie
 import Link from "next/link";
-import { ApiService } from "@/lib/api.services";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,8 +27,14 @@ function Login() {
   });
 
   const onSubmit = async (values) => {
-    const productsData = await ApiService.getData("/api/product", "product");
-    console.log("Product data:" + productsData);
+    const response = await fetch(`/api/product`, {
+      next: { tags: [`product`] },
+      cache: "no-cache",
+      cache: "no-store",
+    });
+    const { data } = await response.json();
+    console.log(data, "This is data");
+
     setIsLoading(true);
     try {
       const user = {
