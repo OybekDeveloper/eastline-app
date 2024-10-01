@@ -21,7 +21,7 @@ const OurLicenses = ({ sertificate, license }) => {
             Наши <br className="max-md:hidden" /> сертификаты
           </h1>
           <Carousel paginate="false" className="">
-            <CarouselContent className="pb-4">
+            <CarouselContent className="pb-6">
               {sertificate.map((item, index) => {
                 return (
                   <CarouselItem key={index}>
@@ -54,7 +54,7 @@ const OurLicenses = ({ sertificate, license }) => {
               <CarouselNext className="rounded-full p-0" />
             </div>
           </div>
-          <CarouselContent className="h-full max-lg:pb-4">
+          <CarouselContent className="h-full max-lg:pb-6">
             {license.map((item, index) => {
               return (
                 <CarouselItem
