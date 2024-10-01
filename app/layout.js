@@ -11,40 +11,55 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "EAST LINE",
-  description: "EAST LINE TELEKOM", // Consider adding a more descriptive and keyword-rich meta description
-  // Additional Open Graph and Twitter meta tags (optional)
+  description: "EAST LINE TELEKOM",
   og: {
     type: "website",
     title: "EAST LINE",
-    description: "EAST LINE TELEKOM", // Use the same description here or a unique one
-    url: "https://eastline-app.vercel.app/", // Replace with your actual website URL
-    image: "https://eastline-app.vercel.app/logo.svg", // Replace with the URL of your website's main image
+    description: "EAST LINE TELEKOM",
+    url: "https://eastline-app.vercel.app/",
+    image: "https://eastline-app.vercel.app/logo.svg",
   },
   twitter: {
     card: "summary_large_image",
     title: "EAST LINE",
-    description: "EAST LINE TELEKOM", // Use the same description here or a unique one
-    image: "https://eastline-app.vercel.app/logo.svg", // Replace with the URL of your website's main image
+    description: "EAST LINE TELEKOM",
+    image: "https://eastline-app.vercel.app/logo.svg",
   },
-  // Additional meta tags for SEO, indexing, and customization (optional)
-  keywords: ["east line", "east line telecom" /* Add more relevant keywords */], // Define relevant keywords
-  author: "EAST LINE TELEKOM", // Or the name of your company/individual
-  robots: "index, follow", // Allow search engines to index and follow your website
-  canonical: "https://eastline-app.vercel.app/", // Set the canonical URL to prevent duplicate content issues
-  viewport: "width=device-width, initial-scale=1", // Ensure proper responsiveness across devices
-  charSet: "utf-8", // Specify the character encoding for global accessibility
-  // Add new meta tags here
-  "google-site-verification": "C3o3vKTwERqa9wb0mxW-jzSXaYZzoj8bv14Vj7JoPKc", // Google verification
-  "yandex-verification": "e332936c74782e28", // Yandex verification
+  keywords: ["east line", "east line telecom"],
+  author: "EAST LINE TELEKOM",
+  robots: "index, follow",
+  canonical: "https://eastline-app.vercel.app/",
+  viewport: "width=device-width, initial-scale=1",
+  charSet: "utf-8",
 };
 
 export default async function RootLayout({ children }) {
   const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
   const productsData = await ApiService.getData("/api/product", "product");
   console.log("Product data:" + productsData);
-  
+
   return (
     <html lang="en">
+      <head>
+        <meta name="google-site-verification" content="C3o3vKTwERqa9wb0mxW-jzSXaYZzoj8bv14Vj7JoPKc" />
+        <meta name="yandex-verification" content="e332936c74782e28" />
+        <meta name="description" content={metadata.description} />
+        <meta property="og:title" content={metadata.og.title} />
+        <meta property="og:description" content={metadata.og.description} />
+        <meta property="og:url" content={metadata.og.url} />
+        <meta property="og:image" content={metadata.og.image} />
+        <meta name="twitter:card" content={metadata.twitter.card} />
+        <meta name="twitter:title" content={metadata.twitter.title} />
+        <meta name="twitter:description" content={metadata.twitter.description} />
+        <meta name="twitter:image" content={metadata.twitter.image} />
+        <meta name="keywords" content={metadata.keywords.join(", ")} />
+        <meta name="author" content={metadata.author} />
+        <meta name="robots" content={metadata.robots} />
+        <link rel="canonical" href={metadata.canonical} />
+        <meta name="viewport" content={metadata.viewport} />
+        <meta charSet={metadata.charSet} />
+        <title>{metadata.title}</title>
+      </head>
       <body
         className={`${inter.className} min-h-screen relative flex flex-col`}
       >
@@ -58,7 +73,7 @@ export default async function RootLayout({ children }) {
           speed={200}
           shadow="0 0 10px #2299DD,0 0 5px #2299DD"
           template='<div class="bar" role="bar"><div class="peg"></div></div> 
-  <div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
+          <div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
           zIndex={999999999}
           showAtBottom={false}
         />
