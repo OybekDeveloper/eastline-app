@@ -121,6 +121,7 @@ const BannerForm = ({ products, categories }) => {
         form.reset();
         setImage([]);
         revalidatePath("changeBanner");
+        revalidatePath("banner");
       }
     } catch (error) {
       console.error("Error creating partner:", error);

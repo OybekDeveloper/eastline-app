@@ -107,6 +107,7 @@ const NewsForm = () => {
       form.reset();
       setImage([]);
       revalidatePath("changenews");
+      revalidatePath("news");
     } catch (error) {
       console.error("Error creating news:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");

@@ -106,6 +106,7 @@ const LicenseForm = () => {
       form.reset();
       setImage([]);
       revalidatePath("changelicense");
+      revalidatePath("license");
     } catch (error) {
       console.error("Error creating license:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");

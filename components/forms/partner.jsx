@@ -106,6 +106,7 @@ const PartnerForm = () => {
       form.reset();
       setImage([]);
       revalidatePath("changepartner");
+      revalidatePath("partner");
     } catch (error) {
       console.error("Error creating partner:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
