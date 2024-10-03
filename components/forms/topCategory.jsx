@@ -42,7 +42,7 @@ const TopCategoryForm = () => {
         toast.success("Верхняя категория создана успешно!");
       }
 
-      revalidatePath("changeTopCategory");
+      revalidatePath("changeTopCategory")
       revalidatePath("topCategory");
       form.reset();
       setIsLoading(false);
