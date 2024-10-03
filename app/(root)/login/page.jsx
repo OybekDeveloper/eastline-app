@@ -33,7 +33,6 @@ function Login() {
       cache: "no-store",
     });
     const { data } = await response.json();
-    console.log(data,"data");
     
     setIsLoading(true);
     try {

@@ -145,7 +145,6 @@ const BannerForm = ({ products, categories }) => {
           ]);
         }
       } catch (error) {
-        console.log(error);
       }
     }
     if (id) {

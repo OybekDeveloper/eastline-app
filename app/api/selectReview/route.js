@@ -6,7 +6,6 @@ export async function GET() {
 }
 export async function POST(req) {
   const data = await req.json();
-  console.log(data.updatedReviews);
   
   const createSelectReview = await db.selectReview.createMany({
     data: data.updatedReviews,

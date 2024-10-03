@@ -44,7 +44,6 @@ export async function POST(req) {
   const createTopCategory = await db.topCategory.create({
     data,
   });
-  console.log("error", createTopCategory);
   return Response.json({ data: createTopCategory });
 }
 export async function PATCH(req) {

@@ -38,7 +38,7 @@ const Footer = () => {
             </ul>
             <ul className="space-y-2 lg:space-y-4 textSmall3">
               <li className="font-semibold textNormal4 lg:text-black">
-                East Line Telecom
+                East Line Telekom
               </li>
               <li className="space-y-2 lg:space-y-4">
                 <p>ООО «East Line Telekom»</p>

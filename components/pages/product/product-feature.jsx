@@ -40,7 +40,7 @@ const ProductFeature = ({ feature }) => {
         )}
         <hr className="border" />
         <p className="font-medium textSmall">Возможность оплаты с помощью</p>
-        <div>
+        {/* <div>
           {cardsLogoData.map((item, idx) => (
             <Image
               key={idx}
@@ -51,14 +51,14 @@ const ProductFeature = ({ feature }) => {
               alt="img"
             />
           ))}
-        </div>
+        </div> */}
       </div>
       <div className="flex flex-col max-lg:justify-start max-lg:items-start gap-2 bg-secondary rounded-md p-4">
         <p className="textSmall cursor-pointer bg-black text-center inline-block text-secondary py-1 px-2 rounded-md">
           Больше инфо. при вызове
         </p>
-        <a className="font-bold textSmall3" href="tel:(90) 933-78-80">
-          (90) 933-78-80
+        <a className="font-bold textSmall3" href="tel:(55) 510-80-33">
+          (55) 510-80-33
         </a>
         <a className="font-bold textSmall3" href="tel:(55) 510-81-33">
           (55) 510-81-33

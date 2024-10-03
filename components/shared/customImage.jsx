@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React, { useState } from "react";
 
-const CustomImage = ({ src, fill, alt, className }) => {
+const CustomImage = ({ src, fill, alt, className, object }) => {
   const lazyRoot = React.useRef(null);
   const [loading, setLoading] = useState(true);
   return (
@@ -18,7 +18,9 @@ const CustomImage = ({ src, fill, alt, className }) => {
           src={src}
           alt={alt}
           fill
-          className={`object-contain duration-700 ease-in-out group-hover:opacity-75 ${
+          className={`${
+            object ? `${object}` : "object-contain h-full"
+          } duration-700 ease-in-out group-hover:opacity-75 ${
             loading
               ? "slice-110 blur-2xl grayscale"
               : "scale-100 blur-0 grayscale-0"
@@ -36,7 +38,9 @@ const CustomImage = ({ src, fill, alt, className }) => {
           layout="responsive"
           quality={100}
           className={cn(
-            "object-contain duration-700 ease-in-out group-hover:opacity-75 h-full w-full",
+            `${
+              object ? `${object}` : "object-contain h-full"
+            } duration-700 ease-in-out group-hover:opacity-75 w-full`,
             loading
               ? "slice-110 blur-2xl grayscale"
               : "scale-100 blur-0 grayscale-0"
