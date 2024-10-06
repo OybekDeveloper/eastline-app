@@ -10,18 +10,18 @@ import { ApiService } from "@/lib/api.services";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "EAST LINE",
+  title: "EAST LINE TELEKOM",
   description: "EAST LINE TELEKOM",
   og: {
     type: "website",
-    title: "EAST LINE",
+    title: "EAST LINE TELEKOM",
     description: "EAST LINE TELEKOM",
     url: "https://eastline-app.vercel.app/",
     image: "https://eastline-app.vercel.app/logo.svg",
   },
   twitter: {
     card: "summary_large_image",
-    title: "EAST LINE",
+    title: "EAST LINE TELEKOM",
     description: "EAST LINE TELEKOM",
     image: "https://eastline-app.vercel.app/logo.svg",
   },
