@@ -25,20 +25,19 @@ const OurLicenses = ({ sertificate, license }) => {
               {sertificate.map((item, index) => {
                 return (
                   <CarouselItem key={index}>
-                    <CustomImage
-                      src={item.image}
-                      alt="img"
-                      height={100}
-                      width={100}
-                      className="h-full w-full hidden lg:block"
-                    />
+                    <div className="relative">
+                      <CustomImage
+                        src={item.image}
+                        alt="img"
+                        className="h-[300px] w-full hidden lg:block"
+                        fill
+                      />
+                    </div>
                   </CarouselItem>
                 );
               })}
             </CarouselContent>
-            <CarouselCounter
-              classNameCounter="lg:hidden bg-white"
-            />
+            <CarouselCounter classNameCounter="lg:hidden bg-white" />
           </Carousel>
         </div>
         <Carousel
@@ -65,8 +64,6 @@ const OurLicenses = ({ sertificate, license }) => {
                     src={item.image}
                     alt={`${item.image}`}
                     className="w-full h-full"
-                    width={100}
-                    height={100}
                   />
                 </CarouselItem>
               );

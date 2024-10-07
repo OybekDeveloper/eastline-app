@@ -1,3 +1,10 @@
+/*
+* Prefixed by https://autoprefixer.github.io
+* PostCSS: v8.4.14,
+* Autoprefixer: v10.4.7
+* Browsers: last 4 version
+*/
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,7 +30,8 @@ html {
 .custom-currency-input:focus {
   border-color: transparent; /* Remove border color on focus */
   outline: none; /* Ensure no outline on focus */
-  box-shadow: none; /* Remove any potential box shadow */
+  -webkit-box-shadow: none;
+          box-shadow: none; /* Remove any potential box shadow */
 }
 
 
@@ -213,9 +221,18 @@ html {
 }
 
 .accordion-item {
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-transition: background-color 0.3s ease;
+  -o-transition: background-color 0.3s ease;
   transition: background-color 0.3s ease;
 }
 
@@ -227,6 +244,8 @@ html {
 .accordion-label {
   position: relative;
   cursor: pointer;
+  -webkit-transition: color 0.3s ease;
+  -o-transition: color 0.3s ease;
   transition: color 0.3s ease;
 }
 
@@ -252,5 +271,7 @@ html {
   max-height: 0;
   overflow: hidden;
   line-height: 26px;
+  -webkit-transition: max-height 0.3s, padding 0.5s;
+  -o-transition: max-height 0.3s, padding 0.5s;
   transition: max-height 0.3s, padding 0.5s;
 }

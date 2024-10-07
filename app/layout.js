@@ -25,7 +25,7 @@ export const metadata = {
     description: "EAST LINE TELEKOM",
     image: "https://eastline-app.vercel.app/logo.svg",
   },
-  keywords: ["east line", "east line telecom"],
+  keywords: ["  ", "east line telecom"],
   author: "EAST LINE TELEKOM",
   robots: "index, follow",
   canonical: "https://eastline-app.vercel.app/",

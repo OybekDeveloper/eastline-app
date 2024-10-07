@@ -10,7 +10,7 @@ const CustomImage = ({ src, fill, alt, className, object }) => {
   return (
     <div
       ref={lazyRoot}
-      className={cn(className, "flex justify-center items-center h-full")}
+      className={cn(className, "flex justify-center items-center")}
     >
       {fill ? (
         <Image

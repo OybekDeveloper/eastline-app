@@ -48,8 +48,6 @@ const Banner = ({ productData, categories }) => {
                       <div className="relative">
                         <CustomImage
                           src={item.image}
-                          width={100}
-                          height={100}
                           alt={`banner-img-${item.id}`}
                           className="w-full mx-auto aspect-square object-contain mb-5"
                         />
@@ -80,7 +78,7 @@ const Banner = ({ productData, categories }) => {
                 return (
                   <CarouselItem
                     key={i}
-                    className="w-full h-[300px] md:basis-1/2 cursor-pointer bg-primary rounded-md py-4"
+                    className="w-full h-[340px] md:basis-1/2 cursor-pointer bg-primary rounded-md py-4"
                   >
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
@@ -88,13 +86,14 @@ const Banner = ({ productData, categories }) => {
                         item.product.categoryId
                       }/${item.product.id}`}
                     >
-                      <CustomImage
-                        object={"con"}
-                        src={item.image}
-                        alt={`banner-img-${item.product.id}`}
-                        className={`w-[100%] mx-auto mb-5`}
-                        fill
-                      />
+                      <div className="relative">
+                        <CustomImage
+                          src={item.image}
+                          alt={`banner-img-${item.product.id}`}
+                          className={`w-[100%] h-[300px] mx-auto mb-5`}
+                          fill
+                        />
+                      </div>
                     </Link>
                   </CarouselItem>
                 );
