@@ -35,9 +35,7 @@ const Partners = ({ partner }) => {
                 <CustomImage
                   src={item.image}
                   alt={item.image}
-                  className="w-full max-md:border rounded-lg"
-                  width={100}
-                  height={100}
+                  className="w-full h-[300px] max-md:border rounded-lg"
                 />
               </CarouselItem>
             );

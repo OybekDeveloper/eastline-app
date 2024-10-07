@@ -88,7 +88,7 @@ const Banner = ({ productData, categories }) => {
                     >
                       <div className="relative">
                         <CustomImage
-                          object={"dd"}
+                          object={"dd"} 
                           src={item.image}
                           alt={`banner-img-${item.product.id}`}
                           className={`w-[100%] h-[300px] mx-auto mb-5`}
