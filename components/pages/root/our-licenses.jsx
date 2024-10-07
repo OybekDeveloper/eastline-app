@@ -29,7 +29,7 @@ const OurLicenses = ({ sertificate, license }) => {
                       <CustomImage
                         src={item.image}
                         alt="img"
-                        className="h-[300px] w-full hidden lg:block"
+                        className="h-[320px] w-full hidden lg:block"
                         fill
                       />
                     </div>
