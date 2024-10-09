@@ -39,10 +39,11 @@ const nextConfig = {
             value:
               "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
           },
-          {
-            key: "Cache-Control",
-            value: "public, max-age=3600, must-revalidate", // Example for caching
-          },
+          // {
+          //   key: "Cache-Control",
+            // value: "public, max-age=3600, must-revalidate", // Example for caching
+            // value: "no-store",
+          // },
         ],
       },
     ];

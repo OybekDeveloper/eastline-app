@@ -74,14 +74,7 @@ export default function SearchComponent({ productsData }) {
         ) : (
           <div className="max-h-[400px]">
             {filteredProducts.map((product) => {
-              const categoryData = categories?.find(
-                (category) => +category.id === +product.categoryId
-              );
-
-              const href = categoryData
-                ? `/${categoryData.topCategoryId}/${categoryData.id}/${product.id}`
-                : "#";
-
+              const href = `/top/${product.categoryId}/${product.id}`;
               return (
                 <Link key={product.id} href={href}>
                   <ComboboxOption

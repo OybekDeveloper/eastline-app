@@ -11,14 +11,9 @@ import {
 } from "../ui/carousel";
 import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Link from "next/link";
-import { truncateText } from "@/lib/utils";
 import CustomImage from "./customImage";
 
-const Banner = ({ productData, categories }) => {
-  const findTopCategoryId = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.id : null;
-  };
+const Banner = ({ banner }) => {
   return (
     <Container
       className={
@@ -31,14 +26,13 @@ const Banner = ({ productData, categories }) => {
           <Carousel
             plugins={[
               emblaCarouselAutoplay({
-                delay: 3000,
+                delay: 7000,
               }),
             ]}
             className="w-full text-secondary "
           >
             <CarouselContent className="mb-2">
-              {productData.map((item, i) => {
-                if (!item.product) return null; // Skip if the product is not loaded
+              {banner.map((item, i) => {
                 return (
                   <CarouselItem key={i} className="md:basis-1/2">
                     <Link
@@ -48,7 +42,7 @@ const Banner = ({ productData, categories }) => {
                       <div className="relative">
                         <CustomImage
                           src={item.image}
-                          alt={`banner-img-${item.id}`}
+                          alt={`banner-img`}
                           className="w-full mx-auto aspect-square object-contain mb-5"
                         />
                       </div>
@@ -73,8 +67,7 @@ const Banner = ({ productData, categories }) => {
             className="w-full h-full text-secondary"
           >
             <CarouselContent className="mb-4 space-x-4">
-              {productData.map((item, i) => {
-                if (!item.product) return null; // Skip if the product is not loaded
+              {banner.map((item, i) => {
                 return (
                   <CarouselItem
                     key={i}
@@ -82,15 +75,13 @@ const Banner = ({ productData, categories }) => {
                   >
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
-                      href={`/${findTopCategoryId(item.product.categoryId)}/${
-                        item.product.categoryId
-                      }/${item.product.id}`}
+                      href={`/${item.topCategoryId}/${item.categoryId}/${item.productId}`}
                     >
                       <div className="relative">
                         <CustomImage
-                          object={"dd"} 
+                          object={"dd"}
                           src={item.image}
-                          alt={`banner-img-${item.product.id}`}
+                          alt={`banner-img`}
                           className={`w-[100%] h-[300px] mx-auto mb-5`}
                           fill
                         />
