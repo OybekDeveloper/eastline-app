@@ -42,9 +42,10 @@ const Banner = ({ banner }) => {
                     >
                       <div className="relative">
                         <CustomImage
+                        object={"object-contain rounded-md"}
                           src={item.image}
                           alt={`banner-img`}
-                          className="w-full mx-auto aspect-square object-contain mb-5"
+                          className="w-full mx-auto aspect-square mb-5"
                         />
                       </div>
                     </Link>
