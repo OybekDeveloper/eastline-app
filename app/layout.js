@@ -75,7 +75,7 @@ export default async function RootLayout({ children }) {
           <div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
           zIndex={999999999}
           showAtBottom={false}
-        />
+        />  
         <Header topCategories={topCategories} productsData={productsData} />
         <div className="grow">{children}</div>
         <Footer />
