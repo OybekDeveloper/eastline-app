@@ -39,7 +39,7 @@ export default function Home({ background, topCategories, productsData }) {
           <div
             className="w-full py-4 bg-secondary"
             style={{
-              // backgroundImage: `url(${urlBack})`,
+              backgroundImage: `url(${urlBack})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
             }}
