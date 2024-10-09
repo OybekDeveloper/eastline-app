@@ -11,9 +11,9 @@ import HeroTitle from "./hero-title";
 import Container from "./container";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function Home({ topCategories, productsData }) {
-
+export default function Home({ background, topCategories, productsData }) {
   const pathname = usePathname();
+  const urlBack = background[0].image;
   return (
     <Suspense>
       <header className={`textSmall ${pathname === "/login" ? "hidden" : ""}`}>
@@ -32,11 +32,18 @@ export default function Home({ topCategories, productsData }) {
               </a>
             </div>
             <p className="ml-auto text-right w-[40%]">
-              Режим работы: ПН, ВТ, СР, ЧТ, ПТ | с 09:00 - 18:00 Выходной:
-              СБ, ВС
+              Режим работы: ПН, ВТ, СР, ЧТ, ПТ | с 09:00 - 18:00 Выходной: СБ,
+              ВС
             </p>
           </div>
-          <div className="w-full bg-secondary py-4">
+          <div
+            className="w-full py-4"
+            style={{
+              backgroundImage: `url(${urlBack})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
             <Container>
               <Link href={"/"}>
                 <Image src={Logo} alt="Logo" className="w-[12vw] min-w-24" />

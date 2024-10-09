@@ -36,6 +36,7 @@ export const metadata = {
 export default async function RootLayout({ children }) {
   const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
   const productsData = await ApiService.getData("/api/product", "product");
+  const background = await ApiService.getData("/api/background", "background");
 
   return (
     <html lang="en">
@@ -76,7 +77,7 @@ export default async function RootLayout({ children }) {
           zIndex={999999999}
           showAtBottom={false}
         />  
-        <Header topCategories={topCategories} productsData={productsData} />
+        <Header background={background} topCategories={topCategories} productsData={productsData} />
         <div className="grow">{children}</div>
         <Footer />
         <ChatBot />

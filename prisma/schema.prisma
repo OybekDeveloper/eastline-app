@@ -122,3 +122,11 @@ model SelectReview {
   message   String
   createdAt DateTime @default(now())
 }
+
+model Background {
+  id        Int      @id @default(autoincrement())
+  name      String
+  image     String
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+}

@@ -1,3 +1,4 @@
+import BackgroundForm from "@/components/forms/background";
 import BannerForm from "@/components/forms/banner";
 import CategoryForm from "@/components/forms/category";
 import LicenseForm from "@/components/forms/license";
@@ -47,6 +48,8 @@ const Create = async ({ params }) => {
         return <NewsForm />;
       case "createBanner":
         return <BannerForm products={products} categories={categories} />;
+      case "createBackground":
+        return <BackgroundForm />;
       case "selectReview":
         return <SelectReview products={products} categories={categories} />;
       default:

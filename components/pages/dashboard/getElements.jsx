@@ -15,6 +15,7 @@ import { banner } from "@/components/tableColumns/banner";
 import { useEffect, useState } from "react";
 import { useEvent } from "@/store/event";
 import axios from "axios";
+import { background } from "@/components/tableColumns/background";
 
 function Getelements({ param }) {
   const { reflesh, setTableData } = useEvent();
@@ -63,6 +64,8 @@ function Getelements({ param }) {
         return news;
       case "changeBanner":
         return banner;
+      case "changeBackground":
+        return background;
 
       default:
         return null;

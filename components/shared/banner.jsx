@@ -22,11 +22,11 @@ const Banner = ({ banner }) => {
     >
       <section className="flex items-center w-full justify-center h-full">
         {/* Mobile View */}
-        <div className="bg-primary pt-8 pb-3 px-3 rounded-xl w-full lg:hidden">
+        <div className="bg-primary pb-3 px-3 rounded-xl w-full lg:hidden">
           <Carousel
             plugins={[
               emblaCarouselAutoplay({
-                delay: 7000,
+                delay: 3000,
               }),
             ]}
             className="w-full text-secondary "
@@ -64,6 +64,9 @@ const Banner = ({ banner }) => {
                 delay: 3000,
               }),
             ]}
+            opts={{
+              align: "start",
+            }}
             className="w-full h-full text-secondary"
           >
             <CarouselContent className="mb-4 space-x-4">
@@ -71,7 +74,7 @@ const Banner = ({ banner }) => {
                 return (
                   <CarouselItem
                     key={i}
-                    className="w-full h-[340px] md:basis-1/2 cursor-pointer bg-primary rounded-md py-4"
+                    className="w-full h-[340px] md:basis-1/2 cursor-pointer rounded-md"
                   >
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
@@ -79,7 +82,7 @@ const Banner = ({ banner }) => {
                     >
                       <div className="relative">
                         <CustomImage
-                          object={"dd"}
+                          object={"dd rounded-md"}
                           src={item.image}
                           alt={`banner-img`}
                           className={`w-[100%] h-[300px] mx-auto mb-5`}
