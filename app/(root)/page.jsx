@@ -39,7 +39,7 @@ async function Home() {
   const lastNews = getLastItems(newsData, 10);
 
   return (
-    <div className="min-h-[50%] py-10 flex flex-col space-y-10 items-center justify-center">
+    <div className="min-h-[50%] flex flex-col space-y-2 items-center justify-center">
       <Suspense>
         <Banner banner={banner} />
         <AllCategories categories={categories} topCategories={topCategories} />

@@ -17,13 +17,14 @@ const Banner = ({ banner }) => {
   return (
     <Container
       className={
-        "max-w-[1440px] pt-5 w-[95%] flex-col mx-auto justify-end items-start md:justify-center lg:mx-0 ml-auto"
+        "pt-5 w-[95%] flex-col mx-auto justify-end items-start md:justify-center lg:mx-0 ml-auto"
       }
     >
       <section className="flex items-center w-full justify-center h-full">
         {/* Mobile View */}
-        <div className="bg-primary pb-3 px-3 rounded-xl w-full lg:hidden">
+        <div className="bg-transparent pb-3 px-3 rounded-xl w-full lg:hidden">
           <Carousel
+            paginate={"false"}
             plugins={[
               emblaCarouselAutoplay({
                 delay: 3000,
@@ -31,7 +32,7 @@ const Banner = ({ banner }) => {
             ]}
             className="w-full text-secondary "
           >
-            <CarouselContent className="mb-2">
+            <CarouselContent className="">
               {banner.map((item, i) => {
                 return (
                   <CarouselItem key={i} className="md:basis-1/2">
@@ -51,7 +52,6 @@ const Banner = ({ banner }) => {
                 );
               })}
             </CarouselContent>
-            <CarouselCounter classNameCounter={"bg-white"} />
           </Carousel>
         </div>
 
@@ -74,7 +74,7 @@ const Banner = ({ banner }) => {
                 return (
                   <CarouselItem
                     key={i}
-                    className="w-full h-[340px] md:basis-1/2 cursor-pointer rounded-md"
+                    className="w-full md:basis-1/2 cursor-pointer rounded-md"
                   >
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
@@ -85,7 +85,7 @@ const Banner = ({ banner }) => {
                           object={"dd rounded-md"}
                           src={item.image}
                           alt={`banner-img`}
-                          className={`w-[100%] h-[300px] mx-auto mb-5`}
+                          className={`w-[100%] h-full aspect-video mx-auto mb-5`}
                           fill
                         />
                       </div>
