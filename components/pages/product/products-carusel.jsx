@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -12,19 +12,12 @@ import CustomImage from "@/components/shared/customImage";
 
 const ProductCarousel = ({ item }) => {
   const [mainImage, setMainImage] = useState(item.image[0]);
-  const [remainingImages, setRemainingImages] = useState(
-    item.image.slice(1, 3)
-  );
 
   const handleClick = (img) => {
     if (mainImage !== img) {
       setMainImage(img);
-      const filterImg = item.image.filter((c) => c != img);
-      setRemainingImages(filterImg);
     }
   };
-
-  useEffect(() => {}, [mainImage]);
 
   return (
     <main>
@@ -38,23 +31,23 @@ const ProductCarousel = ({ item }) => {
           />
         </div>
         {/* Thumbnail Images */}
-        {remainingImages.length > 0 && (
-          <div className="w-full flex gap-4 mt-2">
-            {remainingImages.map((image, index) => (
-              <div
-                className="border-2  rounded-md relative h-[100px] w-[100px] m-2 overflow-hidden"
-                onClick={() => handleClick(image)}
-                key={index}
-              >
-                <CustomImage
-                  src={image}
-                  alt={item.name}
-                  className="w-full rounded-xl cursor-pointer"
-                />
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="w-full flex gap-4 mt-2">
+          {item.image.map((image, index) => (
+            <div
+              key={index}
+              className={`border-2 rounded-md relative h-[100px] w-[100px] m-2 overflow-hidden cursor-pointer ${
+                mainImage == image ? "border-primary" : "border-gray-300"
+              }`}
+              onClick={() => handleClick(image)}
+            >
+              <CustomImage
+                src={image}
+                alt={item.name}
+                className="w-full h-full object-cover rounded-md"
+              />
+            </div>
+          ))}
+        </div>
       </section>
       <section className="lg:hidden">
         <Carousel
@@ -69,7 +62,11 @@ const ProductCarousel = ({ item }) => {
                 className="bg-white rounded-md basis-full flex justify-center items-center p-2"
               >
                 <div className="relative max-h-[400px] overflow-hidden">
-                  <CustomImage src={c} alt={item.name} className="w-full rounded-md" />
+                  <CustomImage
+                    src={c}
+                    alt={item.name}
+                    className="w-full rounded-md"
+                  />
                 </div>
               </CarouselItem>
             ))}
