@@ -11,7 +11,7 @@ import {
 import BannerProducts from "@/components/pages/product/banner-category";
 import ProductFeature from "@/components/pages/product/product-feature";
 import ProductType from "@/components/pages/product/product-type";
-
+import NavigationProduct from "@/components/pages/product/navigation";
 
 const Product = async ({ params }) => {
   const { product } = params;
@@ -19,33 +19,33 @@ const Product = async ({ params }) => {
   const products1 = await db.product.findMany();
   const randomProducts = getRandomItems(products1);
 
-  const getCurrencySum = (dollar) => {
-    if (currency.length) {
-      const sum = currency[0].sum;
-      return Number(sum) * Number(dollar);
-    }
-  };
-
   async function getProduct() {
     const products = await db.product.findMany({
-      where: {
-        id: Number(product),
-      },
+      where: { id: Number(product) },
     });
     const category = await db.category.findMany({
-      where: {
-        id: Number(products[0].categoryId),
-      },
+      where: { id: Number(products[0].categoryId) },
     });
-    return { products, category };
+    const topCategory = await db.topCategory.findMany({
+      where: { id: Number(category[0].topCategoryId) },
+    });
+    return { products, category, topCategory };
   }
 
-  const productData = (await getProduct()).products;
-  const categoryData = (await getProduct()).category;
+  const {
+    products: productData,
+    category: categoryData,
+    topCategory: topCategoryData,
+  } = await getProduct();
   const { name, price, brand, description, feature } = productData[0];
 
   return (
     <main className="min-h-[50%] py-10 flex flex-col gap-4">
+      <NavigationProduct
+        topProductsData={topCategoryData}
+        categoryData={categoryData}
+        product={productData}
+      />
       <section className="w-[95%] lg:w-10/12 mx-auto lg:grid lg:grid-cols-9 gap-x-8 flex flex-col ">
         <div className="col-span-4 max-lg:hidden">
           <ProductCarousel item={productData[0]} />

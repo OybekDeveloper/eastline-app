@@ -38,10 +38,10 @@ const Footer = () => {
             </ul>
             <ul className="space-y-2 lg:space-y-4 textSmall3">
               <li className="font-semibold textNormal4 lg:text-black">
-                East Line Telekom
+                EAST LINE TELEKOM
               </li>
               <li className="space-y-2 lg:space-y-4">
-                <p>ООО «East Line Telekom»</p>
+                <p>ООО «EAST LINE TELEKOM»</p>
                 <p>Адрес: г. Ташкент,</p>
                 <p>Яшнабадский район, ул.</p>
                 <p>Махзуна, 1-тупик, дом 14А.</p>{" "}
@@ -118,7 +118,7 @@ const Footer = () => {
             <Link href="/contacts">Контакты</Link>
           </div>
           <p className="textSmall2 text-secondary text-center lg:text-left w-full">
-            Все права защищены 2014—2024. OOO «East Line Telekom»
+            Все права защищены 2014—2024. OOO «EAST LINE TELEKOM»
           </p>
         </Container>
       </section>

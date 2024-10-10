@@ -21,7 +21,7 @@ const HeroTitle = () => {
         <Image src={Logo} className="w-[40vw] min-w-40" alt="Big logo" />
         <p className="textBig ml-auto text-right text-primary font-semibold">
           {findPath?.name} <br />
-          «East Line Telekom»
+          «EAST LINE TELEKOM»
         </p>
       </section>
     </Suspense>

@@ -1,3 +1,4 @@
+import { topCategory } from "@/components/tableColumns/topCategory";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,7 +10,7 @@ import {
 import React from "react";
 
 const NavigationProduct = (props) => {
-  const { topProductsData, categoryData } = props;
+  const { topProductsData, categoryData, product } = props;
   return (
     <div className="w-[95%] flex-col lg:w-10/12 lg:mx-auto justify-end items-start md:justify-center mx-0 ml-auto">
       <Breadcrumb>
@@ -21,8 +22,20 @@ const NavigationProduct = (props) => {
           <BreadcrumbItem>{topProductsData[0].name}</BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbPage>{categoryData[0].name}</BreadcrumbPage>
+            <BreadcrumbPage>
+              <BreadcrumbLink href={`/${topProductsData[0].id}/${categoryData[0].id}`}>
+                {categoryData[0].name}
+              </BreadcrumbLink>
+            </BreadcrumbPage>
           </BreadcrumbItem>
+          {product && (
+            <>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage>{product[0].name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </>
+          )}
         </BreadcrumbList>
       </Breadcrumb>
     </div>

@@ -22,7 +22,7 @@ const Banner = ({ banner }) => {
     >
       <section className="flex items-center w-full justify-center h-full">
         {/* Mobile View */}
-        <div className="bg-transparent pb-3 px-3 rounded-xl w-full lg:hidden">
+        <div className="bg-transparent rounded-xl w-full lg:hidden">
           <Carousel
             paginate={"false"}
             plugins={[
@@ -32,7 +32,7 @@ const Banner = ({ banner }) => {
             ]}
             className="w-full text-secondary "
           >
-            <CarouselContent className="">
+            <CarouselContent className="my-0 py-0">
               {banner.map((item, i) => {
                 return (
                   <CarouselItem key={i} className="md:basis-1/2">
@@ -40,12 +40,12 @@ const Banner = ({ banner }) => {
                       className="mt-1"
                       href={`/${item.topCategoryId}/${item.categoryId}/${item.productId}`}
                     >
-                      <div className="relative">
+                      <div className="relative max-sm:h-[250px] overflow-hidden">
                         <CustomImage
-                        object={"object-contain rounded-md"}
+                          object={"object-contain rounded-md"}
                           src={item.image}
                           alt={`banner-img`}
-                          className="w-full mx-auto aspect-square mb-5"
+                          className="w-full mx-auto max-sm:aspect-video aspect-square mb-5"
                         />
                       </div>
                     </Link>
