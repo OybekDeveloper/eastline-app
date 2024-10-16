@@ -9,25 +9,35 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import CustomImage from "@/components/shared/customImage";
+import ZoomImage from "@/components/shared/zoom-image";
 
 const ProductCarousel = ({ item }) => {
   const [mainImage, setMainImage] = useState(item.image[0]);
-
+  const [selectImage, setSelectImage] = useState(null);
+  const [zoom, setZoom] = useState(false);
   const handleClick = (img) => {
     if (mainImage !== img) {
       setMainImage(img);
     }
   };
 
+  const handleOpenLupa = (img) => {
+    setZoom(!zoom);
+    setSelectImage(img);
+  };
+
   return (
     <main>
       <section className="hidden lg:block">
         {/* Main Image */}
-        <div className="w-full min-h-[400px]">
+        <div
+          onClick={() => handleOpenLupa(mainImage)}
+          className="w-full relative"
+        >
           <CustomImage
             src={mainImage}
             alt={item.name}
-            className="w-full h-full object-cover rounded-md overflow-hidden"
+            className="w-full h-[250px] object-cover rounded-md overflow-hidden"
           />
         </div>
         {/* Thumbnail Images */}
@@ -35,7 +45,7 @@ const ProductCarousel = ({ item }) => {
           {item.image.map((image, index) => (
             <div
               key={index}
-              className={`border-2 rounded-md relative h-[100px] w-[100px] m-2 overflow-hidden cursor-pointer ${
+              className={`border-2 rounded-md relative h-[60px] w-[60px] m-2 overflow-hidden cursor-pointer ${
                 mainImage == image ? "border-primary" : "border-gray-300"
               }`}
               onClick={() => handleClick(image)}
@@ -61,7 +71,10 @@ const ProductCarousel = ({ item }) => {
                 key={idx}
                 className="bg-white rounded-md basis-full flex justify-center items-center p-2"
               >
-                <div className="relative max-h-[400px] overflow-hidden">
+                <div
+                  onClick={() => handleOpenLupa(c)}
+                  className="relative max-h-[400px] overflow-hidden"
+                >
                   <CustomImage
                     src={c}
                     alt={item.name}
@@ -74,6 +87,11 @@ const ProductCarousel = ({ item }) => {
           <CarouselNext className="absolute right-2 top-1/2 rounded-full p-0 z-50" />
         </Carousel>
       </section>
+      <ZoomImage
+        selectImage={selectImage}
+        zoom={zoom}
+        handleClose={handleOpenLupa}
+      />
     </main>
   );
 };

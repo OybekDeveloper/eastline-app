@@ -44,7 +44,7 @@ export default function SearchComponent({ productsData }) {
       onChange={(value) => setSelected(value)}
       onClose={() => setQuery("")}
     >
-      <div className="relative z-[10000]">
+      <div className="relative z-[800]">
         <ComboboxInput
           placeholder="Поиск по сайту"
           className="rounded-3xl border border-primary pl-3 w-[170px] sm:w-[200px] md:w-[250px] px-3 py-2 h-10 focus:ring-0 focus:border-primary outline-none"

@@ -20,7 +20,7 @@ async function Home() {
     newsData,
     reviews,
     currency,
-    banner
+    banner,
   ] = await Promise.all([
     ApiService.getData("/api/product", "product"),
     ApiService.getData("/api/category", "category"),
@@ -31,7 +31,7 @@ async function Home() {
     ApiService.getData("/api/news", "news"),
     ApiService.getData("/api/selectReview", "selectReview"),
     ApiService.getData("/api/currency", "currency"),
-    ApiService.getData("/api/banner", "banner")
+    ApiService.getData("/api/banner", "banner"),
   ]);
 
   const randomLicense = getRandomItems(license);
@@ -39,9 +39,9 @@ async function Home() {
   const lastNews = getLastItems(newsData, 10);
 
   return (
-    <div className="min-h-[50%] flex flex-col space-y-2 items-center justify-center">
-      <Suspense>
-        <Banner banner={banner} />
+    <div className="min-h-[50%] w-full flex flex-col space-y-2 items-center justify-center">
+      <Banner banner={banner} />
+      <div className="w-full space-y-6">
         <AllCategories categories={categories} topCategories={topCategories} />
         <AllProducts
           products={lastProducts}
@@ -52,7 +52,7 @@ async function Home() {
         <OurLicenses sertificate={sertificate} license={randomLicense} />
         <Partners partner={partner} />
         <NewsRew newsItem={lastNews} reviews={reviews} />
-      </Suspense>
+      </div>
     </div>
   );
 }

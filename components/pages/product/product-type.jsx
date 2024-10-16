@@ -1,16 +1,9 @@
 "use client";
-
-import { AboutBanner, productImage } from "@/public/img";
-import Image from "next/image";
 import React, { useState } from "react";
 
 const data = [
   {
     id: 1,
-    title: "Описания",
-  },
-  {
-    id: 2,
     title: "Характеристика",
   },
 ];
@@ -18,9 +11,14 @@ const data = [
 const ProductType = ({ productData }) => {
   const { description, feature } = productData[0];
   const [activeTab, setActiveTab] = useState(1);
+  const [isExpanded, setIsExpanded] = useState(false); // State to handle expansion
 
   const handleActiveTab = (id) => {
     setActiveTab(id);
+  };
+
+  const toggleExpand = () => {
+    setIsExpanded((prev) => !prev);
   };
 
   return (
@@ -38,66 +36,38 @@ const ProductType = ({ productData }) => {
           </div>
         ))}
       </div>
+
       <div className="flex gap-4">
-        {activeTab === 1 && (
+        {activeTab === 2 && (
           <aside className="space-y-4">
             <p>{description}</p>
-            {/* <CustomImage
-              url={`${productData[0].image[0]}`}
-              title={`img`}
-              className={"w-full h-[400px] caption-top"}
-            /> */}
-            {/* <Image
-              src={AboutBanner}
-              alt="ddd"
-              width={100}
-              height={100}
-              className="w-full h-[300px] rounded-md border"
-            />
-            <div className="space-y-3">
-              <h1 className="font-bold textNormal">
-                Основное назначение Hikvision DS-2CD2421G0-I
-              </h1>
-              <p>
-                Камера Hikvision DS-2CD2421G0-I разработана для внутреннего
-                мониторинга за домом, квартирой или офисом. С ее помощью можно
-                контролировать и наблюдать за домашними питомцами, общаться с
-                детьми, которые остаются одни дома и даже контролировать работу
-                в офисе. Оптимальная температура для ее работы -10° C - +40° C.
-                <br />
-                <br />
-                Для улучшения видео, видеокамера использует такие функции как
-                цифровой широкий динамический диапазон, компенсация внешней
-                засветки (фоновой и точечной), трехмерное шумоподавление.
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                <Image
-                  src={productImage}
-                  alt="ddd"
-                  width={100}
-                  height={100}
-                  className="w-full h-[300px] rounded-md border"
-                />{" "}
-                <Image
-                  src={productImage}
-                  alt="ddd"
-                  width={100}
-                  height={100}
-                  className="w-full h-[300px] rounded-md border"
-                />
-              </div>
-            </div> */}
           </aside>
         )}
-        {activeTab === 2 && (
-          <div
-            className={`ProseMirror whitespace-pre-line`}
-            style={{ whiteSpace: "pre-line" }}
-            dangerouslySetInnerHTML={{ __html: feature }}
-          />
+        {activeTab === 1 && (
+          <div className="relative">
+            {/* Characteristic content with partial view */}
+            <div
+              className={`ProseMirror whitespace-pre-line overflow-hidden transition-all duration-500 ${
+                isExpanded ? "max-h-full" : "max-h-[200px]"
+              }`}
+              dangerouslySetInnerHTML={{ __html: feature }}
+              style={{ whiteSpace: "pre-line" }}
+            />
+
+            {/* White shadow effect (fade-out) */}
+            {!isExpanded && (
+              <div className="absolute bottom-10 left-0 right-0 h-10 bg-gradient-to-t from-white"></div>
+            )}
+
+            {/* View All / Show Less button */}
+            <button
+              onClick={toggleExpand}
+              className="mt-2 text-blue-500 underline"
+            >
+              {isExpanded ? "Показать меньше" : "Просмотреть все"}
+            </button>
+          </div>
         )}
-        {/* {activeTab === 1 && <p>{productData[0].description}</p>}
-        {activeTab === 2 && <p>{productData[0].brand}</p>} */}
       </div>
     </main>
   );

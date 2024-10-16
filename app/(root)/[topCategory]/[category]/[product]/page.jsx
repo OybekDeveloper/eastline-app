@@ -24,10 +24,10 @@ const Product = async ({ params }) => {
       where: { id: Number(product) },
     });
     const category = await db.category.findMany({
-      where: { id: Number(products[0].categoryId) },
+      where: { id: Number(products[0]?.categoryId) },
     });
     const topCategory = await db.topCategory.findMany({
-      where: { id: Number(category[0].topCategoryId) },
+      where: { id: Number(category[0]?.topCategoryId) },
     });
     return { products, category, topCategory };
   }
@@ -82,48 +82,10 @@ const Product = async ({ params }) => {
           <ul className="list-disc space-y-2 lg:hidden">
             <li className="ml-4 textSmall">{description}</li>
           </ul>
-          <ul className="text-xl flex gap-3 max-lg:hidden">
-            <li className="bg-border lg:border p-2 rounded-full items-block">
-              <a
-                className="w-full h-full"
-                target="_blank"
-                href="https://t.me/ELTprice_bot"
-              >
-                <FaTelegram />
-              </a>
-            </li>
-            <li className="bg-border lg:border p-2 rounded-full items-block">
-              <a
-                className="w-full h-full"
-                target="_blank"
-                href="https://www.facebook.com/eastlinetelecom"
-              >
-                <FaFacebookF />
-              </a>
-            </li>
-            <li className="bg-border lg:border p-2 rounded-full items-block">
-              <a
-                className="w-full h-full"
-                target="_blank"
-                href="https://www.instagram.com/_elt_uz?igsh=dXNnZWt3a3N3ejV6&utm_source=qr"
-              >
-                <FaInstagram />
-              </a>
-            </li>
-            <li className="bg-border lg:border p-2 rounded-full items-block">
-              <a
-                className="w-full h-full"
-                target="_blank"
-                href="https://www.youtube.com/@AnpArtSer"
-              >
-                <FaYoutube />
-              </a>
-            </li>
-          </ul>
         </div>
         <ProductFeature feature={feature} />
       </section>
-      <section className="w-[95%] lg:w-10/12 mx-auto lg:hidden">
+      <section className="w-[95%] lg:w-10/12 mx-auto">
         <ProductType productData={productData} />
       </section>
       <section className="w-[95%] lg:w-10/12 mx-auto space-y-4">
