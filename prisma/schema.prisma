@@ -130,3 +130,22 @@ model Background {
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 }
+
+model Contacts {
+  id              Int      @id @default(autoincrement())
+  company_name    String
+  phone1          String
+  phone2          String
+  work_hours      String
+  email           String
+  address         String
+  telegram        String
+  telegram_bot    String
+  facebook        String
+  instagram       String
+  youtube         String
+  footer_info     String
+  experience_info String
+  createdAt       DateTime @default(now())
+  updateAt        DateTime @updatedAt
+}

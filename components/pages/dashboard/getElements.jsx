@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useEvent } from "@/store/event";
 import axios from "axios";
 import { background } from "@/components/tableColumns/background";
+import { contacts } from "@/components/tableColumns/contacts";
 
 function Getelements({ param }) {
   const { reflesh, setTableData } = useEvent();
@@ -66,6 +67,8 @@ function Getelements({ param }) {
         return banner;
       case "changeBackground":
         return background;
+      case "changeContact":
+        return contacts;
 
       default:
         return null;

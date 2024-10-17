@@ -11,7 +11,14 @@ import HeroTitle from "./hero-title";
 import Container from "./container";
 import { usePathname, useRouter } from "next/navigation";
 
-export default function Home({ background, topCategories, productsData }) {
+export default function Home({
+  background,
+  topCategories,
+  productsData,
+  contactData,
+}) {
+  console.log(contactData, "this is fucjt");
+  const { experience_info, work_hours, email, phone1, phone2 } = contactData;
   const pathname = usePathname();
   const urlBack = background[0].image;
   return (
@@ -19,22 +26,21 @@ export default function Home({ background, topCategories, productsData }) {
       <header className={`textSmall ${pathname === "/login" ? "hidden" : ""}`}>
         <Container className="flex-col w-full bg-primary items-start">
           <div className="flex items-center justify-between w-10/12 mx-auto text-secondary py-2 gap-1 md:gap-5">
-            <p className="hidden lg:block">
-              Более 20-ти лет опыта на рынке систем безопасности и мини АТС
-            </p>
+            <p className="hidden lg:block">{experience_info}</p>
             <div className="flex flex-col sm:flex-row justify-end items-center gap-1 md:gap-5 lg:hidden">
-              <p>info@elt.uz</p>
-              <a href="tel:+998555108033" className="flex items-center">
-                +998 55 510-80-33
-              </a>
-              <a href="tel:+998555108133" className="flex items-center">
-                +998 55 510-81-33
-              </a>
+              <p>{email}</p>
+              {phone1 && (
+                <a href="tel:+998555108033" className="flex items-center">
+                  {phone1}
+                </a>
+              )}
+              {phone2 && (
+                <a href="tel:+998555108133" className="flex items-center">
+                  {phone2}
+                </a>
+              )}
             </div>
-            <p className="ml-auto text-right w-[40%]">
-              Режим работы: ПН, ВТ, СР, ЧТ, ПТ | с 09:00 - 18:00 Выходной: СБ,
-              ВС
-            </p>
+            <p className="ml-auto text-right w-[40%]">{work_hours}</p>
           </div>
           <div
             className="w-full py-4 bg-secondary"
@@ -81,15 +87,19 @@ export default function Home({ background, topCategories, productsData }) {
             })}
           </ul>
           <div className="hidden items-center gap-1 md:gap-5 lg:flex">
-            <p>info@elt.uz</p>
-            <a href="tel:+998555108033" className="flex items-center gap-2">
-              <Phone size={16} />
-              +998 55 510-80-33
-            </a>
-            <a href="tel:+998555108133" className="flex items-center gap-2">
-              <Phone size={16} />
-              +998 55 510-81-33
-            </a>
+            <p>{email}</p>
+            {phone1 && (
+              <a href="tel:+998555108033" className="flex items-center gap-2">
+                <Phone size={16} />
+                {phone1}
+              </a>
+            )}
+            {phone2 && (
+              <a href="tel:+998555108133" className="flex items-center gap-2">
+                <Phone size={16} />
+                {phone2}
+              </a>
+            )}
           </div>
         </Container>
       </nav>

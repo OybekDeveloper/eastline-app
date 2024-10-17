@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
 import React from "react";
 import Container from "./container";
 import { navItems } from "@/lib/iterationDetails";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Send } from "lucide-react";
+import { Bot, Send } from "lucide-react";
 import {
   FaTelegram,
   FaFacebookF,
@@ -14,8 +14,17 @@ import {
 } from "react-icons/fa6";
 import { usePathname } from "next/navigation";
 
-const Footer = () => {
+const Footer = ({ contactData }) => {
   const pathname = usePathname();
+  const {
+    company_name,
+    address,
+    telegram,
+    telegram_bot,
+    instagram,
+    facebook,
+    youtube,
+  } = contactData;
 
   return (
     <footer className={`${pathname === "/login" ? "hidden" : ""} relative`}>
@@ -38,14 +47,19 @@ const Footer = () => {
             </ul>
             <ul className="space-y-2 lg:space-y-4 textSmall3">
               <li className="font-semibold textNormal4 lg:text-black">
-                EAST LINE TELEKOM
+                {company_name}
               </li>
               <li className="space-y-2 lg:space-y-4">
-                <p>ООО «EAST LINE TELEKOM»</p>
-                <p>Адрес: г. Ташкент,</p>
-                <p>Яшнабадский район, ул.</p>
-                <p>Махзуна, 1-тупик, дом 14А.</p>{" "}
-                <p>Ориентир: Масложирокомбинат.</p>
+                <p>{`ООО «${company_name}»`}</p>
+                <p>
+                  Адрес:{" "}
+                  {address.split(", ").map((line, index) => (
+                    <span key={index}>
+                      {line}
+                      <br />
+                    </span>
+                  ))}
+                </p>
               </li>
               <li></li>
             </ul>
@@ -68,42 +82,41 @@ const Footer = () => {
               </div>
             </div>
             <ul className="text-xl flex items-center justify-center lg:justify-end gap-2 border-t lg:border-none max-lg:pt-3">
-              <li className="lg:border p-2 rounded-full items-block">
-                <a
-                  className="w-full h-full"
-                  target="_blank"
-                  href="https://t.me/ELTprice_bot"
-                >
-                  <FaTelegram />
-                </a>
-              </li>
-              <li className="lg:border p-2 rounded-full items-block">
-                <a
-                  className="w-full h-full"
-                  target="_blank"
-                  href="https://www.facebook.com/eastlinetelecom"
-                >
-                  <FaFacebookF />
-                </a>
-              </li>
-              <li className="lg:border p-2 rounded-full items-block">
-                <a
-                  className="w-full h-full"
-                  target="_blank"
-                  href="https://www.instagram.com/_elt_uz?igsh=dXNnZWt3a3N3ejV6&utm_source=qr"
-                >
-                  <FaInstagram />
-                </a>
-              </li>
-              <li className="lg:border p-2 rounded-full items-block">
-                <a
-                  className="w-full h-full"
-                  target="_blank"
-                  href="https://www.youtube.com/@AnpArtSer"
-                >
-                  <FaYoutube />
-                </a>
-              </li>
+              {telegram && (
+                <li className="lg:border p-2 rounded-full items-block">
+                  <a className="w-full h-full" target="_blank" href={telegram}>
+                    <FaTelegram />
+                  </a>
+                </li>
+              )}
+              {telegram_bot && (
+                <li className="lg:border p-2 rounded-full items-block">
+                  <a className="w-full h-full" target="_blank" href={telegram_bot}>
+                    <Bot />
+                  </a>
+                </li>
+              )}
+              {facebook && (
+                <li className="lg:border p-2 rounded-full items-block">
+                  <a className="w-full h-full" target="_blank" href={facebook}>
+                    <FaFacebookF />
+                  </a>
+                </li>
+              )}
+              {instagram && (
+                <li className="lg:border p-2 rounded-full items-block">
+                  <a className="w-full h-full" target="_blank" href={instagram}>
+                    <FaInstagram />
+                  </a>
+                </li>
+              )}
+              {youtube && (
+                <li className="lg:border p-2 rounded-full items-block">
+                  <a className="w-full h-full" target="_blank" href={youtube}>
+                    <FaYoutube />
+                  </a>
+                </li>
+              )}
               {/* <li className="lg:border p-2 rounded-full items-block">
                 <CiMail />
               </li> */}

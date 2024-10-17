@@ -29,8 +29,8 @@ export function DataTableViewOptions({ table }) {
         <DropdownMenuLabel>Переключить столбцы</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
-          .getAllColumns()
-          .filter(
+          ?.getAllColumns()
+          ?.filter(
             (column) =>
               typeof column.accessorFn !== "undefined" && column.getCanHide()
           )

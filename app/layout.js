@@ -34,14 +34,21 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const topCategories = await ApiService.getData("/api/topCategory", "topCategory");
+  const topCategories = await ApiService.getData(
+    "/api/topCategory",
+    "topCategory"
+  );
   const productsData = await ApiService.getData("/api/product", "product");
   const background = await ApiService.getData("/api/background", "background");
+  const contactData = await ApiService.getData("/api/contact", "contact");
 
   return (
     <html lang="en">
       <head>
-        <meta name="google-site-verification" content="C3o3vKTwERqa9wb0mxW-jzSXaYZzoj8bv14Vj7JoPKc" />
+        <meta
+          name="google-site-verification"
+          content="C3o3vKTwERqa9wb0mxW-jzSXaYZzoj8bv14Vj7JoPKc"
+        />
         <meta name="yandex-verification" content="e332936c74782e28" />
         <meta name="description" content={metadata.description} />
         <meta property="og:title" content={metadata.og.title} />
@@ -50,7 +57,10 @@ export default async function RootLayout({ children }) {
         <meta property="og:image" content={metadata.og.image} />
         <meta name="twitter:card" content={metadata.twitter.card} />
         <meta name="twitter:title" content={metadata.twitter.title} />
-        <meta name="twitter:description" content={metadata.twitter.description} />
+        <meta
+          name="twitter:description"
+          content={metadata.twitter.description}
+        />
         <meta name="twitter:image" content={metadata.twitter.image} />
         <meta name="keywords" content={metadata.keywords.join(", ")} />
         <meta name="author" content={metadata.author} />
@@ -76,10 +86,15 @@ export default async function RootLayout({ children }) {
           <div class="spinner" role="spinner"><div class="spinner-icon"></div></div>'
           zIndex={999999999}
           showAtBottom={false}
-        />  
-        <Header background={background} topCategories={topCategories} productsData={productsData} />
+        />
+        <Header
+          contactData={contactData[0]}
+          background={background}
+          topCategories={topCategories}
+          productsData={productsData}
+        />
         <div className="grow">{children}</div>
-        <Footer />
+        <Footer contactData={contactData[0]} />
         <ChatBot />
         <Toaster position="bottom-left" reverseOrder={false} />
       </body>

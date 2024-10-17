@@ -32,12 +32,12 @@ const ProductCarousel = ({ item }) => {
         {/* Main Image */}
         <div
           onClick={() => handleOpenLupa(mainImage)}
-          className="w-full relative"
+          className="w-full relative h-[250px]"
         >
           <CustomImage
             src={mainImage}
             alt={item.name}
-            className="w-full h-[250px] object-cover rounded-md overflow-hidden"
+            className="w-[60%] mx-auto aspect-square object-contain mb-5"
           />
         </div>
         {/* Thumbnail Images */}
@@ -45,7 +45,7 @@ const ProductCarousel = ({ item }) => {
           {item.image.map((image, index) => (
             <div
               key={index}
-              className={`border-2 rounded-md relative h-[60px] w-[60px] m-2 overflow-hidden cursor-pointer ${
+              className={`bg-white border-2 rounded-md relative h-[60px] w-[60px] m-2 overflow-hidden cursor-pointer ${
                 mainImage == image ? "border-primary" : "border-gray-300"
               }`}
               onClick={() => handleClick(image)}

@@ -56,7 +56,7 @@ const ProductType = ({ productData }) => {
 
             {/* White shadow effect (fade-out) */}
             {!isExpanded && (
-              <div className="absolute bottom-10 left-0 right-0 h-10 bg-gradient-to-t from-white"></div>
+              <div className="absolute bottom-5 left-0 right-0 h-20 bg-gradient-to-t from-white"></div>
             )}
 
             {/* View All / Show Less button */}
