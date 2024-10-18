@@ -234,7 +234,7 @@ export function DataTable({ param, columns, data, loading }) {
           </div>
         )}
       </>
-      <div className="p-4 rounded-md border mt-2">
+      {/* <div className="p-4 rounded-md border mt-2">
         {(param === "changeTopCategory" || param === "changeBanner") && (
           <DragDropComponent
             param={param}
@@ -243,7 +243,7 @@ export function DataTable({ param, columns, data, loading }) {
             categories={categories}
           />
         )}
-      </div>
+      </div> */}
     </>
   );
 }
