@@ -18,6 +18,7 @@ import { sanitizeString, supabase } from "@/lib/utils";
 import { SelectItem } from "../ui/select";
 import { topCategory } from "../tableColumns/topCategory";
 import { revalidatePath } from "@/lib/revalidate";
+import { Button } from "../ui/button";
 
 const BannerForm = ({ products, categories }) => {
   const router = useRouter();
@@ -46,9 +47,15 @@ const BannerForm = ({ products, categories }) => {
   }
 
   const onSubmit = async (values) => {
-    const categoryData = categories.find((c) =>
-      c.products?.some((product) => +product.id === +values.productId)
-    );
+    console.log(values);
+    let categoryData;
+    if (values.productId) {
+      categoryData = categories.find((c) =>
+        c.products?.some((product) => +product.id === +values.productId)
+      );
+    } else {
+      categoryData = categories.find((c) => +c.id === +values.categoryId);
+    }
 
     if (!image.length) {
       toast.error("Пожалуйста, выберите изображение");
@@ -82,7 +89,6 @@ const BannerForm = ({ products, categories }) => {
 
           uploadedUrl = newPublicUrlData.publicUrl;
         } else {
-
           const { data: newPublicUrlData } = await supabase.storage
             .from("eastLine_images")
             .getPublicUrl(imageName);
@@ -96,6 +102,7 @@ const BannerForm = ({ products, categories }) => {
         return;
       }
     }
+    console.log(categoryData);
 
     try {
       if (categoryData) {
@@ -108,7 +115,7 @@ const BannerForm = ({ products, categories }) => {
             image: uploadedUrl ? uploadedUrl : image[0].url,
           });
           toast.success("Партнер изменена успешно!");
-          router.back()
+          router.back();
         } else {
           await axios.post("/api/banner", {
             productId: Number(values.productId),
@@ -131,6 +138,11 @@ const BannerForm = ({ products, categories }) => {
     }
   };
 
+  const handleResetForm = (e) => {
+    e.preventDefault();
+    form.setValue("productId", "");
+    form.setValue("categoryId", "");
+  };
   useEffect(() => {
     async function updateData() {
       try {
@@ -145,8 +157,7 @@ const BannerForm = ({ products, categories }) => {
             },
           ]);
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     }
     if (id) {
       updateData();
@@ -163,12 +174,34 @@ const BannerForm = ({ products, categories }) => {
           />
           <p>{id ? "Обновить баннер" : "Создать баннер"}</p>
         </div>
+        <h1 className="text-yellow-500">Выберите только один продукт или категорию</h1>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="flex-1 w-full"
+            className="flex-1 w-full space-y-2"
           >
-            <div className="w-full space-y-6 lg:w-1/2">
+            <div
+              onClick={() => form.setValue("productId", "")}
+              className="w-full space-y-6 lg:w-1/2"
+            >
+              <CustomFormField
+                fieldType={FormFieldType.SELECT}
+                control={form.control}
+                name="categoryId"
+                label="Категория"
+                placeholder="Выбрать категория"
+              >
+                {categories.map((item) => (
+                  <SelectItem key={item.id} value={`${item.id}`}>
+                    <p>{item.name}</p>
+                  </SelectItem>
+                ))}
+              </CustomFormField>
+            </div>
+            <div
+              onClick={() => form.setValue("categoryId", "")}
+              className="w-full space-y-6 lg:w-1/2"
+            >
               <CustomFormField
                 fieldType={FormFieldType.SELECT}
                 control={form.control}
@@ -183,6 +216,7 @@ const BannerForm = ({ products, categories }) => {
                 ))}
               </CustomFormField>
             </div>
+            <Button onClick={handleResetForm}>перезагрузить</Button>
             <div className="my-6">
               <DropTarget images={image} setImages={setImage} limitImg={1} />
             </div>

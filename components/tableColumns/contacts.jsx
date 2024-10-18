@@ -101,6 +101,6 @@ export const contacts = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <DeleteItem payment={row.original} />, // Pass the contact data for deletion
+    cell: ({ row }) => <DeleteItem only={true} payment={row.original} />, // Pass the contact data for deletion
   },
 ];

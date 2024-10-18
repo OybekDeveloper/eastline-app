@@ -79,7 +79,9 @@ const Banner = ({ banner }) => {
                   >
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
-                      href={`/${item.topCategoryId}/${item.categoryId}/${item.productId}`}
+                      href={`/${item.topCategoryId}/${item.categoryId}/${
+                        item.productId ? item.productId : ""
+                      }`}
                     >
                       <div className="relative">
                         <CustomImage

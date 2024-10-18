@@ -88,7 +88,7 @@ export default function DragDropComponent({
 
   return (
     <div className="space-y-2">
-      <h2 className="text-2xl font-bold mb-4">User List</h2>
+      <h2 className="font-bold mb-4 textNormal3">Регулирование</h2>
       <ul className="bg-white shadow-md rounded-lg">
         <DndContext
           sensors={sensors}

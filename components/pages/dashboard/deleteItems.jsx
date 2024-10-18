@@ -26,7 +26,7 @@ import Link from "next/link";
 import { useEvent } from "@/store/event";
 import { revalidatePath } from "@/lib/revalidate";
 
-const DeleteItem = ({ payment }) => {
+const DeleteItem = ({ payment, only }) => {
   const { setReflesh } = useEvent();
   const { setTableData, changeTableData } = useEvent();
 
@@ -94,13 +94,15 @@ const DeleteItem = ({ payment }) => {
               Изменить продукт
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              setOpen(true);
-            }}
-          >
-            Удалить
-          </DropdownMenuItem>
+          {!only && (
+            <DropdownMenuItem
+              onClick={() => {
+                setOpen(true);
+              }}
+            >
+              Удалить
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
