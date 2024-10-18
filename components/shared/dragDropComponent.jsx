@@ -97,10 +97,10 @@ export default function DragDropComponent({
       let res = null;
       try {
         if (param == "changeBanner") {
-          res = await ApiService.getData("/api/bannerSort");
+          res = await axios.get("/api/bannerSort");
         }
         if (param == "changeTopCategory") {
-          res = await ApiService.getData("/api/topCategorySort");
+          res = await axios.get("/api/topCategorySort");
         }
         console.log(res, "This is res");
 
