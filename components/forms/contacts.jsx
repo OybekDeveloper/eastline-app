@@ -68,8 +68,6 @@ const ContactsForm = () => {
     async function updateData() {
       try {
         const res = await axios.get(`/api/contact?id=${id}`);
-        console.log(res, "this is res");
-
         if (res) {
           const contactData = res.data.data;
           form.setValue("company_name", contactData.company_name);

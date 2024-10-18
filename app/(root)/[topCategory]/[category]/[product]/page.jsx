@@ -18,6 +18,7 @@ const Product = async ({ params }) => {
   const currency = await db.currency.findMany();
   const products1 = await db.product.findMany();
   const randomProducts = getRandomItems(products1);
+  const contactData = await db.contacts.findMany();
 
   async function getProduct() {
     const products = await db.product.findMany({
@@ -46,7 +47,7 @@ const Product = async ({ params }) => {
         categoryData={categoryData}
         product={productData}
       />
-      <section className="w-[95%] lg:w-10/12 mx-auto lg:grid lg:grid-cols-9 gap-x-8 flex flex-col ">
+      <section className="w-[95%] lg:w-10/12 mx-auto lg:grid lg:grid-cols-9 gap-x-8 flex flex-col gap-3">
         <div className="col-span-4 max-lg:hidden">
           <ProductCarousel item={productData[0]} />
         </div>
@@ -83,12 +84,12 @@ const Product = async ({ params }) => {
             <li className="ml-4 textSmall">{description}</li>
           </ul>
         </div>
-        <ProductFeature feature={feature} />
+        <ProductFeature contactData={contactData[0]} feature={feature} />
       </section>
       <section className="w-[95%] lg:w-10/12 mx-auto">
         <ProductType productData={productData} />
       </section>
-      <section className="w-[95%] lg:w-10/12 mx-auto space-y-4">
+      <section className="w-full lg:w-10/12 mx-auto space-y-4">
         <h1 className="text-primary textNormal3 font-bold">Другие товары</h1>
         <BannerProducts randomProducts={randomProducts} currency={currency} />
       </section>

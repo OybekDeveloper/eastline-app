@@ -36,8 +36,9 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 import { useEvent } from "@/store/event";
+import DragDropComponent from "./dragDropComponent";
 
-export function DataTable({ columns, data, loading }) {
+export function DataTable({ param, columns, data, loading }) {
   const router = useRouter();
   const reflesh = useEvent((state) => state.reflesh); // Listen to the reflesh state
   const changeTableData = useEvent((state) => state.changeTableData); // Listen to the reflesh state
@@ -49,7 +50,9 @@ export function DataTable({ columns, data, loading }) {
   const [rowSelection, setRowSelection] = useState({});
   const [topCategories, setTopCategories] = useState([]);
   const [products, setProducts] = useState([]);
-
+  const [categories, setCategories] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]); // Store selected categories/banners with order
+  const [uniqueId, setUniqueId] = useState(1);
   const table = useReactTable({
     data: changeTableData,
     columns,
@@ -75,12 +78,28 @@ export function DataTable({ columns, data, loading }) {
     onRowSelectionChange: setRowSelection,
   });
 
+  const handleSelectItem = (item) => {
+    const exists = selectedItems.find((selected) => selected.id === item.id);
+
+    if (exists) {
+      // Remove if already selected
+      setSelectedItems((prev) =>
+        prev.filter((selected) => selected.id !== item.id)
+      );
+    } else {
+      // Add new selected item with unique ID
+      setSelectedItems((prev) => [...prev, { ...item, unique_id: uniqueId }]);
+      setUniqueId((prev) => prev + 1); // Increment unique ID
+    }
+  };
+
   // Fetch data on component mount and whenever reflesh changes
   useEffect(() => {
     async function fetchData() {
       const topCategory = await axios.get(`/api/topCategory`);
       const product = await axios.get(`/api/product`);
-
+      const categories = await axios.get(`/api/category`);
+      setCategories(categories);
       setTopCategories(topCategory.data.data);
       setProducts(product.data.data);
     }
@@ -96,6 +115,8 @@ export function DataTable({ columns, data, loading }) {
       }
     }
   }, [table]);
+
+  console.log(selectedItems, "this is selected");
 
   return (
     <>
@@ -207,13 +228,22 @@ export function DataTable({ columns, data, loading }) {
                 )}
               </TableBody>
             </Table>
-
             <div className="flex items-center justify-end space-x-2 p-4">
               <DataTablePagination table={table} />
             </div>
           </div>
         )}
       </>
+      <div className="p-4 rounded-md border mt-2">
+        {(param === "changeTopCategory" || param === "changeBanner") && (
+          <DragDropComponent
+            param={param}
+            data={data}
+            products={products}
+            categories={categories}
+          />
+        )}
+      </div>
     </>
   );
 }

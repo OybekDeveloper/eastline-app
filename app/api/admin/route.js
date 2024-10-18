@@ -11,7 +11,6 @@ export async function POST(req) {
         name: name,
       },
     });
-    console.log(admin);
 
     if (admin.length === 0) {
       return NextResponse.json({ message: "Админ не найден" }, { status: 404 });

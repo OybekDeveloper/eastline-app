@@ -5,9 +5,14 @@
 * Browsers: last 4 version
 */
 
+/* styles/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+ 
+.touch-action-none {
+  touch-action: none;
+}
 
 html {
   scroll-behavior: smooth;

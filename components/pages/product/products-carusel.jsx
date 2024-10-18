@@ -28,7 +28,7 @@ const ProductCarousel = ({ item }) => {
 
   return (
     <main>
-      <section className="hidden lg:block">
+      <section className="hidden lg:flex justify-start flex-row-reverse">
         {/* Main Image */}
         <div
           onClick={() => handleOpenLupa(mainImage)}
@@ -41,7 +41,7 @@ const ProductCarousel = ({ item }) => {
           />
         </div>
         {/* Thumbnail Images */}
-        <div className="w-full flex gap-4 mt-2">
+        <div className="flex flex-col gap-4 mt-2 w-1/5">
           {item.image.map((image, index) => (
             <div
               key={index}

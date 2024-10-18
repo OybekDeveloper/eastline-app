@@ -17,7 +17,6 @@ export default function Home({
   productsData,
   contactData,
 }) {
-  console.log(contactData, "this is fucjt");
   const { experience_info, work_hours, email, phone1, phone2 } = contactData;
   const pathname = usePathname();
   const urlBack = background[0].image;
@@ -48,6 +47,8 @@ export default function Home({
               backgroundImage: `url(${urlBack})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
+              boxShadow:
+                "inset -70px 0 20px -5px rgba(255, 255, 255, 0.5), inset 130px 0 20px -5px rgba(255, 255, 255, 0.5)",
             }}
           >
             <Container>

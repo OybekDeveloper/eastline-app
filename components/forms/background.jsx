@@ -64,7 +64,6 @@ const BackgroundForm = () => {
         }
         const imageName = sanitizeString(image[0].name);
 
-        console.log(imageToUpload);
         // File doesn't exist, upload it
         const { data, error: uploadError } = await supabase.storage
           .from("eastLine_images")

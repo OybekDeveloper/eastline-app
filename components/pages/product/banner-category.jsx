@@ -9,13 +9,7 @@ import {
 import { f, truncateText } from "@/lib/utils";
 import emblaCarouselAutoplay from "embla-carousel-autoplay";
 
-const BannerProducts = ({ randomProducts, currency }) => {
-  const getCurrencySum = (dollar) => {
-    if (currency.length) {
-      const sum = currency[0].sum;
-      return Number(sum) * Number(dollar);
-    }
-  };
+const BannerProducts = ({ randomProducts }) => {
   return (
     <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
       {randomProducts[0] && (
@@ -32,7 +26,7 @@ const BannerProducts = ({ randomProducts, currency }) => {
           <div className="flex flex-col gap-5 justify-between items-end py-5 px-3">
             <div className="space-y-5">
               <h1 className="font-medium textNormal4 text-right leading-7">
-                {randomProducts[0].name}
+                {truncateText(randomProducts[0].name, 30)}
               </h1>
               <p className="textSmall3 text-right w-[70%] whitespace-normal break-words overflow-wrap ml-auto">
                 {truncateText(randomProducts[0].description, 50)}
@@ -58,6 +52,9 @@ const BannerProducts = ({ randomProducts, currency }) => {
               delay: 3000,
             }),
           ]}
+          opts={{
+            align: "start",
+          }}
           paginate={"false"}
           className="w-full h-full text-secondary"
         >
@@ -70,7 +67,9 @@ const BannerProducts = ({ randomProducts, currency }) => {
                   className="text-center text-black basis-full md:basis-[45%] min-h-[300px] border-2 py-3 rounded-xl mr-2"
                 >
                   <div className="h-full px-3 flex flex-col gap-y-1 rounded-md justify-between">
-                    <h1 className="textSmall3 font-bold">{item.name}</h1>
+                    <h1 className="textSmall3 font-bold">
+                      {truncateText(item.name, 30)}
+                    </h1>
                     <div className="relative bg-white rounded-md">
                       <CustomImage
                         src={item.image[0]}

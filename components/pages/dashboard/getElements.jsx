@@ -83,7 +83,12 @@ function Getelements({ param }) {
         <Admin />
       ) : (
         <div className="container mx-auto">
-          <DataTable columns={getColumn(param)} data={data} loading={loading} />
+          <DataTable
+            param={param}
+            columns={getColumn(param)}
+            data={data}
+            loading={loading}
+          />
         </div>
       )}
     </div>

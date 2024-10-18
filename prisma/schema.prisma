@@ -32,14 +32,15 @@ model TopCategory {
 }
 
 model Category {
-  id            Int          @id @default(autoincrement())
-  name          String
-  image         String
-  createdAt     DateTime     @default(now())
-  updateAt      DateTime     @updatedAt
-  topCategory   TopCategory? @relation(fields: [topCategoryId], references: [id], onDelete: Cascade)
-  topCategoryId Int?
-  products      Product[]
+  id                Int          @id @default(autoincrement())
+  name              String
+  image             String
+  createdAt         DateTime     @default(now())
+  updateAt          DateTime     @updatedAt
+  topCategory       TopCategory? @relation(fields: [topCategoryId], references: [id], onDelete: Cascade)
+  topCategoryId     Int?
+  products          Product[]
+  topCategorySortId Int?
 }
 
 model Product {
@@ -148,4 +149,25 @@ model Contacts {
   experience_info String
   createdAt       DateTime @default(now())
   updateAt        DateTime @updatedAt
+}
+
+model BannerSort {
+  id            Int      @id @default(autoincrement())
+  uniqueId      String
+  bannerId      Int?
+  image         String
+  topCategoryId Int?
+  categoryId    Int?
+  productId     Int?
+  createdAt     DateTime @default(now())
+  updateAt      DateTime @updatedAt
+}
+
+model TopCategorySort {
+  id            Int      @id @default(autoincrement())
+  name          String
+  topCategoryId Int?
+  uniqueId      Int?
+  createdAt     DateTime @default(now())
+  updateAt      DateTime @updatedAt
 }
