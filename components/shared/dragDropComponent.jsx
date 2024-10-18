@@ -102,11 +102,8 @@ export default function DragDropComponent({
         if (param == "changeTopCategory") {
           res = await axios.get("/api/topCategorySort");
         }
-        console.log(res, "This is res");
-
         if (res.length > 0) {
           setUsersList(res);
-          console.log(res);
         } else {
           setUsersList(data);
         }
@@ -115,7 +112,7 @@ export default function DragDropComponent({
       }
     };
     fetchData();
-  }, [data]);
+  }, [data,param]);
 
   console.log(usersList, "this is faucasdfas");
 

@@ -26,7 +26,6 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
       const matchingItems = topCategoriesSort.filter(
         (item) => +item.topCategoryId === +category.id
       );
-      console.log(matchingItems,"111");
       
       const uniqueIds = matchingItems.map((item) => item.uniqueId).filter(Boolean); // Faqat mavjud uniqueId'larni olish
 
@@ -34,8 +33,6 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
     })
     .filter(category => category.uniqueIds) // Faqat uniqueId mavjud bo'lganlarni qoldirish
     .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]); // uniqueId bo'yicha tartiblash
-
-  console.log(topCategoriesSort,topCategory);
 
   return (
     <DropdownMenu>
