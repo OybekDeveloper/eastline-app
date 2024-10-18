@@ -13,12 +13,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 
-export function HeaderDropdown({ topCategory }) {
+export function HeaderDropdown({ topCategory, topCategoriesSort }) {
   const [activeCategory, setActiveCategory] = useState(null);
 
   const handleSubcategoryToggle = (categoryId) => {
     setActiveCategory((prev) => (prev === categoryId ? null : categoryId));
   };
+
+  // topCategory ni uniqueId bo'yicha tartiblash
+  const topCategorySort = topCategory
+    .map((category) => {
+      const matchingItems = topCategoriesSort.filter(
+        (item) => +item.topCategoryId === +category.id
+      );
+      console.log(matchingItems,"111");
+      
+      const uniqueIds = matchingItems.map((item) => item.uniqueId).filter(Boolean); // Faqat mavjud uniqueId'larni olish
+
+      return { ...category, uniqueIds }; // uniqueIds massivini saqlash
+    })
+    .filter(category => category.uniqueIds) // Faqat uniqueId mavjud bo'lganlarni qoldirish
+    .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]); // uniqueId bo'yicha tartiblash
+
+  console.log(topCategoriesSort,topCategory);
 
   return (
     <DropdownMenu>
@@ -30,7 +47,7 @@ export function HeaderDropdown({ topCategory }) {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-xs">
-        {topCategory?.map((topCategory, idx) => {
+        {topCategorySort?.map((topCategory, idx) => {
           if (topCategory?.categories.length <= 0) {
             return null;
           }

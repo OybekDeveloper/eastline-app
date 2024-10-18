@@ -96,10 +96,10 @@ export function DataTable({ param, columns, data, loading }) {
   // Fetch data on component mount and whenever reflesh changes
   useEffect(() => {
     async function fetchData() {
-      const topCategory = await axios.get(`https://eastline-app.vercel.app/api/topCategory`);
-      const product = await axios.get(`https://eastline-app.vercel.app/api/product`);
-      const categories = await axios.get(`https://eastline-app.vercel.app/api/category`);
-      setCategories(categories);
+      const topCategory = await axios.get(`/api/topCategory`);
+      const product = await axios.get(`/api/product`);
+      const categories = await axios.get(`/api/category`);
+      setCategories(categories.data.data);
       setTopCategories(topCategory.data.data);
       setProducts(product.data.data);
     }
@@ -178,9 +178,24 @@ export function DataTable({ param, columns, data, loading }) {
                           topCategories.find(
                             (item) => item.id == cell.getValue()
                           );
-                        const findTopProductName =
+                        let findTopProductName =
                           cell.column.columnDef.accessorKey == "productId" &&
                           products.find((item) => item.id == cell.getValue());
+                        if (
+                          !findTopProductName &&
+                          cell.column.columnDef.accessorKey == "categoryId"
+                        ) {
+                          findTopProductName =
+                            cell.column.columnDef.accessorKey == "categoryId" &&
+                            categories?.find(
+                              (item) => item.id == cell.getValue()
+                            );
+                        }
+
+                        console.log(
+                          categories?.find((c) => c.id == cell.getValue())
+                        );
+
                         return (
                           <TableCell key={cell.id}>
                             {cell.column.columnDef.accessorKey ==
@@ -191,6 +206,9 @@ export function DataTable({ param, columns, data, loading }) {
                               findTopCategoryName?.name
                             ) : cell.column.columnDef.accessorKey ==
                               "productId" ? (
+                              findTopProductName?.name
+                            ) : cell.column.columnDef.accessorKey ==
+                              "categoryId" ? (
                               findTopProductName?.name
                             ) : cell.column.columnDef.accessorKey ==
                               "feature" ? (

@@ -16,6 +16,7 @@ export default function Home({
   topCategories,
   productsData,
   contactData,
+  topCategoriesSort,
 }) {
   const { experience_info, work_hours, email, phone1, phone2 } = contactData;
   const pathname = usePathname();
@@ -76,7 +77,10 @@ export default function Home({
                 >
                   {item.id === 2 ? (
                     <div className="cursor-pointer">
-                      <HeaderDropdown topCategory={topCategories || []} />
+                      <HeaderDropdown
+                        topCategoriesSort={topCategoriesSort || []}
+                        topCategory={topCategories || []}
+                      />
                     </div>
                   ) : (
                     <Link href={`${item.path}`} className="py-2 px-3">

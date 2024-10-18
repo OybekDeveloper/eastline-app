@@ -21,6 +21,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import axios from "axios";
 import { ApiService } from "@/lib/api.services";
+import Loader from "./loader";
 
 export default function DragDropComponent({
   data,
@@ -29,7 +30,7 @@ export default function DragDropComponent({
   param,
 }) {
   const [usersList, setUsersList] = useState(data);
-
+  const [loading, setLoading] = useState(false);
   function onDragEnd(event) {
     const { active, over } = event;
     if (active.id === over?.id) {
@@ -55,29 +56,39 @@ export default function DragDropComponent({
       ...item,
       uniqueId: idx + 1,
     }));
-    console.log(updatedUsersList, "11111111111111");
 
-    if (param == "changeBanner") {
-      // change banner code
-      const filterData = updatedUsersList.map((item) => ({
-        uniqueId: item.uniqueId,
-        bannerId: item.id,
-        image: item.image,
-        topCategoryId: item.topCategoryId,
-        categoryId: item.categoryId,
-        productId: item.productId,
-      }));
-      await axios.post("/api/bannerSort", filterData);
-    } else if (param == "changeTopCategory") {
-      // change top category code
-      const filterData = updatedUsersList.map((item) => ({
-        uniqueId: Number(item.uniqueId),
-        name: item.name,
-        topCategoryId: Number(item.id),
-      }));
-      console.log(filterData);
+    try {
+      setLoading(true);
+      if (param == "changeBanner") {
+        // change banner code
+        const filterData = updatedUsersList.map((item) => ({
+          uniqueId: item.uniqueId,
+          bannerId: item.bannerId ? item.bannerId : item.id,
+          image: item.image,
+          topCategoryId: item.topCategoryId,
+          categoryId: item.categoryId,
+          productId: item.productId,
+        }));
+        await axios.post("/api/bannerSort", filterData);
+      } else if (param == "changeTopCategory") {
+        // change top category code
+        const filterData = updatedUsersList.map((item) => ({
+          uniqueId: Number(item.uniqueId),
+          name: item.name,
+          topCategoryId: Number(
+            item.topCategoryId ? item.topCategoryId : item.id
+          ),
+        }));
+        console.log(filterData);
 
-      await axios.post("/api/topCategorySort", filterData);
+        await axios.post("/api/topCategorySort", filterData);
+      }
+      toast.success("Изменено успешно!");
+    } catch (error) {
+      toast.success("Что-то пошло не так, пожалуйста, обновите сайт!");
+
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,9 +102,9 @@ export default function DragDropComponent({
         if (param == "changeTopCategory") {
           res = await ApiService.getData("/api/topCategorySort");
         }
-        console.log(res,"This is res");
+        console.log(res, "This is res");
 
-        if (res) {
+        if (res.length > 0) {
           setUsersList(res);
           console.log(res);
         } else {
@@ -128,13 +139,23 @@ export default function DragDropComponent({
                 products={products}
                 categories={categories}
                 index={idx}
+                param={param}
               />
             ))}
           </SortableContext>
         </DndContext>
       </ul>
       <div className="w-full flex justify-end items-center">
-        <Button onClick={handleSave}>Сохранять</Button>
+        <Button onClick={handleSave}>
+          {loading ? (
+            <div className="flex items-center gap-4">
+              <Loader />
+              Загрузка...
+            </div>
+          ) : (
+            "Сохранять"
+          )}
+        </Button>
       </div>
     </div>
   );
@@ -142,7 +163,7 @@ export default function DragDropComponent({
 
 // components/SortableUser.tsx
 
-export function SortableUser({ user, categories, products, index }) {
+export function SortableUser({ param, user, categories, products, index }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: user.id });
 
@@ -150,24 +171,29 @@ export function SortableUser({ user, categories, products, index }) {
     transition,
     transform: CSS.Transform.toString(transform),
   };
-  const product = products.find((c) => c.id == user.productId);
-  const category = products.find((c) => c.categoryId == user.categoryId);
+  let name = "";
+  if (param == "changeBanner") {
+    if (user.productId) {
+      const productFind = products.find((c) => c.id == user.productId);
+      name = productFind?.name;
+    } else {
+      const categoryFind = categories.find((c) => c.id == user.categoryId);
+      name = categoryFind?.name;
+    }
+  } else {
+    name = user.name;
+  }
+
   return (
     <li
       ref={setNodeRef}
       {...attributes}
       {...listeners}
       style={style}
-      className="gap-4 textSmall3 flex items-center border-b border-gray-200 py-2 px-4 touch-action-none"
+      className="gap-4 textSmall2 flex items-center border-b border-gray-200 py-2 px-4 touch-action-none"
     >
       <h1>{index + 1}</h1>
-      {product ? (
-        <div className="ml-4 text-gray-700">{product?.name}</div>
-      ) : category ? (
-        <div className="ml-4 text-gray-700">{category?.name}</div>
-      ) : (
-        <h1>{user.name}</h1>
-      )}
+      <div className="ml-4 text-gray-700">{name}</div>
     </li>
   );
 }

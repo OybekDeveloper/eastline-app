@@ -49,7 +49,7 @@ const TopCategoryForm = () => {
             values
           );
         }
-        // router.back();
+        router.back();
       } else {
         const res = await axios.post("/api/topCategory", values);
         if (res.data.data) {
@@ -65,7 +65,6 @@ const TopCategoryForm = () => {
 
         toast.success("Верхняя категория создана успешно!");
       }
-      router.back();
       revalidatePath("changeTopCategory");
       revalidatePath("topCategory");
       form.reset();

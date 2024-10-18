@@ -12,6 +12,12 @@ export const banner = [
     ),
   },
   {
+    accessorKey: "categoryId",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Название категория" />
+    ),
+  },
+  {
     accessorKey: "image",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Изображение" />

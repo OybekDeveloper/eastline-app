@@ -107,6 +107,8 @@ const BannerForm = ({ products, categories }) => {
     try {
       if (categoryData) {
         const { topCategoryId } = categoryData;
+        const bannerD = await axios.get("/api/bannerSort");
+        const bannerSortData = bannerD.data.data;
         if (id) {
           await axios.patch(`/api/banner?id=${id}`, {
             productId: Number(values.productId),
@@ -114,15 +116,35 @@ const BannerForm = ({ products, categories }) => {
             categoryId: Number(categoryData?.id),
             image: uploadedUrl ? uploadedUrl : image[0].url,
           });
+          const findBanner = bannerSortData.find((c) => +c.bannerId === +id);
+          if (findBanner) {
+            await axios.patch(`/api/bannerSort?id=${findBanner.id}`, {
+              productId: Number(values.productId),
+              topCategoryId: Number(topCategoryId),
+              categoryId: Number(categoryData?.id),
+              image: uploadedUrl ? uploadedUrl : image[0].url,
+            });
+          }
           toast.success("Партнер изменена успешно!");
           router.back();
         } else {
-          await axios.post("/api/banner", {
+          const res = await axios.post("/api/banner", {
             productId: Number(values.productId),
             image: uploadedUrl,
             topCategoryId: Number(topCategoryId),
             categoryId: Number(categoryData?.id),
           });
+          if (res) {
+            const unqId = bannerSortData.length + 1;
+            axios.post("/api/bannerSort?one=one", {
+              productId: Number(values.productId),
+              image: uploadedUrl,
+              topCategoryId: Number(topCategoryId),
+              categoryId: Number(categoryData?.id),
+              bannerId: res.data.data.id,
+              uniqueId: unqId,
+            });
+          }
           toast.success("Партнер создана успешно!");
         }
         form.reset();
@@ -174,7 +196,9 @@ const BannerForm = ({ products, categories }) => {
           />
           <p>{id ? "Обновить баннер" : "Создать баннер"}</p>
         </div>
-        <h1 className="text-yellow-500">Выберите только один продукт или категорию</h1>
+        <h1 className="text-yellow-500">
+          Выберите только один продукт или категорию
+        </h1>
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}

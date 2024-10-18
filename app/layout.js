@@ -38,6 +38,10 @@ export default async function RootLayout({ children }) {
     "/api/topCategory",
     "topCategory"
   );
+  const topCategoriesSort = await ApiService.getData(
+    "/api/topCategorySort",
+    "topCategory"
+  );
   const productsData = await ApiService.getData("/api/product", "product");
   const background = await ApiService.getData("/api/background", "background");
   const contactData = await ApiService.getData("/api/contact", "contact");
@@ -88,6 +92,7 @@ export default async function RootLayout({ children }) {
           showAtBottom={false}
         />
         <Header
+          topCategoriesSort={topCategoriesSort}
           contactData={contactData[0]}
           background={background}
           topCategories={topCategories}

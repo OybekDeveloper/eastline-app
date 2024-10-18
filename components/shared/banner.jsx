@@ -13,7 +13,12 @@ import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import CustomImage from "./customImage";
 
-const Banner = ({ banner }) => {
+const Banner = ({ banner, bannerSort }) => {
+  const filterBanner = bannerSort
+    .filter((category) => category.uniqueId) // Faqat uniqueId mavjud bo'lganlarni qoldirish
+    .sort((a, b) => a.uniqueId - b.uniqueId);
+  console.log(filterBanner,"dadsfas");
+
   return (
     <Container
       className={
@@ -33,7 +38,7 @@ const Banner = ({ banner }) => {
             className="w-full text-secondary "
           >
             <CarouselContent className="my-0 py-0">
-              {banner.map((item, i) => {
+              {filterBanner.map((item, i) => {
                 return (
                   <CarouselItem key={i} className="md:basis-1/2">
                     <Link
@@ -71,7 +76,7 @@ const Banner = ({ banner }) => {
             className="w-full h-full text-secondary"
           >
             <CarouselContent className="mb-4 space-x-4">
-              {banner.map((item, i) => {
+              {filterBanner.map((item, i) => {
                 return (
                   <CarouselItem
                     key={i}
