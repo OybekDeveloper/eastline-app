@@ -20,8 +20,8 @@ import { CSS } from "@dnd-kit/utilities";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import axios from "axios";
-import { ApiService } from "@/lib/api.services";
 import Loader from "./loader";
+import toast from "react-hot-toast";
 
 export default function DragDropComponent({
   data,
