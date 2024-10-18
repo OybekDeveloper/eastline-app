@@ -20,6 +20,7 @@ import { CSS } from "@dnd-kit/utilities";
 import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import axios from "axios";
+import { ApiService } from "@/lib/api.services";
 
 export default function DragDropComponent({
   data,
@@ -81,7 +82,28 @@ export default function DragDropComponent({
   };
 
   useEffect(() => {
-    setUsersList(data);
+    const fetchData = async () => {
+      let res = null;
+      try {
+        if (param == "changeBanner") {
+          res = await ApiService.getData("/api/bannerSort");
+        }
+        if (param == "changeTopCategory") {
+          res = await ApiService.getData("/api/topCategorySort");
+        }
+        console.log(res,"This is res");
+
+        if (res) {
+          setUsersList(res);
+          console.log(res);
+        } else {
+          setUsersList(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
   }, [data]);
 
   console.log(usersList, "this is faucasdfas");

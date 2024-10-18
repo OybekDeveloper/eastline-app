@@ -153,7 +153,7 @@ model Contacts {
 
 model BannerSort {
   id            Int      @id @default(autoincrement())
-  uniqueId      String
+  uniqueId      Int?
   bannerId      Int?
   image         String
   topCategoryId Int?

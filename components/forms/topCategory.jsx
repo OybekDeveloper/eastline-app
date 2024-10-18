@@ -33,16 +33,40 @@ const TopCategoryForm = () => {
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
+      const topCategories = await axios.get("/api/topCategorySort");
+      const topCategorySortData = topCategories.data.data;
       if (id) {
         await axios.patch(`/api/topCategory?id=${id}`, values);
         toast.success("Если нужно что-то изменить или уточнить, дайте знать!");
-        router.back();
+        const findCategory = topCategorySortData.find(
+          (c) => +c.topCategoryId === +id
+        );
+        if (findCategory) {
+          console.log(findCategory);
+
+          await axios.patch(
+            `/api/topCategorySort?id=${findCategory.id}`,
+            values
+          );
+        }
+        // router.back();
       } else {
-        await axios.post("/api/topCategory", values);
+        const res = await axios.post("/api/topCategory", values);
+        if (res.data.data) {
+          const { name, id } = res.data.data;
+          console.log(res);
+          const unqId = topCategorySortData.length + 1;
+          await axios.post("/api/topCategorySort?one=one", {
+            name: name,
+            topCategoryId: id,
+            uniqueId: unqId,
+          });
+        }
+
         toast.success("Верхняя категория создана успешно!");
       }
-
-      revalidatePath("changeTopCategory")
+      router.back();
+      revalidatePath("changeTopCategory");
       revalidatePath("topCategory");
       form.reset();
       setIsLoading(false);

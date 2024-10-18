@@ -96,9 +96,9 @@ export function DataTable({ param, columns, data, loading }) {
   // Fetch data on component mount and whenever reflesh changes
   useEffect(() => {
     async function fetchData() {
-      const topCategory = await axios.get(`/api/topCategory`);
-      const product = await axios.get(`/api/product`);
-      const categories = await axios.get(`/api/category`);
+      const topCategory = await axios.get(`https://eastline-app.vercel.app/api/topCategory`);
+      const product = await axios.get(`https://eastline-app.vercel.app/api/product`);
+      const categories = await axios.get(`https://eastline-app.vercel.app/api/category`);
       setCategories(categories);
       setTopCategories(topCategory.data.data);
       setProducts(product.data.data);
@@ -234,7 +234,7 @@ export function DataTable({ param, columns, data, loading }) {
           </div>
         )}
       </>
-      {/* <div className="p-4 rounded-md border mt-2">
+      <div className="p-4 rounded-md border mt-2">
         {(param === "changeTopCategory" || param === "changeBanner") && (
           <DragDropComponent
             param={param}
@@ -243,7 +243,7 @@ export function DataTable({ param, columns, data, loading }) {
             categories={categories}
           />
         )}
-      </div> */}
+      </div>
     </>
   );
 }

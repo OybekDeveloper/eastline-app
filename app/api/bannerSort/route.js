@@ -37,11 +37,29 @@ export async function DELETE(req) {
 
 export async function POST(req) {
   const data = await req.json();
-  const createBannerSort = await db.bannerSort.createMany({
-    data,
-    skipDuplicates: true,
-  });
-  return Response.json({ data: createBannerSort });
+  const one = await req.nextUrl.searchParams.get("one");
+
+  try {
+    if (one) {
+      const createBannerSort = await db.bannerSort.create({
+        data,
+      });
+      return Response.json({ data: createBannerSort });
+    } else {
+      await db.bannerSort.deleteMany();
+      const createBannerSort = await db.bannerSort.createMany({
+        data,
+        skipDuplicates: true,
+      });
+      return Response.json({ data: createBannerSort });
+    }
+  } catch (error) {
+    // Handle any potential errors during the process
+    return Response.json(
+      { error: "Failed to process the request" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function PATCH(req) {

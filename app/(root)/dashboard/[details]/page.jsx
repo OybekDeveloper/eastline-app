@@ -12,22 +12,17 @@ import SertificateForm from "@/components/forms/sertificate";
 import TopCategoryForm from "@/components/forms/topCategory";
 import Getelements from "@/components/pages/dashboard/getElements";
 import db from "@/db/db";
+import { ApiService } from "@/lib/api.services";
 import React from "react";
 
 // If you're using Next.js app directory, use this function to handle server-side data fetching
 const Create = async ({ params }) => {
   // Fetch data here for pre-rendering
-  const topCategories = await db.topCategory.findMany({
-    include: {
-      categories: true,
-    },
-  });
-  const categories = await db.category.findMany({
-    include: {
-      products: true,
-    },
-  });
-  const products = await db.product.findMany();
+  const [topCategories, categories, products] = await Promise.all([
+    ApiService.getData("/api/topCategory", "topCategory"),
+    ApiService.getData("/api/category", "category"),
+    ApiService.getData("/api/product", "product"),
+  ]);
 
   // Handle the page rendering based on params.details
   const renderPage = () => {

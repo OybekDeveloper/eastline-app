@@ -25,6 +25,7 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 import { useEvent } from "@/store/event";
 import { revalidatePath } from "@/lib/revalidate";
+import { ApiService } from "@/lib/api.services";
 
 const DeleteItem = ({ payment, only }) => {
   const { setReflesh } = useEvent();
@@ -35,18 +36,42 @@ const DeleteItem = ({ payment, only }) => {
   const [open, setOpen] = useState(false);
 
   const deleteItem = async (payment) => {
+    const pathName =
+      pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
+      pathname.split("/")[2].slice(6).slice(1);
     try {
-      const response = await axios.delete(
-        `/api/${
-          pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
-          pathname.split("/")[2].slice(6).slice(1)
-        }`,
-        {
-          params: {
-            id: payment.id,
-          },
+      const response = await axios.delete(`/api/${pathName}`, {
+        params: {
+          id: payment.id,
+        },
+      });
+
+      if (pathName == "topCategory") {
+        const topCategorySortData = await ApiService.getData(
+          `/api/topCategorySort`
+        );
+        const delId = topCategorySortData.find(
+          (c) => +c.topCategoryId === payment.id
+        ).id;
+        if (delId) {
+          await axios.delete(`/api/topCategorySort`, {
+            params: {
+              id: delId,
+            },
+          });
         }
-      );
+      }
+      if (pathName == "banner") {
+        const bannerSortData = await ApiService.getData(`/api/bannerSort`);
+        const delId = bannerSortData.find((c) => +c.bannerId === payment.id).id;
+        if (delId) {
+          await axios.delete(`/api/bannerSort`, {
+            params: {
+              id: delId,
+            },
+          });
+        }
+      }
       if (response) {
         // Force refresh by navigating to the same page
         router.push(pathname);
