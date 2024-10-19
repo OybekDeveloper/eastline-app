@@ -62,14 +62,12 @@ const DeleteItem = ({ payment, only }) => {
       if (pathName == "banner") {
         const bannerSortData = await axios.get(`/api/bannerSort`);
         const delId = bannerSortData.data.data.find((c) => +c.bannerId === payment.id).id;
-        console.log(bannerSortData,"banner sort");
-        
         if (delId) {
-          // await axios.delete(`/api/bannerSort`, {
-          //   params: {
-          //     id: delId,
-          //   },
-          // });
+          await axios.delete(`/api/bannerSort`, {
+            params: {
+              id: delId,
+            },
+          });
         }
       }
       if (response) {
