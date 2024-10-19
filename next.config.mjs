@@ -29,7 +29,7 @@ const nextConfig = {
         source: "/api/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: "*" },
+          { key: "Access-Control-Allow-Origin", value: "https://elt.uz" }, // Restrict to your domain
           {
             key: "Access-Control-Allow-Methods",
             value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",
@@ -41,8 +41,7 @@ const nextConfig = {
           },
           {
             key: "Cache-Control",
-            // value: "public, max-age=3600, must-revalidate", // Example for caching
-            value: "no-store",
+            value: "no-store", // Adjust caching if needed
           },
         ],
       },
