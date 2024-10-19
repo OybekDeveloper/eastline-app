@@ -17,7 +17,6 @@ const Banner = ({ banner, bannerSort }) => {
   const filterBanner = bannerSort
     .filter((category) => category.uniqueId) // Faqat uniqueId mavjud bo'lganlarni qoldirish
     .sort((a, b) => a.uniqueId - b.uniqueId);
-  console.log(filterBanner,"dadsfas");
 
   return (
     <Container
@@ -35,6 +34,10 @@ const Banner = ({ banner, bannerSort }) => {
                 delay: 3000,
               }),
             ]}
+            opts={{
+              loop: true, // Loopni qo'shish
+              align: "start",
+            }}
             className="w-full text-secondary "
           >
             <CarouselContent className="my-0 py-0">
@@ -71,6 +74,7 @@ const Banner = ({ banner, bannerSort }) => {
               }),
             ]}
             opts={{
+              loop: true, // Loopni qo'shish
               align: "start",
             }}
             className="w-full h-full text-secondary"

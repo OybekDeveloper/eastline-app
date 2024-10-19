@@ -27,6 +27,10 @@ const Category = async ({ params }) => {
     });
     return res;
   }
+  async function getTopCategoriesSort() {
+    const res = await db.topCategorySort.findMany();
+    return res;
+  }
 
   async function getCategory() {
     const categoryData = await db.category.findMany({
@@ -56,6 +60,7 @@ const Category = async ({ params }) => {
 
   const topProductsData = await getTopProducts();
   const topCategoryData = await getTopCategories();
+  const topCategoriesSort = await getTopCategoriesSort();
   const productsData = await getProducts();
   const categoryData = await getCategory();
   const currency = await db.currency.findMany();
@@ -71,6 +76,7 @@ const Category = async ({ params }) => {
           topCategoryId={topCategory}
           categoryId={category}
           topCategoryData={topCategoryData}
+          topCategoriesSort={topCategoriesSort}
         />
         <Products
           topProductsData={topProductsData}

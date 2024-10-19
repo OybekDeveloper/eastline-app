@@ -47,7 +47,6 @@ const BannerForm = ({ products, categories }) => {
   }
 
   const onSubmit = async (values) => {
-    console.log(values);
     let categoryData;
     if (values.productId) {
       categoryData = categories.find((c) =>
@@ -102,7 +101,6 @@ const BannerForm = ({ products, categories }) => {
         return;
       }
     }
-    console.log(categoryData);
 
     try {
       if (categoryData) {

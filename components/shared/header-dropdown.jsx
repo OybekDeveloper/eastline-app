@@ -26,13 +26,15 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
       const matchingItems = topCategoriesSort.filter(
         (item) => +item.topCategoryId === +category.id
       );
-      
-      const uniqueIds = matchingItems.map((item) => item.uniqueId).filter(Boolean); // Faqat mavjud uniqueId'larni olish
 
-      return { ...category, uniqueIds }; // uniqueIds massivini saqlash
+      const uniqueIds = matchingItems
+        .map((item) => item.uniqueId)
+        .filter(Boolean);
+
+      return { ...category, uniqueIds };
     })
-    .filter(category => category.uniqueIds) // Faqat uniqueId mavjud bo'lganlarni qoldirish
-    .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]); // uniqueId bo'yicha tartiblash
+    .filter((category) => category.uniqueIds)
+    .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
 
   return (
     <DropdownMenu>

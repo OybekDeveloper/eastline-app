@@ -52,7 +52,14 @@ const Create = async ({ params }) => {
       case "selectReview":
         return <SelectReview products={products} categories={categories} />;
       default:
-        return <Getelements param={params.details} />;
+        return (
+          <Getelements
+            param={params.details}
+            topCategories={topCategories}
+            products={products}
+            categories={categories}
+          />
+        );
     }
   };
 

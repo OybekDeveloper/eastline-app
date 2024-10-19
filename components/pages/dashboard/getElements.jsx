@@ -18,7 +18,7 @@ import axios from "axios";
 import { background } from "@/components/tableColumns/background";
 import { contacts } from "@/components/tableColumns/contacts";
 
-function Getelements({ param }) {
+function Getelements({ param, topCategories, products, categories }) {
   const { reflesh, setTableData } = useEvent();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -88,6 +88,9 @@ function Getelements({ param }) {
             columns={getColumn(param)}
             data={data}
             loading={loading}
+            topCategories={topCategories}
+            products={products}
+            categories={categories}
           />
         </div>
       )}

@@ -31,6 +31,7 @@ export default function DragDropComponent({
 }) {
   const [usersList, setUsersList] = useState(data);
   const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   function onDragEnd(event) {
     const { active, over } = event;
     if (active.id === over?.id) {
@@ -79,14 +80,11 @@ export default function DragDropComponent({
             item.topCategoryId ? item.topCategoryId : item.id
           ),
         }));
-        console.log(filterData);
-
         await axios.post("/api/topCategorySort", filterData);
       }
       toast.success("Изменено успешно!");
     } catch (error) {
       toast.success("Что-то пошло не так, пожалуйста, обновите сайт!");
-
     } finally {
       setLoading(false);
     }
@@ -102,20 +100,22 @@ export default function DragDropComponent({
         if (param == "changeTopCategory") {
           res = await axios.get("/api/topCategorySort");
         }
-        if (res.length > 0) {
-          setUsersList(res);
+        if (res.data.data.length > 0) {
+          setUsersList(res.data.data);
         } else {
           setUsersList(data);
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
-  }, [data,param]);
-
-  console.log(usersList, "this is faucasdfas");
-
+  }, [data, param]);
+  if (isLoading) {
+    return null;
+  }
   return (
     <div className="space-y-2">
       <h2 className="font-bold mb-4 textNormal3">Регулирование</h2>

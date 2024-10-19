@@ -23,6 +23,9 @@ const Partners = ({ partner }) => {
       <Carousel
         className="w-full h-full text-foreground relative"
         paginate={"false"}
+        opts={{
+          loop: true, // Loopni qo'shish
+        }}
       >
         <CarouselPrevious className="hidden md:flex absolute top-1/2 -left-0 rounded-md z-30 shadow-md" />
         <CarouselContent className="md:h-full px-6 py-2 max-md:pb-6">

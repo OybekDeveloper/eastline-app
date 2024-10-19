@@ -42,7 +42,6 @@ const TopCategoryForm = () => {
           (c) => +c.topCategoryId === +id
         );
         if (findCategory) {
-          console.log(findCategory);
 
           await axios.patch(
             `/api/topCategorySort?id=${findCategory.id}`,
@@ -54,7 +53,6 @@ const TopCategoryForm = () => {
         const res = await axios.post("/api/topCategory", values);
         if (res.data.data) {
           const { name, id } = res.data.data;
-          console.log(res);
           const unqId = topCategorySortData.length + 1;
           await axios.post("/api/topCategorySort?one=one", {
             name: name,

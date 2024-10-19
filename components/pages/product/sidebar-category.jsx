@@ -3,9 +3,28 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
-const SideBarCategory = ({ topCategoryData, categoryId, topCategoryId }) => {
+const SideBarCategory = ({
+  topCategoryData,
+  topCategoriesSort,
+  categoryId,
+  topCategoryId,
+}) => {
   const [activeCategory, setActiveCategory] = useState(null);
+  const topCategorySort = topCategoryData
+    .map((category) => {
+      const matchingItems = topCategoriesSort.filter(
+        (item) => +item.topCategoryId === +category.id
+      );
 
+      const uniqueIds = matchingItems
+        .map((item) => item.uniqueId)
+        .filter(Boolean);
+
+      return { ...category, uniqueIds };
+    })
+    .filter((category) => category.uniqueIds)
+    .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
+    
   useEffect(() => {
     setActiveCategory(topCategoryId);
   }, [topCategoryId]);
@@ -19,7 +38,7 @@ const SideBarCategory = ({ topCategoryData, categoryId, topCategoryId }) => {
       <div className="bg-secondary mx-auto h-auto p-4 rounded-md space-y-3">
         <h1 className="textNormal4 font-bold">Категории</h1>
         <div className="w-full space-y-2">
-          {topCategoryData.map((topCategory, idx) => {
+          {topCategorySort.map((topCategory, idx) => {
             if (topCategory?.categories.length <= 0) {
               return null;
             }

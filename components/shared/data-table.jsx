@@ -38,7 +38,15 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 import { useEvent } from "@/store/event";
 import DragDropComponent from "./dragDropComponent";
 
-export function DataTable({ param, columns, data, loading }) {
+export function DataTable({
+  topCategories,
+  products,
+  categories,
+  param,
+  columns,
+  data,
+  loading,
+}) {
   const router = useRouter();
   const reflesh = useEvent((state) => state.reflesh); // Listen to the reflesh state
   const changeTableData = useEvent((state) => state.changeTableData); // Listen to the reflesh state
@@ -48,11 +56,7 @@ export function DataTable({ param, columns, data, loading }) {
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
-  const [topCategories, setTopCategories] = useState([]);
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]); // Store selected categories/banners with order
-  const [uniqueId, setUniqueId] = useState(1);
+
   const table = useReactTable({
     data: changeTableData,
     columns,
@@ -78,36 +82,6 @@ export function DataTable({ param, columns, data, loading }) {
     onRowSelectionChange: setRowSelection,
   });
 
-  const handleSelectItem = (item) => {
-    const exists = selectedItems.find((selected) => selected.id === item.id);
-
-    if (exists) {
-      // Remove if already selected
-      setSelectedItems((prev) =>
-        prev.filter((selected) => selected.id !== item.id)
-      );
-    } else {
-      // Add new selected item with unique ID
-      setSelectedItems((prev) => [...prev, { ...item, unique_id: uniqueId }]);
-      setUniqueId((prev) => prev + 1); // Increment unique ID
-    }
-  };
-
-  // Fetch data on component mount and whenever reflesh changes
-  useEffect(() => {
-    async function fetchData() {
-      const topCategory = await axios.get(`/api/topCategory`);
-      const product = await axios.get(`/api/product`);
-      const categories = await axios.get(`/api/category`);
-      setCategories(categories.data.data);
-      setTopCategories(topCategory.data.data);
-      setProducts(product.data.data);
-    }
-
-    fetchData();
-  }, [reflesh]); // reflesh added as a dependency
-
-  // Ensure sorting when fuzzy filtering by fullName
   useEffect(() => {
     if (table?.getState().columnFilters[0]?.id === "fullName") {
       if (table.getState().sorting[0]?.id !== "fullName") {
@@ -115,8 +89,6 @@ export function DataTable({ param, columns, data, loading }) {
       }
     }
   }, [table]);
-
-  console.log(selectedItems, "this is selected");
 
   return (
     <>
@@ -192,10 +164,6 @@ export function DataTable({ param, columns, data, loading }) {
                             );
                         }
 
-                        console.log(
-                          categories?.find((c) => c.id == cell.getValue())
-                        );
-
                         return (
                           <TableCell key={cell.id}>
                             {cell.column.columnDef.accessorKey ==
@@ -252,16 +220,18 @@ export function DataTable({ param, columns, data, loading }) {
           </div>
         )}
       </>
-      <div className="p-4 rounded-md border mt-2">
-        {(param === "changeTopCategory" || param === "changeBanner") && (
-          <DragDropComponent
-            param={param}
-            data={data}
-            products={products}
-            categories={categories}
-          />
-        )}
-      </div>
+      {data.length > 0 && (
+        <div className="p-4 rounded-md border mt-2">
+          {(param === "changeTopCategory" || param === "changeBanner") && (
+            <DragDropComponent
+              param={param}
+              data={data}
+              products={products}
+              categories={categories}
+            />
+          )}
+        </div>
+      )}
     </>
   );
 }
