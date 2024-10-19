@@ -47,9 +47,7 @@ const DeleteItem = ({ payment, only }) => {
       });
 
       if (pathName == "topCategory") {
-        const topCategorySortData = await ApiService.getData(
-          `/api/topCategorySort`
-        );
+        const topCategorySortData = await axios.get(`/api/topCategorySort`);
         const delId = topCategorySortData.find(
           (c) => +c.topCategoryId === payment.id
         ).id;
@@ -62,7 +60,7 @@ const DeleteItem = ({ payment, only }) => {
         }
       }
       if (pathName == "banner") {
-        const bannerSortData = await ApiService.getData(`/api/bannerSort`);
+        const bannerSortData = await axios.get(`/api/bannerSort`);
         const delId = bannerSortData.find((c) => +c.bannerId === payment.id).id;
         if (delId) {
           await axios.delete(`/api/bannerSort`, {
