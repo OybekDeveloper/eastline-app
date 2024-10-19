@@ -46,7 +46,9 @@ const Banner = ({ banner, bannerSort }) => {
                   <CarouselItem key={i} className="md:basis-1/2">
                     <Link
                       className="mt-1"
-                      href={`/${item.topCategoryId}/${item.categoryId}/${item.productId}`}
+                      href={`/${item.topCategoryId}/${item.categoryId}/${
+                        item.productId > 0 ? item.productId : ""
+                      }`}
                     >
                       <div className="relative max-sm:h-[250px] overflow-hidden">
                         <CustomImage
@@ -89,7 +91,7 @@ const Banner = ({ banner, bannerSort }) => {
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
                       href={`/${item.topCategoryId}/${item.categoryId}/${
-                        item.productId ? item.productId : ""
+                        item.productId >0 ? item.productId : ""
                       }`}
                     >
                       <div className="relative">
