@@ -32,6 +32,7 @@ export default function DragDropComponent({
   const [usersList, setUsersList] = useState(data);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
   function onDragEnd(event) {
     const { active, over } = event;
     if (active.id === over?.id) {
@@ -58,6 +59,7 @@ export default function DragDropComponent({
       uniqueId: idx + 1,
     }));
 
+
     try {
       setLoading(true);
       if (param == "changeBanner") {
@@ -81,6 +83,13 @@ export default function DragDropComponent({
           ),
         }));
         await axios.post("/api/topCategorySort", filterData);
+      } else if (param === "categorySort") {
+        const filterData = updatedUsersList.map((item) => ({
+          uniqueId: item.uniqueId,
+          id: item.id,
+        }));
+        
+        await axios.patch("/api/categorySort?all=true", filterData);
       }
       toast.success("Изменено успешно!");
     } catch (error) {
@@ -99,6 +108,7 @@ export default function DragDropComponent({
         }
         if (param == "changeTopCategory") {
           res = await axios.get("/api/topCategorySort");
+          console.log(res);
         }
         if (res.data.data.length > 0) {
           setUsersList(res.data.data);
@@ -118,7 +128,6 @@ export default function DragDropComponent({
   }
   return (
     <div className="space-y-2">
-      <h2 className="font-bold mb-4 textNormal3">Регулирование</h2>
       <ul className="bg-white shadow-md rounded-lg">
         <DndContext
           sensors={sensors}

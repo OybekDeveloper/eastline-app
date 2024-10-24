@@ -101,24 +101,54 @@ const CategoryForm = () => {
 
     try {
       if (id) {
+        const categorySort = await axios.get(
+          `/api/categorySort?categoryId=${id}`
+        );
+        console.log(categorySort);
+        console.log(values);
+
         await axios.patch(`/api/category?id=${id}`, {
           ...values,
           image: uploadedUrl ? uploadedUrl : image[0].url,
         });
-        toast.success("Категория изменена успешно!");
-        router.back();
+        if (categorySort.data.data[0]) {
+          const {
+            categoryId,
+            id: sort_id,
+            uniqueId,
+          } = categorySort.data.data[0];
+          await axios.patch(`/api/categorySort?id=${sort_id}`, {
+            categoryId: categoryId,
+            topCategorySortId: values.topCategoryId,
+            name: values.name,
+            uniqueId: uniqueId,
+          });
+          toast.success("Категория изменена успешно!");
+          router.back();
+        }
       } else {
-        await axios.post("/api/category", {
+        const res = await axios.post("/api/category", {
           ...values,
           image: uploadedUrl,
         });
-        toast.success("Категория создана успешно!");
+        console.log(res.data.data);
+        if (res.data.data) {
+          const { name, id, topCategoryId } = res.data.data;
+          const ress = await axios.post(`/api/categorySort`, {
+            name: name,
+            topCategorySortId: topCategoryId,
+            categoryId: id,
+            uniqueId: 9999,
+          });
+          if (ress) {
+            toast.success("Категория создана успешно!");
+            form.reset();
+            setImage([]);
+            revalidatePath("changeCategory");
+            revalidatePath("category");
+          }
+        }
       }
-
-      form.reset();
-      setImage([]);
-      revalidatePath("changeCategory");
-      revalidatePath("category");
     } catch (error) {
       console.error("Error creating category:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");

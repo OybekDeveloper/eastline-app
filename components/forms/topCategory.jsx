@@ -15,12 +15,13 @@ import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
 import { revalidatePath } from "@/lib/revalidate";
+import DragDropComponent from "../shared/dragDropComponent";
 
 const TopCategoryForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
-
+  const [categorySort, setCategorySort] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
@@ -29,6 +30,8 @@ const TopCategoryForm = () => {
       name: "",
     },
   });
+
+  console.log(categorySort);
 
   const onSubmit = async (values) => {
     setIsLoading(true);
@@ -42,7 +45,6 @@ const TopCategoryForm = () => {
           (c) => +c.topCategoryId === +id
         );
         if (findCategory) {
-
           await axios.patch(
             `/api/topCategorySort?id=${findCategory.id}`,
             values
@@ -78,8 +80,16 @@ const TopCategoryForm = () => {
     async function updateData() {
       try {
         const res = await axios.get(`/api/topCategory?id=${id}`);
+        const categorySort = await axios.get(`/api/categorySort`);
+        const filterCategoryData = categorySort?.data?.data?.filter(
+          (c) => +c.topCategorySortId === +id
+        );
+        console.log(filterCategoryData, "This is filter");
+
         if (res) {
-          form.setValue("name", res.data.data[0].name);
+          const { name } = res.data.data[0];
+          form.setValue("name", name);
+          setCategorySort(filterCategoryData);
         }
       } catch (error) {
         console.log(error);
@@ -89,6 +99,8 @@ const TopCategoryForm = () => {
       updateData();
     }
   }, [id, form]);
+
+  console.log(categorySort);
 
   return (
     <Suspense>
@@ -120,6 +132,14 @@ const TopCategoryForm = () => {
             </SubmitButton>
           </form>
         </Form>
+        {categorySort.length > 0 && (
+          <div className="p-4 rounded-md border mt-2 w-full">
+            <h2 className="font-bold mb-4 textNormal3">
+              Регулирование категория{" "}
+            </h2>
+            <DragDropComponent param={"categorySort"} data={categorySort} />
+          </div>
+        )}
       </Container>
     </Suspense>
   );

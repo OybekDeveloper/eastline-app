@@ -171,3 +171,13 @@ model TopCategorySort {
   createdAt     DateTime @default(now())
   updateAt      DateTime @updatedAt
 }
+
+model CategorySort {
+  id                Int      @id @default(autoincrement())
+  uniqueId          Int
+  categoryId        Int
+  topCategorySortId Int
+  name              String
+  createdAt         DateTime @default(now())
+  updateAt          DateTime @updatedAt
+}

@@ -38,6 +38,10 @@ export default async function RootLayout({ children }) {
     "/api/topCategory",
     "topCategory"
   );
+  const categorySortData = await ApiService.getData(
+    "/api/categorySort",
+    "category"
+  );
   const topCategoriesSort = await ApiService.getData(
     "/api/topCategorySort",
     "topCategory"
@@ -49,10 +53,10 @@ export default async function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <meta
+        {/* <meta
           name="google-site-verification"
           content="C3o3vKTwERqa9wb0mxW-jzSXaYZzoj8bv14Vj7JoPKc"
-        />
+        /> */}
         <meta name="yandex-verification" content="e332936c74782e28" />
         <meta name="description" content={metadata.description} />
         <meta property="og:title" content={metadata.og.title} />
@@ -92,6 +96,7 @@ export default async function RootLayout({ children }) {
           showAtBottom={false}
         />
         <Header
+          categorySortData={categorySortData}
           topCategoriesSort={topCategoriesSort}
           contactData={contactData[0]}
           background={background}

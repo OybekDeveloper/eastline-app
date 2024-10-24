@@ -61,9 +61,24 @@ const DeleteItem = ({ payment, only }) => {
       }
       if (pathName == "banner") {
         const bannerSortData = await axios.get(`/api/bannerSort`);
-        const delId = bannerSortData.data.data.find((c) => +c.bannerId === payment.id).id;
+        const delId = bannerSortData.data.data.find(
+          (c) => +c.bannerId === payment.id
+        ).id;
         if (delId) {
           await axios.delete(`/api/bannerSort`, {
+            params: {
+              id: delId,
+            },
+          });
+        }
+      }
+      if (pathName == "category") {
+        const categorySort = await axios.get(`/api/categorySort`);
+        const delId = categorySort.data.data.find(
+          (c) => +c.categoryId === payment.id
+        ).id;
+        if (delId) {
+          await axios.delete(`/api/categorySort`, {
             params: {
               id: delId,
             },
