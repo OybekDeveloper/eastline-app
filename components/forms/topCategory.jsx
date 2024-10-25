@@ -79,16 +79,11 @@ const TopCategoryForm = () => {
   useEffect(() => {
     async function updateData() {
       try {
-        let filterCategoryData = [];
         const res = await axios.get(`/api/topCategory?id=${id}`);
         const categorySort = await axios.get(`/api/categorySort`);
-        if (categorySort.length > 0) {
-          filterCategoryData = categorySort?.data?.data
-            ?.filter((c) => Number(c.topCategorySortId) === Number(id))
-            ?.sort((a, b) => {
-              return Number(a.uniqueId || 0) - Number(b.uniqueId || 0);
-            });
-        }
+        const filterCategoryData = categorySort?.data?.data?.filter(
+          (c) => +c.topCategorySortId === +id
+        );
         console.log(filterCategoryData, "This is filter");
 
         if (res) {
