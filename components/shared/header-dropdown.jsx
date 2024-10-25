@@ -13,7 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 
-export function HeaderDropdown({ topCategory, topCategoriesSort }) {
+export function HeaderDropdown({
+  topCategory,
+  topCategoriesSort,
+  categorySortData,
+}) {
   const [activeCategory, setActiveCategory] = useState(null);
 
   const handleSubcategoryToggle = (categoryId) => {
@@ -21,7 +25,7 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
   };
 
   // topCategory ni uniqueId bo'yicha tartiblash
-  const topCategorySort = topCategory
+  let topCategorySort = topCategory
     .map((category) => {
       const matchingItems = topCategoriesSort.filter(
         (item) => +item.topCategoryId === +category.id
@@ -36,6 +40,19 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
     .filter((category) => category.uniqueIds)
     .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
 
+  const updatedTopCategorySort = topCategorySort.map((item) => {
+    const filterCategories = categorySortData
+      .filter((c) => Number(c.topCategorySortId) === Number(item.id))
+      .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
+
+    return {
+      ...item,
+      categories: filterCategories,
+    };
+  });
+
+  console.log(updatedTopCategorySort, "This is data"); // Check the final result
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,7 +63,7 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-xs">
-        {topCategorySort?.map((topCategory, idx) => {
+        {updatedTopCategorySort?.map((topCategory, idx) => {
           if (topCategory?.categories.length <= 0) {
             return null;
           }
@@ -64,10 +81,10 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
                 {topCategory?.categories.length > 0 ? (
                   <DropdownMenuSubContent side="right">
                     {topCategory.categories.map((category) => (
-                      <DropdownMenuItem asChild key={category.id}>
+                      <DropdownMenuItem asChild key={category.uniqueId}>
                         <Link
                           className="textSmall"
-                          href={`/${topCategory.id}/${category.id}`}
+                          href={`/${topCategory.id}/${category.categoryId}`}
                         >
                           {category.name}
                         </Link>
@@ -86,7 +103,7 @@ export function HeaderDropdown({ topCategory, topCategoriesSort }) {
                         <Link
                           key={category.id}
                           className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall1 hover:bg-secondary cursor-pointer"
-                          href={`/${topCategory.id}/${category.id}`}
+                          href={`/${topCategory.id}/${category.categoryId}`}
                         >
                           {category.name}
                         </Link>

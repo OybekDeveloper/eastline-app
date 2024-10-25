@@ -30,8 +30,10 @@ const DropdownMenuSubTrigger = React.forwardRef(
         )}
         {...props}
       >
-        {children}
-        {props.arrow == 0 ? null : <ChevronRight className="ml-auto h-4 w-4" />}
+        <div className="w-[90%]">{children}</div>
+        {props.arrow == 0 ? null : (
+          <ChevronRight className="w-[10%] ml-auto max-w-4 h-4" />
+        )}
       </DropdownMenuPrimitive.SubTrigger>
     );
   }

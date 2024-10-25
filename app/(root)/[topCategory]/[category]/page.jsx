@@ -7,63 +7,38 @@ import React from "react";
 const Category = async ({ params }) => {
   const { topCategory, category } = params;
 
-  async function getTopProducts() {
-    const res = await db.topCategory.findMany({
-      where: {
-        id: Number(topCategory),
-      },
-      include: {
-        categories: true,
-      },
-    });
-    return res;
-  }
-
-  async function getTopCategories() {
-    const res = await db.topCategory.findMany({
-      include: {
-        categories: true,
-      },
-    });
-    return res;
-  }
-  async function getTopCategoriesSort() {
-    const res = await db.topCategorySort.findMany();
-    return res;
-  }
-
-  async function getCategory() {
-    const categoryData = await db.category.findMany({
-      where: {
-        id: Number(category),
-      },
-    });
-    const categorysData = await db.category.findMany({
-      where: {
-        topCategoryId: Number(topCategory),
-      },
-    });
-    return {
-      categoryData,
-      categorysData,
-    };
-  }
-
-  async function getProducts() {
-    const res = await db.product.findMany({
-      where: {
-        categoryId: Number(category),
-      },
-    });
-    return res;
-  }
-
-  const topProductsData = await getTopProducts();
-  const topCategoryData = await getTopCategories();
-  const topCategoriesSort = await getTopCategoriesSort();
-  const productsData = await getProducts();
-  const categoryData = await getCategory();
-  const currency = await db.currency.findMany();
+  const [
+    topProductsData,
+    topCategoryData,
+    topCategoriesSort,
+    productsData,
+    categoryData,
+    currency,
+    categorySortData
+  ] = await Promise.all([
+    db.topCategory.findMany({
+      where: { id: Number(topCategory) },
+      include: { categories: true },
+    }),
+    db.topCategory.findMany({
+      include: { categories: true },
+    }),
+    db.topCategorySort.findMany(),
+    db.product.findMany({
+      where: { categoryId: Number(category) },
+    }),
+    (async () => {
+      const categoryData = await db.category.findMany({
+        where: { id: Number(category) },
+      });
+      const categorysData = await db.category.findMany({
+        where: { topCategoryId: Number(topCategory) },
+      });
+      return { categoryData, categorysData };
+    })(),
+    db.currency.findMany(),
+    db.categorySort.findMany(),
+  ]);
 
   return (
     <main className="min-h-[50%] py-10 flex flex-col">
@@ -77,12 +52,15 @@ const Category = async ({ params }) => {
           categoryId={category}
           topCategoryData={topCategoryData}
           topCategoriesSort={topCategoriesSort}
+          categorySortData={categorySortData}
         />
         <Products
           topProductsData={topProductsData}
           topCategoryData={topCategoryData}
           productsData={productsData}
           categorys={categoryData.categorysData}
+          topCategoriesSort={topCategoriesSort}
+          categorySortData={categorySortData}
           currency={currency}
         />
       </div>

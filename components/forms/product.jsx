@@ -28,7 +28,6 @@ const ProductForm = ({ categories }) => {
   const [content, setContent] = useState("");
 
   const handleContentChange = (reason) => {
-    setContent(reason);
     form.setValue("feature", reason);
   };
 

@@ -8,6 +8,7 @@ const SideBarCategory = ({
   topCategoriesSort,
   categoryId,
   topCategoryId,
+  categorySortData
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
   const topCategorySort = topCategoryData
@@ -25,6 +26,17 @@ const SideBarCategory = ({
     .filter((category) => category.uniqueIds)
     .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
     
+    const updatedTopCategorySort = topCategorySort.map((item) => {
+      const filterCategories = categorySortData
+        .filter((c) => Number(c.topCategorySortId) === Number(item.id))
+        .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
+  
+      return {
+        ...item,
+        categories: filterCategories,
+      };
+    });
+
   useEffect(() => {
     setActiveCategory(topCategoryId);
   }, [topCategoryId]);
@@ -38,7 +50,7 @@ const SideBarCategory = ({
       <div className="bg-secondary mx-auto h-auto p-4 rounded-md space-y-3">
         <h1 className="textNormal4 font-bold">Категории</h1>
         <div className="w-full space-y-2">
-          {topCategorySort.map((topCategory, idx) => {
+          {updatedTopCategorySort?.map((topCategory, idx) => {
             if (topCategory?.categories.length <= 0) {
               return null;
             }
@@ -65,13 +77,13 @@ const SideBarCategory = ({
                 >
                   {topCategory?.categories.map((category) => (
                     <Link
-                      key={category.id}
+                      key={category.uniqueId}
                       className={`${
-                        +category.id === +categoryId
+                        +category.categoryId === +categoryId
                           ? "opacity-1 font-medium"
                           : "opacity-[0.8]"
                       } w-full px-2 py-1 rounded-md textSmall2 hover:bg-secondary cursor-pointer`}
-                      href={`/${topCategory.id}/${category.id}`}
+                      href={`/${topCategory.id}/${category.categoryId}`}
                     >
                       {category.name}
                     </Link>

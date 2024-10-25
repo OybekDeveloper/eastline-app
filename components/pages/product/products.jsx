@@ -33,7 +33,8 @@ const Products = ({
   productsData,
   topCategoryData,
   topProductsData,
-  currency,
+  categorySortData,
+  topCategoriesSort,
 }) => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(12);
@@ -43,19 +44,38 @@ const Products = ({
     setActiveCategory((prev) => (prev === categoryId ? null : categoryId));
   };
 
+  const topCategorySort = topCategoryData
+    .map((category) => {
+      const matchingItems = topCategoriesSort.filter(
+        (item) => +item.topCategoryId === +category.id
+      );
+
+      const uniqueIds = matchingItems
+        .map((item) => item.uniqueId)
+        .filter(Boolean);
+
+      return { ...category, uniqueIds };
+    })
+    .filter((category) => category.uniqueIds)
+    .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
+
+  const updatedTopCategorySort = topCategorySort.map((item) => {
+    const filterCategories = categorySortData
+      .filter((c) => Number(c.topCategorySortId) === Number(item.id))
+      .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
+
+    return {
+      ...item,
+      categories: filterCategories,
+    };
+  });
+
   // Paginated Data
   const paginatedData = useMemo(() => {
     const start = page * pageSize;
     const end = start + pageSize;
     return productsData.slice(start, end);
   }, [page, pageSize, productsData]);
-
-  const getCurrencySum = (dollar) => {
-    if (currency.length) {
-      const sum = currency[0].sum;
-      return Number(sum) * Number(dollar);
-    }
-  };
 
   const columns = useMemo(
     () => [
@@ -113,7 +133,7 @@ const Products = ({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="max-w-xs md:hidden">
-              {topCategoryData?.map((topCategory, idx) => {
+              {updatedTopCategorySort?.map((topCategory, idx) => {
                 if (topCategory?.categories.length <= 0) {
                   return null;
                 }
@@ -134,7 +154,7 @@ const Products = ({
                             <DropdownMenuItem asChild key={category.id}>
                               <Link
                                 className="textSmall2"
-                                href={`/${topCategory.id}/${category.id}`}
+                                href={`/${topCategory.id}/${category.categoryId}`}
                               >
                                 {category.name}
                               </Link>
@@ -248,7 +268,7 @@ const Products = ({
           {Array.from({ length: table.getPageCount() }).map((_, idx) => (
             <PaginationItem key={idx}>
               <PaginationLink
-              className={"cursor-pointer hover:bg-secondary"}
+                className={"cursor-pointer hover:bg-secondary"}
                 onClick={() => table.setPageIndex(idx)}
                 isActive={
                   idx === table.getState().pagination.pageIndex

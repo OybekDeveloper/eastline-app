@@ -17,6 +17,7 @@ export default function Home({
   productsData,
   contactData,
   topCategoriesSort,
+  categorySortData,
 }) {
   const { experience_info, work_hours, email, phone1, phone2 } = contactData;
   const pathname = usePathname();
@@ -78,6 +79,7 @@ export default function Home({
                   {item.id === 2 ? (
                     <div className="cursor-pointer">
                       <HeaderDropdown
+                        categorySortData={categorySortData}
                         topCategoriesSort={topCategoriesSort || []}
                         topCategory={topCategories || []}
                       />
