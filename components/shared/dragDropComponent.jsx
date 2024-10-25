@@ -94,7 +94,7 @@ export default function DragDropComponent({
       }
       toast.success("Изменено успешно!");
     } catch (error) {
-      toast.success("Что-то пошло не так, пожалуйста, обновите сайт!");
+      toast.error("Что-то пошло не так, пожалуйста, обновите сайт!");
     } finally {
       setLoading(false);
     }
