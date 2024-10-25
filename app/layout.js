@@ -76,7 +76,7 @@ export default async function RootLayout({ children }) {
         <link rel="canonical" href={metadata.canonical} />
         <meta name="viewport" content={metadata.viewport} />
         <meta charSet={metadata.charSet} />
-        <title>{metadata.title}</title>
+        {/* <title>{metadata.title}</title> */}
       </head>
       <body
         className={`${inter.className} min-h-screen relative flex flex-col`}
