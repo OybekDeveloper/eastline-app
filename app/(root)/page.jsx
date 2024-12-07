@@ -49,6 +49,7 @@ async function Home() {
           products={lastProducts}
           categories={categories}
           currency={currency}
+          topCategories={topCategories}
         />
         <Icons />
         <OurLicenses sertificate={sertificate} license={randomLicense} />

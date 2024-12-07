@@ -29,7 +29,7 @@ const nextConfig = {
         source: "/api/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "true" },
-          { key: "Access-Control-Allow-Origin", value: "https://elt.uz" }, // Restrict to your domain
+          { key: "Access-Control-Allow-Origin", value: "https://elt.uz" },
           {
             key: "Access-Control-Allow-Methods",
             value: "GET,OPTIONS,PATCH,DELETE,POST,PUT",
@@ -39,10 +39,10 @@ const nextConfig = {
             value:
               "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
           },
-          // {
-          //   key: "Cache-Control",
-          //   value: "no-store", // Adjust caching if needed
-          // },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=7200, stale-while-revalidate=7200", // 2 soat
+          },
         ],
       },
     ];
