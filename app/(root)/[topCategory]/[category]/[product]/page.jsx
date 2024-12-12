@@ -91,7 +91,11 @@ const Product = async ({ params }) => {
       </section>
       <section className="w-[95%] lg:w-10/12 mx-auto space-y-4">
         <h1 className="text-primary textNormal3 font-bold">Другие товары</h1>
-        <BannerProducts randomProducts={randomProducts} currency={currency} />
+        <BannerProducts
+          randomProducts={randomProducts}
+          currency={currency}
+          categories={categoryData}
+        />
       </section>
     </main>
   );

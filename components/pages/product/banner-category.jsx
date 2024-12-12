@@ -8,12 +8,22 @@ import {
 } from "@/components/ui/carousel";
 import { f, truncateText } from "@/lib/utils";
 import emblaCarouselAutoplay from "embla-carousel-autoplay";
+import Link from "next/link";
 
-const BannerProducts = ({ randomProducts }) => {
+const BannerProducts = ({ randomProducts, categories }) => {
+  const findTopCategoryId = (categoryId) => {
+    const category = categories.find((cat) => cat.id === categoryId);
+    return category ? category.id : null;
+  };
   return (
     <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
       {randomProducts[0] && (
-        <div className="max-lg:hidden p-5 flex justify-between gap-y-1 border-2 rounded-xl">
+        <Link
+          href={`/${findTopCategoryId(randomProducts[0]?.categoryId)?.id}/${
+            randomProducts[0]?.categoryId
+          }/${randomProducts[0]?.id}`}
+          className="max-lg:hidden p-5 flex justify-between gap-y-1 border-2 rounded-xl"
+        >
           <div className="relative w-full">
             <CustomImage
               src={randomProducts[0].image[0]}
@@ -43,7 +53,7 @@ const BannerProducts = ({ randomProducts }) => {
               </Button>
             </Link> */}
           </div>
-        </div>
+        </Link>
       )}
       <div className="rounded-xl w-full h-full">
         <Carousel
@@ -59,14 +69,19 @@ const BannerProducts = ({ randomProducts }) => {
           className="w-full h-full text-secondary"
         >
           <CarouselContent className="max-md:pb-4 h-full">
-            {randomProducts.map((item, i) => {
+            {randomProducts?.map((item, i) => {
               if (!item) return null; // Skip if item is empty
               return (
                 <CarouselItem
                   key={i}
                   className="text-center text-black basis-full md:basis-[45%] min-h-[300px] border-2 py-3 rounded-xl mr-2"
                 >
-                  <div className="h-full px-3 flex flex-col gap-y-1 rounded-md justify-between">
+                  <Link
+                    href={`/${findTopCategoryId(item.categoryId)?.id}/${
+                      item?.categoryId
+                    }/${item?.id}`}
+                    className="h-full px-3 flex flex-col gap-y-1 rounded-md justify-between"
+                  >
                     <h1 className="textSmall3 font-bold">
                       {truncateText(item.name, 30)}
                     </h1>
@@ -86,7 +101,7 @@ const BannerProducts = ({ randomProducts }) => {
                     <p className="textSmall">
                       {truncateText(item.description, 20)}
                     </p>
-                  </div>
+                  </Link>
                 </CarouselItem>
               );
             })}
