@@ -12,7 +12,7 @@ import Link from "next/link";
 
 const BannerProducts = ({ randomProducts, categories }) => {
   const findTopCategoryId = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
+    const category = categories?.find((cat) => cat.id === categoryId);
     return category ? category.id : null;
   };
   return (

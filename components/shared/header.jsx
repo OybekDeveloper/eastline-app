@@ -10,6 +10,7 @@ import { HeaderDropdown } from "./header-dropdown";
 import HeroTitle from "./hero-title";
 import Container from "./container";
 import { usePathname, useRouter } from "next/navigation";
+import { FaTelegram } from "react-icons/fa6";
 
 export default function Home({
   background,
@@ -19,9 +20,12 @@ export default function Home({
   topCategoriesSort,
   categorySortData,
 }) {
-  const { experience_info, work_hours, email, phone1, phone2 } = contactData;
+  const { experience_info, work_hours, email, phone1, phone2, telegram } =
+    contactData;
   const pathname = usePathname();
   const urlBack = background[0].image;
+  console.log(contactData);
+  
   return (
     <Suspense>
       <header className={`textSmall ${pathname === "/login" ? "hidden" : ""}`}>
@@ -29,7 +33,20 @@ export default function Home({
           <div className="flex items-center justify-between w-10/12 mx-auto text-secondary py-2 gap-1 md:gap-5">
             <p className="hidden lg:block">{experience_info}</p>
             <div className="flex flex-col sm:flex-row justify-end items-center gap-1 md:gap-5 lg:hidden">
-              <p>{email}</p>
+              <div className="flex justify-center items-center gap-2">
+                {telegram && (
+                  <div className="rounded-full">
+                    <a
+                      className="w-full h-full"
+                      target="_blank"
+                      href={telegram}
+                    >
+                      <FaTelegram size={16} />
+                    </a>
+                  </div>
+                )}
+                <p>{email}</p>
+              </div>
               {phone1 && (
                 <a href="tel:+998555108033" className="flex items-center">
                   {phone1}
@@ -94,7 +111,16 @@ export default function Home({
             })}
           </ul>
           <div className="hidden items-center gap-1 md:gap-5 lg:flex">
-            <p>{email}</p>
+            <div className="flex justify-center items-center gap-2">
+              {telegram && (
+                <div className="rounded-full items-block">
+                  <a className="w-full h-full" target="_blank" href={telegram}>
+                    <FaTelegram size={18} />
+                  </a>
+                </div>
+              )}
+              <p>{email}</p>
+            </div>
             {phone1 && (
               <a href="tel:+998555108033" className="flex items-center gap-2">
                 <Phone size={16} />
