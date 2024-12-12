@@ -21,6 +21,7 @@ const ProductFeature = ({ contactData, feature }) => {
     youtube,
     phone1,
     phone2,
+    more_call_info,
   } = contactData;
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -107,7 +108,7 @@ const ProductFeature = ({ contactData, feature }) => {
           )}
         </ul>
         <p className="textSmall cursor-pointer bg-black text-center inline-block text-secondary py-1 px-2 rounded-md">
-          Больше инфо. при вызове
+          {more_call_info}
         </p>
         {phone1 && (
           <a className="font-bold textSmall3" href="tel:(55) 510-80-33">

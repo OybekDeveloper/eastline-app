@@ -46,6 +46,12 @@ export const contacts = [
     ),
   },
   {
+    accessorKey: "more_call_info",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Больше инфо. при вызове" />
+    ),
+  },
+  {
     accessorKey: "email",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Электронная почта" />

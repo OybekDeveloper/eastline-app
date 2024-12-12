@@ -41,7 +41,7 @@ const nextConfig = {
           },
           {
             key: "Cache-Control",
-            value: "public, max-age=300, stale-while-revalidate=300", // 2 soat
+            value: "public, max-age=1200, stale-while-revalidate=1200", // 20 daqiqa soat
           },
         ],
       },

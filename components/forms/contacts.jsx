@@ -39,10 +39,13 @@ const ContactsForm = () => {
       youtube: "",
       footer_info: "",
       experience_info: "",
+      more_call_info: "",
     },
   });
 
   const onSubmit = async (values) => {
+    console.log(values);
+    
     setIsLoading(true);
     try {
       if (id) {
@@ -83,6 +86,7 @@ const ContactsForm = () => {
           form.setValue("youtube", contactData.youtube);
           form.setValue("footer_info", contactData.footer_info);
           form.setValue("experience_info", contactData.experience_info);
+          form.setValue("more_call_info", contactData.more_call_info);
         }
       } catch (error) {
         console.log(error);
@@ -132,6 +136,12 @@ const ContactsForm = () => {
                 control={form.control}
                 name="phone2"
                 label="Телефон 2"
+              />
+              <CustomFormField
+                fieldType={FormFieldType.INPUT}
+                control={form.control}
+                name="more_call_info"
+                label="Больше инфо. при вызове"
               />
               <CustomFormField
                 fieldType={FormFieldType.INPUT}

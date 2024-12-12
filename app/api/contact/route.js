@@ -78,6 +78,7 @@ export async function PATCH(req) {
         youtube: data.youtube,
         footer_info: data.footer_info,
         experience_info: data.experience_info,
+        more_call_info: data.more_call_info,
       },
     });
 
