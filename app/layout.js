@@ -5,7 +5,7 @@ import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import { Toaster } from "react-hot-toast";
 import ChatBot from "@/components/shared/chat-bot";
-import { ApiService } from "@/lib/api.services";
+import { getData } from "@/lib/api.services";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -35,7 +35,6 @@ export const metadata = {
 
 export default async function RootLayout({ children }) {
   try {
-    // Fetch all data concurrently
     const [
       topCategories,
       categorySortData,
@@ -44,14 +43,13 @@ export default async function RootLayout({ children }) {
       background,
       contactData,
     ] = await Promise.all([
-      ApiService.getData("/api/topCategory", "topCategory"),
-      ApiService.getData("/api/categorySort", "category"),
-      ApiService.getData("/api/topCategorySort", "topCategory"),
-      ApiService.getData("/api/product", "product"),
-      ApiService.getData("/api/background", "background"),
-      ApiService.getData("/api/contact", "contact"),
+      getData("/api/topCategory", "topCategory"),
+      getData("/api/categorySort", "category"),
+      getData("/api/topCategorySort", "topCategory"),
+      getData("/api/product", "product"),
+      getData("/api/background", "background"),
+      getData("/api/contact", "contact"),
     ]);
-
     return (
       <html lang="en">
         <head>
@@ -63,7 +61,10 @@ export default async function RootLayout({ children }) {
           <meta property="og:image" content={metadata.og.image} />
           <meta name="twitter:card" content={metadata.twitter.card} />
           <meta name="twitter:title" content={metadata.twitter.title} />
-          <meta name="twitter:description" content={metadata.twitter.description} />
+          <meta
+            name="twitter:description"
+            content={metadata.twitter.description}
+          />
           <meta name="twitter:image" content={metadata.twitter.image} />
           <meta name="keywords" content={metadata.keywords.join(", ")} />
           <meta name="author" content={metadata.author} />
@@ -71,7 +72,9 @@ export default async function RootLayout({ children }) {
           <link rel="canonical" href={metadata.canonical} />
           <meta charSet={metadata.charSet} />
         </head>
-        <body className={`${inter.className} min-h-screen relative flex flex-col`}>
+        <body
+          className={`${inter.className} min-h-screen relative flex flex-col`}
+        >
           <NextTopLoader
             color="hsl(210 40% 96.1%)"
             crawlSpeed={200}
@@ -106,4 +109,3 @@ export default async function RootLayout({ children }) {
     return <div>Error loading application. Please try again later.</div>;
   }
 }
-

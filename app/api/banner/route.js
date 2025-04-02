@@ -5,7 +5,7 @@ export async function GET(req) {
 
   if (id) {
     const getBanner = await db.banner.findMany({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
     return Response.json({ data: getBanner });
   } else {
@@ -18,7 +18,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteBanner = await db.banner.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(JSON.stringify({ success: true, data: deleteBanner }), {
@@ -34,6 +34,8 @@ export async function DELETE(req) {
 
 export async function POST(req) {
   const data = await req.json();
+  console.log(data);
+
   const createBanner = await db.banner.create({
     data,
   });
@@ -46,7 +48,7 @@ export async function PATCH(req) {
     const id = await req.nextUrl.searchParams.get("id");
 
     const updateBanner = await db.banner.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data,
     });
 

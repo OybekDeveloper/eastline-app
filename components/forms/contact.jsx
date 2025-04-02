@@ -9,8 +9,8 @@ import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../shared/customFormField";
 import { ReviewsFormValidation } from "@/lib/validation";
 import SubmitButton from "../shared/submitButton";
-import axios from "axios";
 import toast from "react-hot-toast";
+import { postData } from "@/lib/api.services";
 
 export const ContactForm = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,15 +35,15 @@ export const ContactForm = () => {
         phone: values.phone,
         message: values.message,
       };
-      await axios.post("/api/review", user );
+      await postData("/api/review", user, "review");
 
-      toast.success('Ваш комментарий принят!')
+      toast.success("Ваш комментарий принят!");
 
       form.reset();
       setIsLoading(false);
     } catch (error) {
       console.log(error);
-      toast.error("Что то пошло не так. Пожалуйста, повторите попытку позже.")
+      toast.error("Что то пошло не так. Пожалуйста, повторите попытку позже.");
     }
   };
 

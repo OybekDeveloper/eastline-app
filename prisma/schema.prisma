@@ -1,21 +1,14 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Reviews {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   phone     String
   email     String
@@ -24,27 +17,27 @@ model Reviews {
 }
 
 model TopCategory {
-  id         Int        @id @default(autoincrement())
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   createdAt  DateTime   @default(now())
   updateAt   DateTime   @updatedAt
-  categories Category[]
+  categories Category[] @relation("TopCategoryToCategory")
 }
 
 model Category {
-  id                Int          @id @default(autoincrement())
+  id                String       @id @default(auto()) @map("_id") @db.ObjectId
   name              String
   image             String
   createdAt         DateTime     @default(now())
   updateAt          DateTime     @updatedAt
-  topCategory       TopCategory? @relation(fields: [topCategoryId], references: [id], onDelete: Cascade)
-  topCategoryId     Int?
+  topCategory       TopCategory? @relation("TopCategoryToCategory", fields: [topCategoryId], references: [id])
+  topCategoryId     String?      @db.ObjectId
   products          Product[]
-  topCategorySortId Int?
+  topCategorySortId String?      @db.ObjectId
 }
 
 model Product {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String
   feature     String
@@ -53,12 +46,12 @@ model Product {
   image       String[]
   createdAt   DateTime  @default(now())
   updateAt    DateTime  @updatedAt
-  category    Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  Int?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  categoryId  String?   @db.ObjectId
 }
 
 model Sertificate {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   image     String
   createdAt DateTime @default(now())
@@ -66,7 +59,7 @@ model Sertificate {
 }
 
 model License {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   image     String
   createdAt DateTime @default(now())
@@ -74,7 +67,7 @@ model License {
 }
 
 model News {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   image     String
   createdAt DateTime @default(now())
@@ -82,7 +75,7 @@ model News {
 }
 
 model Partner {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   image     String
   createdAt DateTime @default(now())
@@ -90,7 +83,7 @@ model Partner {
 }
 
 model Admin {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   password  String
   createdAt DateTime @default(now())
@@ -98,25 +91,25 @@ model Admin {
 }
 
 model Currency {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   sum       String
   createdAt DateTime @default(now())
   updateAt  DateTime @updatedAt
 }
 
 model Banner {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   image         String
-  topCategoryId Int?
-  categoryId    Int?
-  productId     Int?
+  topCategoryId String?  @db.ObjectId
+  categoryId    String?  @db.ObjectId
+  productId     String?  @db.ObjectId
   createdAt     DateTime @default(now())
   updateAt      DateTime @updatedAt
 }
 
 model SelectReview {
-  id        Int      @id @default(autoincrement())
-  reviewId  Int?
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  reviewId  String?  @db.ObjectId
   name      String
   phone     String
   email     String
@@ -125,7 +118,7 @@ model SelectReview {
 }
 
 model Background {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   image     String
   createdAt DateTime @default(now())
@@ -133,7 +126,7 @@ model Background {
 }
 
 model Contacts {
-  id              Int      @id @default(autoincrement())
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
   company_name    String?
   phone1          String?
   phone2          String?
@@ -153,31 +146,40 @@ model Contacts {
 }
 
 model BannerSort {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   uniqueId      Int?
-  bannerId      Int?
+  bannerId      String?  @db.ObjectId
   image         String
-  topCategoryId Int?
-  categoryId    Int?
-  productId     Int?
+  topCategoryId String?  @db.ObjectId
+  categoryId    String?  @db.ObjectId
+  productId     String?  @db.ObjectId
   createdAt     DateTime @default(now())
   updateAt      DateTime @updatedAt
 }
 
 model TopCategorySort {
-  id            Int      @id @default(autoincrement())
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
   name          String
-  topCategoryId Int?
+  topCategoryId String?  @db.ObjectId
   uniqueId      Int?
   createdAt     DateTime @default(now())
   updateAt      DateTime @updatedAt
 }
 
 model CategorySort {
-  id                Int      @id @default(autoincrement())
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
   uniqueId          Int
-  categoryId        Int
-  topCategorySortId Int
+  categoryId        String   @db.ObjectId
+  topCategorySortId String   @db.ObjectId
+  name              String
+  createdAt         DateTime @default(now())
+  updateAt          DateTime @updatedAt
+}
+model CategorySortTest {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  uniqueId          Int
+  categoryId        String   @db.ObjectId
+  topCategorySortId String   @db.ObjectId
   name              String
   createdAt         DateTime @default(now())
   updateAt          DateTime @updatedAt

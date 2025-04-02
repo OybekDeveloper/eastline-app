@@ -8,13 +8,13 @@ const SideBarCategory = ({
   topCategoriesSort,
   categoryId,
   topCategoryId,
-  categorySortData
+  categorySortData,
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
   const topCategorySort = topCategoryData
     .map((category) => {
       const matchingItems = topCategoriesSort.filter(
-        (item) => +item.topCategoryId === +category.id
+        (item) => String(item.topCategoryId) === String(category.id)
       );
 
       const uniqueIds = matchingItems
@@ -25,17 +25,17 @@ const SideBarCategory = ({
     })
     .filter((category) => category.uniqueIds)
     .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
-    
-    const updatedTopCategorySort = topCategorySort.map((item) => {
-      const filterCategories = categorySortData
-        .filter((c) => Number(c.topCategorySortId) === Number(item.id))
-        .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
-  
-      return {
-        ...item,
-        categories: filterCategories,
-      };
-    });
+
+  const updatedTopCategorySort = topCategorySort.map((item) => {
+    const filterCategories = categorySortData
+      .filter((c) => String(c.topCategorySortId) === String(item.id))
+      .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
+
+    return {
+      ...item,
+      categories: filterCategories,
+    };
+  });
 
   useEffect(() => {
     setActiveCategory(topCategoryId);
@@ -61,7 +61,7 @@ const SideBarCategory = ({
               >
                 <h1
                   className={`textSmall3  cursor-pointer transition-opacity duration-300 ease-linear ${
-                    +activeCategory === +topCategory.id
+                    String(activeCategory) === String(topCategory.id)
                       ? "opacity-1 font-medium"
                       : "opacity-[0.8]"
                   }`}
@@ -70,7 +70,7 @@ const SideBarCategory = ({
                 </h1>
                 <div
                   className={`pl-4 pt-2 w-full flex flex-col gap-y-1 overflow-hidden ${
-                    +activeCategory === +topCategory.id
+                    String(activeCategory) === String(topCategory.id)
                       ? "max-h-screen"
                       : "max-h-0"
                   }`}
@@ -79,7 +79,7 @@ const SideBarCategory = ({
                     <Link
                       key={category.uniqueId}
                       className={`${
-                        +category.categoryId === +categoryId
+                        String(category.categoryId) === String(categoryId)
                           ? "opacity-1 font-medium"
                           : "opacity-[0.8]"
                       } w-full px-2 py-1 rounded-md textSmall2 hover:bg-secondary cursor-pointer`}

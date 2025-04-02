@@ -47,7 +47,7 @@ const Products = ({
   const topCategorySort = topCategoryData
     .map((category) => {
       const matchingItems = topCategoriesSort.filter(
-        (item) => +item.topCategoryId === +category.id
+        (item) => String(item.topCategoryId) === String(category.id)
       );
 
       const uniqueIds = matchingItems
@@ -61,7 +61,7 @@ const Products = ({
 
   const updatedTopCategorySort = topCategorySort.map((item) => {
     const filterCategories = categorySortData
-      .filter((c) => Number(c.topCategorySortId) === Number(item.id))
+      .filter((c) => String(c.topCategorySortId) === String(item.id))
       .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
 
     return {

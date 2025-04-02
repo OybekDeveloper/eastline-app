@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../shared/customFormField";
 import { Category } from "@/lib/validation";
@@ -17,7 +16,8 @@ import { ChevronLeft } from "lucide-react";
 import { SelectItem } from "../ui/select";
 import { revalidatePath } from "@/lib/revalidate";
 import DropTarget from "../shared/fileDnd";
-import { sanitizeString, supabase } from "@/lib/utils";
+import { sanitizeString } from "@/lib/utils";
+import { getData, patchData, postData } from "@/lib/api.services";
 
 const CategoryForm = () => {
   const router = useRouter();
@@ -63,94 +63,94 @@ const CategoryForm = () => {
 
     let uploadedUrl = "";
 
-    let imageToUpload = image[0]?.file;
-
-    if (imageToUpload) {
-      if (image[0]?.cropped) {
-        imageToUpload = dataURLToBlob(image[0].url);
-      }
-
-      try {
-        if (image.cropped) {
+    try {
+      // If there's a file to upload (new or cropped image)
+      if (image[0]?.file) {
+        let imageToUpload = image[0].file;
+        if (image[0]?.cropped) {
           imageToUpload = dataURLToBlob(image[0].url);
         }
-        const imageName = sanitizeString(image[0].name);
-        // File doesn't exist, upload it
-        const { data, error: uploadError } = await supabase.storage
-          .from("eastLine_images")
-          .upload(imageName, imageToUpload);
 
-        if (uploadError && uploadError.statusCode == 409) {
-          const { data: newPublicUrlData } = await supabase.storage
-            .from("eastLine_images")
-            .getPublicUrl(imageName);
+        const formData = new FormData();
+        formData.append("file", imageToUpload, sanitizeString(image[0].name));
 
-          uploadedUrl = newPublicUrlData.publicUrl;
-        } else {
-          const { data: newPublicUrlData } = await supabase.storage
-            .from("eastLine_images")
-            .getPublicUrl(imageName);
-
-          uploadedUrl = newPublicUrlData.publicUrl;
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        toast.error("Ошибка загрузки изображения. Попробуйте еще раз.");
-      }
-    }
-
-    try {
-      if (id) {
-        const categorySort = await axios.get(
-          `/api/categorySort?categoryId=${id}`
-        );
-        console.log(categorySort);
-        console.log(values);
-
-        await axios.patch(`/api/category?id=${id}`, {
-          ...values,
-          image: uploadedUrl ? uploadedUrl : image[0].url,
+        // Upload to Cloudflare R2 via API
+        const response = await axios.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
-        if (categorySort.data.data[0]) {
-          const {
-            categoryId,
-            id: sort_id,
-            uniqueId,
-          } = categorySort.data.data[0];
-          await axios.patch(`/api/categorySort?id=${sort_id}`, {
-            categoryId: categoryId,
-            topCategorySortId: values.topCategoryId,
-            name: values.name,
-            uniqueId: uniqueId,
-          });
-          toast.success("Категория изменена успешно!");
-          router.back();
+
+        if (response.data.success) {
+          uploadedUrl = response.data.url;
+        } else {
+          throw new Error("Upload failed");
         }
       } else {
-        const res = await axios.post("/api/category", {
-          ...values,
-          image: uploadedUrl,
-        });
-        console.log(res.data.data);
-        if (res.data.data) {
-          const { name, id, topCategoryId } = res.data.data;
-          const ress = await axios.post(`/api/categorySort`, {
-            name: name,
-            topCategorySortId: topCategoryId,
-            categoryId: id,
-            uniqueId: 9999,
-          });
+        // If no file (existing image), use the current URL
+        uploadedUrl = image[0].url;
+      }
+
+      // Handle form submission
+      if (id) {
+        const categorySort = await getData(
+          `/api/categorySort?categoryId=${id}`,
+          "category"
+        );
+        await patchData(
+          `/api/category?id=${id}`,
+          {
+            ...values,
+            image: uploadedUrl,
+          },
+          "category"
+        );
+        if (categorySort[0]) {
+          const { categoryId, id: sort_id, uniqueId } = categorySort[0];
+          await patchData(
+            `/api/categorySort?id=${sort_id}`,
+            {
+              categoryId: categoryId,
+              topCategorySortId: values.topCategoryId,
+              name: values.name,
+              uniqueId: uniqueId,
+            },
+            "category"
+          );
+        }
+        toast.success("Категория изменена успешно!");
+        router.back();
+      } else {
+        const res = await postData(
+          "/api/category",
+          {
+            ...values,
+            image: uploadedUrl,
+          },
+          "category"
+        );
+        if (res.data) {
+          const { name, id, topCategoryId } = res.data;
+          const ress = await postData(
+            `/api/categorySort`,
+            {
+              name: name,
+              topCategorySortId: topCategoryId,
+              categoryId: id,
+              uniqueId: 9999,
+            },
+            "category"
+          );
           if (ress) {
             toast.success("Категория создана успешно!");
             form.reset();
             setImage([]);
-            revalidatePath("changeCategory");
-            revalidatePath("category");
           }
         }
       }
+      revalidatePath("category"); // Revalidate category path
     } catch (error) {
-      console.error("Error creating category:", error);
+      console.error("Error processing category:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
     } finally {
       setIsLoading(false);
@@ -160,8 +160,8 @@ const CategoryForm = () => {
   useEffect(() => {
     async function updateData() {
       try {
-        const res = await axios.get(`/api/category?id=${id}`);
-        const { name, topCategoryId, image } = res.data.data[0];
+        const res = await getData(`/api/category?id=${id}`, "category");
+        const { name, topCategoryId, image } = res[0];
         if (res) {
           form.setValue("name", name);
           form.setValue("topCategoryId", topCategoryId);
@@ -177,8 +177,8 @@ const CategoryForm = () => {
       }
     }
     const getCategories = async () => {
-      const { data } = await axios.get("/api/topCategory");
-      setTopCategories(data.data);
+      const topCategory = await getData("/api/topCategory", "topCategory");
+      setTopCategories(topCategory);
     };
     getCategories();
 

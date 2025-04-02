@@ -1,8 +1,7 @@
 import NavigationProduct from "@/components/pages/product/navigation";
 import Products from "@/components/pages/product/products";
 import SideBarCategory from "@/components/pages/product/sidebar-category";
-import db from "@/db/db";
-import React from "react";
+import { getData } from "@/lib/api.services";
 
 const Category = async ({ params }) => {
   const { topCategory, category } = params;
@@ -13,38 +12,26 @@ const Category = async ({ params }) => {
     topCategoriesSort,
     productsData,
     categoryData,
+    categorysData,
     currency,
-    categorySortData
+    categorySortData,
   ] = await Promise.all([
-    db.topCategory.findMany({
-      where: { id: Number(topCategory) },
-      include: { categories: true },
-    }),
-    db.topCategory.findMany({
-      include: { categories: true },
-    }),
-    db.topCategorySort.findMany(),
-    db.product.findMany({
-      where: { categoryId: Number(category) },
-    }),
-    (async () => {
-      const categoryData = await db.category.findMany({
-        where: { id: Number(category) },
-      });
-      const categorysData = await db.category.findMany({
-        where: { topCategoryId: Number(topCategory) },
-      });
-      return { categoryData, categorysData };
-    })(),
-    db.currency.findMany(),
-    db.categorySort.findMany(),
+    getData(`/api/topCategory?id=${topCategory}`, "topCategory"),
+    getData("/api/topCategory", "topCategory"),
+    getData("/api/topCategorySort", "topCategory"),
+    getData(`/api/product?categoryId=${category}`, "product"),
+    getData(`/api/category?id=${category}`, "category"),
+    getData(`/api/category?topCategoryId=${topCategory}`, "category"),
+    getData("/api/currency", "currency"),
+    getData("/api/categorySort", "category"),
   ]);
+  console.log({ topProductsData });
 
   return (
     <main className="min-h-[50%] py-10 flex flex-col">
       <NavigationProduct
         topProductsData={topProductsData}
-        categoryData={categoryData.categoryData}
+        categoryData={categoryData}
       />
       <div className="pt-5 w-[95%] lg:w-10/12 mx-auto grid grid-cols-1 md:grid-cols-5 lg:grid-cols-4 gap-6">
         <SideBarCategory
@@ -58,7 +45,7 @@ const Category = async ({ params }) => {
           topProductsData={topProductsData}
           topCategoryData={topCategoryData}
           productsData={productsData}
-          categorys={categoryData.categorysData}
+          categorys={categorysData}
           topCategoriesSort={topCategoriesSort}
           categorySortData={categorySortData}
           currency={currency}

@@ -22,6 +22,7 @@ import { Button } from "../ui/button";
 import axios from "axios";
 import Loader from "./loader";
 import toast from "react-hot-toast";
+import { getData, patchData, postData } from "@/lib/api.services";
 
 export default function DragDropComponent({
   data,
@@ -73,24 +74,25 @@ export default function DragDropComponent({
           categoryId: item.categoryId,
           productId: item.productId,
         }));
-        await axios.post("/api/bannerSort", filterData);
+        console.log(filterData, "update banner sort");
+        await postData("/api/bannerSort", filterData, "banner");
       } else if (param == "changeTopCategory") {
         // change top category code
         const filterData = updatedUsersList.map((item) => ({
           uniqueId: Number(item.uniqueId),
           name: item.name,
-          topCategoryId: Number(
+          topCategoryId: String(
             item.topCategoryId ? item.topCategoryId : item.id
           ),
         }));
-        await axios.post("/api/topCategorySort", filterData);
+        await postData("/api/topCategorySort", filterData, "topCategory");
       } else if (param === "categorySort") {
         const filterData = updatedUsersList.map((item) => ({
           uniqueId: item.uniqueId,
           id: item.id,
         }));
 
-        await axios.patch("/api/categorySort?all=true", filterData);
+        await patchData("/api/categorySort?all=true", filterData, "category");
       }
       toast.success("Изменено успешно!");
     } catch (error) {
@@ -105,19 +107,19 @@ export default function DragDropComponent({
       let res = null;
       try {
         if (param == "changeBanner") {
-          res = await axios.get("/api/bannerSort");
+          res = await getData("/api/bannerSort", "banner");
         }
         if (param == "changeTopCategory") {
-          res = await axios.get("/api/topCategorySort");
-          console.log(res);
+          res = await getData("/api/topCategorySort", "topCategory");
         }
-        if (res.data.data.length > 0) {
-          setUsersList(res.data.data?.sort((a, b) => a.uniqueId - b.uniqueId));
+        console.log(res);
+
+        if (res.length > 0) {
+          setUsersList(res?.sort((a, b) => a.uniqueId - b.uniqueId));
         } else {
           setUsersList(data?.sort((a, b) => a.uniqueId - b.uniqueId));
         }
       } catch (error) {
-        console.log(error);
       } finally {
         setIsLoading(false);
       }

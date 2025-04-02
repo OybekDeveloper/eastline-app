@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../shared/customFormField";
 import { Sertificate } from "@/lib/validation";
@@ -15,7 +14,8 @@ import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
 import { revalidatePath } from "@/lib/revalidate";
 import DropTarget from "../shared/fileDnd";
-import { sanitizeString, supabase } from "@/lib/utils";
+import { sanitizeString } from "@/lib/utils";
+import { getData, patchData, postData } from "@/lib/api.services";
 
 const NewsForm = () => {
   const router = useRouter();
@@ -52,55 +52,48 @@ const NewsForm = () => {
     setIsLoading(true);
     let uploadedUrl = "";
 
-    let imageToUpload = image[0]?.file;
-
-    if (imageToUpload) {
-      if (image[0]?.cropped) {
-        imageToUpload = dataURLToBlob(image[0].url);
-      }
-
-      try {
-        if (image.cropped) {
+    try {
+      // If there's a file to upload (new or cropped image)
+      if (image[0]?.file) {
+        let imageToUpload = image[0].file;
+        if (image[0]?.cropped) {
           imageToUpload = dataURLToBlob(image[0].url);
         }
-        const imageName = sanitizeString(image[0].name);
 
-        // File doesn't exist, upload it
-        const { data, error: uploadError } = await supabase.storage
-          .from("eastLine_images")
-          .upload(imageName, imageToUpload);
+        const formData = new FormData();
+        formData.append("file", imageToUpload, sanitizeString(image[0].name));
 
-        if (uploadError && uploadError.statusCode == 409) {
-          console.log("Error uploading image:", uploadError);
-          const { data: newPublicUrlData } = await supabase.storage
-            .from("eastLine_images")
-            .getPublicUrl(imageName);
-
-          uploadedUrl = newPublicUrlData.publicUrl;
-        } else {
-
-          const { data: newPublicUrlData } = await supabase.storage
-            .from("eastLine_images")
-            .getPublicUrl(imageName);
-
-          uploadedUrl = newPublicUrlData.publicUrl;
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        toast.error("Ошибка загрузки изображения. Попробуйте еще раз.");
-      }
-    }
-
-    try {
-      if (id) {
-        await axios.patch(`/api/news?id=${id}`, {
-          ...values,
-          image: uploadedUrl ? uploadedUrl : image[0].url,
+        // Upload to Cloudflare R2 via API
+        const response = await axios.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         });
-        toast.success("Новости изменена успешно!");
-        router.back()
+
+        if (response.data.success) {
+          uploadedUrl = response.data.url;
+        } else {
+          throw new Error("Upload failed");
+        }
       } else {
-        await axios.post("/api/news", { ...values, image: uploadedUrl });
+        // If no file (existing image), use the current URL
+        uploadedUrl = image[0].url;
+      }
+
+      // Handle form submission
+      if (id) {
+        await patchData(
+          `/api/news?id=${id}`,
+          {
+            ...values,
+            image: uploadedUrl,
+          },
+          "news"
+        );
+        toast.success("Новости изменена успешно!");
+        router.back();
+      } else {
+        await postData("/api/news", { ...values, image: uploadedUrl }, "news");
         toast.success("Новости создана успешно!");
       }
 
@@ -109,18 +102,19 @@ const NewsForm = () => {
       revalidatePath("changenews");
       revalidatePath("news");
     } catch (error) {
-      console.error("Error creating news:", error);
+      console.error("Error processing news:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
     } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
     async function updateData() {
       try {
-        const res = await axios.get(`/api/news?id=${id}`);
+        const res = await getData(`/api/news?id=${id}`, "news");
         if (res) {
-          const { name, image } = res.data.data[0];
+          const { name, image } = res[0];
           form.setValue("name", name);
           setImage([
             {
@@ -158,7 +152,7 @@ const NewsForm = () => {
                 fieldType={FormFieldType.INPUT}
                 control={form.control}
                 name="name"
-                label="Название партнёр"
+                label="Название новости"
               />
             </div>
             <div className="my-6">

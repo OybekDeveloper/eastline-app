@@ -2,10 +2,16 @@ import db from "@/db/db";
 
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
+  const topCategoryId = await req.nextUrl.searchParams.get("topCategoryId");
 
   if (id) {
     const getTopCategroies = await db.category.findMany({
-      where: { id: Number(id) },
+      where: { id: String(id) },
+    });
+    return Response.json({ data: getTopCategroies });
+  } else if (topCategoryId) {
+    const getTopCategroies = await db.category.findMany({
+      where: { topCategoryId: String(topCategoryId) },
     });
     return Response.json({ data: getTopCategroies });
   } else {
@@ -22,7 +28,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteCategory = await db.category.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -39,12 +45,14 @@ export async function DELETE(req) {
 
 export async function POST(req) {
   const data = await req.json();
+  console.log(data);
+
   const createCategory = await db.category.create({
     data: {
       name: data.name,
       topCategory: {
         connect: {
-          id: Number(data.topCategoryId),
+          id: String(data.topCategoryId),
         },
       },
       image: data.image,
@@ -59,12 +67,12 @@ export async function PATCH(req) {
     const id = await req.nextUrl.searchParams.get("id");
 
     const updateCategory = await db.category.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data: {
         name: data.name,
         topCategory: {
           connect: {
-            id: Number(data.topCategoryId),
+            id: String(data.topCategoryId),
           },
         },
         image: data.image,

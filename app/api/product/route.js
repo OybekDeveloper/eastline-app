@@ -5,14 +5,14 @@ export async function GET(req) {
   const categoryId = await req.nextUrl.searchParams.get("categoryId");
   if (id) {
     const getProducts = await db.product.findMany({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
     return Response.json({ data: getProducts });
   }
   if (categoryId) {
     const getCategoryProduct = await db.product.findMany({
       where: {
-        categoryId: Number(categoryId),
+        categoryId: String(categoryId),
       },
     });
     return Response.json({ data: getCategoryProduct });
@@ -35,7 +35,7 @@ export async function POST(req) {
       image: data.images,
       category: {
         connect: {
-          id: Number(data.categoryId),
+          id: String(data.categoryId),
         },
       },
     },
@@ -48,7 +48,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteTopCategory = await db.product.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -71,7 +71,7 @@ export async function PATCH(req) {
     const id = searchParams.get("id");
 
     const updateProduct = await db.product.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data: {
         name: data.name,
         description: data.description,
@@ -81,7 +81,7 @@ export async function PATCH(req) {
         image: data.images,
         category: {
           connect: {
-            id: Number(data.categoryId),
+            id: String(data.categoryId),
           },
         },
       },

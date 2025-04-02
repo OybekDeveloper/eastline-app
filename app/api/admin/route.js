@@ -20,10 +20,7 @@ export async function POST(req) {
     const isPasswordValid = admin[0].password === password; // Replace with proper hashing comparison if needed
 
     if (!isPasswordValid) {
-      return NextResponse.json(
-        { message: "Неверный пароль" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Неверный пароль" }, { status: 401 });
     }
 
     return NextResponse.json(
@@ -48,8 +45,17 @@ export async function PATCH(req) {
 
   const updateAdmin = await db.admin.update({
     where: {
-      id: 1,
+      id: String("67e66e9f1dfa5322e99a3bad"),
     },
+    data: data,
+  });
+
+  return Response.json({ data: updateAdmin });
+}
+export async function PUT(req) {
+  const data = await req.json();
+
+  const updateAdmin = await db.admin.create({
     data: data,
   });
 

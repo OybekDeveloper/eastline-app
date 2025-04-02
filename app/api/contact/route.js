@@ -6,7 +6,7 @@ export async function GET(req) {
   if (id) {
     // Fetch a specific contact by ID
     const contact = await db.contacts.findUnique({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
     return Response.json({ data: contact });
   } else {
@@ -39,7 +39,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deletedContact = await db.contacts.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -63,7 +63,7 @@ export async function PATCH(req) {
     const id = searchParams.get("id");
 
     const updatedContact = await db.contacts.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data: {
         company_name: data.company_name,
         phone1: data.phone1,

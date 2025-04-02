@@ -1,30 +1,30 @@
 import db from "@/db/db";
 
 export async function GET(req) {
-  const id = await req.nextUrl.searchParams.get("id");
-  const categoryId = await req.nextUrl.searchParams.get("categoryId");
+  const id = req.nextUrl.searchParams.get("id");
+  const categoryId = req.nextUrl.searchParams.get("categoryId");
 
   if (id) {
-    const getTopCategroies = await db.categorySort.findMany({
-      where: { id: Number(id) },
+    const getTopCategories = await db.categorySort.findMany({
+      where: { id: String(id) },
     });
-    return Response.json({ data: getTopCategroies });
+    return Response.json({ data: getTopCategories });
   } else if (categoryId) {
-    const getTopCategroies = await db.categorySort.findMany({
-      where: { categoryId: Number(categoryId) },
+    const getTopCategories = await db.categorySort.findMany({
+      where: { categoryId: String(categoryId) },
     });
-    return Response.json({ data: getTopCategroies });
+    return Response.json({ data: getTopCategories });
   } else {
-    const getTopCategroies = await db.categorySort.findMany();
-    return Response.json({ data: getTopCategroies });
+    const getTopCategories = await db.categorySort.findMany();
+    return Response.json({ data: getTopCategories });
   }
 }
 
 export async function DELETE(req) {
   try {
-    const id = await req.nextUrl.searchParams.get("id");
+    const id = req.nextUrl.searchParams.get("id");
     const deleteCategory = await db.categorySort.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -40,17 +40,17 @@ export async function DELETE(req) {
 }
 
 export async function POST(req) {
-  const all = await req.nextUrl.searchParams.get("all");
-
+  const all = req.nextUrl.searchParams.get("all");
   const data = await req.json();
   console.log(data);
 
   if (all) {
-    const createCategory = await db.categorySort.createMany({
-      data,
-      skipDuplicates: true,
-    });
-    return Response.json({ data: createCategory });
+    for (const item of data) {
+      await db.categorySort.create({
+        data: item,
+      });
+    }
+    return Response.json({ success: true, message: "All items created" });
   } else {
     const createCategory = await db.categorySort.create({
       data: {
@@ -66,25 +66,23 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   try {
-    const id = await req.nextUrl.searchParams.get("id");
-    const all = await req.nextUrl.searchParams.get("all");
+    const id = req.nextUrl.searchParams.get("id");
+    const all = req.nextUrl.searchParams.get("all");
     const data = await req.json();
     console.log(data);
 
     if (all) {
-      // Handle batch update if 'all=true' is passed
       if (Array.isArray(data)) {
-        const updatePromises = data.map((item) =>
-          db.categorySort.update({
-            where: { id: Number(item.id) },
+        for (const item of data) {
+          await db.categorySort.update({
+            where: { id: String(item.id) },
             data: {
-              uniqueId: item.uniqueId, // Update the necessary fields
+              uniqueId: item.uniqueId,
             },
-          })
-        );
-        const updateCategory = await Promise.all(updatePromises);
+          });
+        }
         return new Response(
-          JSON.stringify({ success: true, data: updateCategory }),
+          JSON.stringify({ success: true, message: "All items updated" }),
           { status: 200 }
         );
       } else {
@@ -98,12 +96,12 @@ export async function PATCH(req) {
     if (id) {
       const { name, categoryId, uniqueId, topCategorySortId } = data;
       const updateCategory = await db.categorySort.update({
-        where: { id: Number(id) },
+        where: { id: String(id) },
         data: {
           name: name,
-          categoryId: Number(categoryId),
+          categoryId: String(categoryId),
           uniqueId: Number(uniqueId),
-          topCategorySortId: Number(topCategorySortId),
+          topCategorySortId: String(topCategorySortId),
         },
       });
       return new Response(

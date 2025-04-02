@@ -13,7 +13,7 @@ export async function GET(req) {
 
   if (id) {
     const getBackground = await db.background.findMany({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
     return Response.json({ data: getBackground });
   } else {
@@ -26,7 +26,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteBackground = await db.background.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -47,7 +47,7 @@ export async function PATCH(req) {
 
   try {
     const updateBackground = await db.background.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data,
     });
 

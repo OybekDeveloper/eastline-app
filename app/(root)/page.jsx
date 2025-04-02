@@ -5,59 +5,66 @@ import Partners from "@/components/pages/root/partners";
 import AllCategories from "@/components/shared/allCategories";
 import AllProducts from "@/components/shared/allProducts";
 import Banner from "@/components/shared/banner";
-import { ApiService } from "@/lib/api.services";
+import { getData } from "@/lib/api.services";
 import { getLastItems, getRandomItems } from "@/lib/utils";
 import { Suspense } from "react";
 
 async function Home() {
-  const [
-    products,
-    categories,
-    topCategories,
-    sertificate,
-    license,
-    partner,
-    newsData,
-    reviews,
-    currency,
-    banner,
-    bannerSort,
-  ] = await Promise.all([
-    ApiService.getData("/api/product", "product"),
-    ApiService.getData("/api/category", "category"),
-    ApiService.getData("/api/topCategory", "topCategory"),
-    ApiService.getData("/api/sertificate", "sertificate"),
-    ApiService.getData("/api/license", "license"),
-    ApiService.getData("/api/partner", "partner"),
-    ApiService.getData("/api/news", "news"),
-    ApiService.getData("/api/selectReview", "selectReview"),
-    ApiService.getData("/api/currency", "currency"),
-    ApiService.getData("/api/banner", "banner"),
-    ApiService.getData("/api/bannerSort", "banner"),
-  ]);
+  try {
+    const [
+      products,
+      categories,
+      topCategories,
+      sertificate,
+      license,
+      partner,
+      newsData,
+      reviews,
+      currency,
+      banner,
+      bannerSort,
+    ] = await Promise.all([
+      getData("/api/product", "product").catch(() => []),
+      getData("/api/category", "category").catch(() => []),
+      getData("/api/topCategory", "topCategory").catch(() => []),
+      getData("/api/sertificate", "sertificate").catch(() => []),
+      getData("/api/license", "license").catch(() => []),
+      getData("/api/partner", "partner").catch(() => []),
+      getData("/api/news", "news").catch(() => []),
+      getData("/api/selectReview", "selectReview").catch(() => []),
+      getData("/api/currency", "currency").catch(() => []),
+      getData("/api/banner", "banner").catch(() => []),
+      getData("/api/bannerSort", "banner").catch(() => []),
+    ]);
 
-  const randomLicense = getRandomItems(license);
-  const lastProducts = getLastItems(products, 4);
-  const lastNews = getLastItems(newsData, 10);
+    const randomLicense = getRandomItems(license);
+    const lastProducts = getLastItems(products, 4);
+    const lastNews = getLastItems(newsData, 10);
 
-  return (
-    <div className="min-h-[50%] w-full flex flex-col space-y-2 items-center justify-center">
-      <Banner banner={banner} bannerSort={bannerSort} />
-      <div className="w-full space-y-6">
-        <AllCategories categories={categories} topCategories={topCategories} />
-        <AllProducts
-          products={lastProducts}
-          categories={categories}
-          currency={currency}
-          topCategories={topCategories}
-        />
-        <Icons />
-        <OurLicenses sertificate={sertificate} license={randomLicense} />
-        <Partners partner={partner} />
-        <NewsRew newsItem={lastNews} reviews={reviews} />
+    return (
+      <div className="min-h-[50%] w-full flex flex-col space-y-2 items-center justify-center">
+        <Suspense fallback={<div>Loading banner...</div>}>
+          <Banner banner={banner} bannerSort={bannerSort} />
+        </Suspense>
+        <div className="w-full space-y-6">
+          <AllCategories categories={categories} topCategories={topCategories} />
+          <AllProducts
+            products={lastProducts}
+            categories={categories}
+            currency={currency}
+            topCategories={topCategories}
+          />
+          <Icons />
+          <OurLicenses sertificate={sertificate} license={randomLicense} />
+          <Partners partner={partner} />
+          <NewsRew newsItem={lastNews} reviews={reviews} />
+        </div>
       </div>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error("Error loading Home page data:", error);
+    return <div>Error loading page. Please try again later.</div>;
+  }
 }
 
 export default Home;

@@ -16,7 +16,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteReview = await db.reviews.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(

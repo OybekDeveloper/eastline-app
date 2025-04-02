@@ -47,7 +47,9 @@ const Banner = ({ banner, bannerSort }) => {
                     <Link
                       className="mt-1"
                       href={`/${item.topCategoryId}/${item.categoryId}/${
-                        item.productId > 0 ? item.productId : ""
+                        item.productId && item?.productId != undefined
+                          ? item.productId
+                          : ""
                       }`}
                     >
                       <div className="relative max-sm:h-[250px] overflow-hidden">
@@ -55,6 +57,7 @@ const Banner = ({ banner, bannerSort }) => {
                           object={"object-contain rounded-md"}
                           src={item.image}
                           alt={`banner-img`}
+                          loading="eager"
                           className="w-full mx-auto max-sm:aspect-video aspect-square mb-5"
                         />
                       </div>
@@ -91,7 +94,9 @@ const Banner = ({ banner, bannerSort }) => {
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
                       href={`/${item.topCategoryId}/${item.categoryId}/${
-                        item.productId >0 ? item.productId : ""
+                        item.productId && item?.productId != undefined
+                          ? item.productId
+                          : ""
                       }`}
                     >
                       <div className="relative">

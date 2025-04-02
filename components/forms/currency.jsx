@@ -13,6 +13,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
+import { patchData } from "@/lib/api.services";
 
 const CurrencySum = () => {
   const router = useRouter();
@@ -29,7 +30,7 @@ const CurrencySum = () => {
     // setIsLoading(true);
 
     try {
-      await axios.patch("/api/currency", values);
+      await patchData("/api/currency", values, "currency");
 
       toast.success("Валюта успешно изменена!");
       localStorage.setItem("sum", values.sum);

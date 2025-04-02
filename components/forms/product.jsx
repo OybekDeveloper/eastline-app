@@ -14,9 +14,15 @@ import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
 import { SelectItem } from "../ui/select";
 import DropTarget from "../shared/fileDnd";
-import { sanitizeString, supabase } from "@/lib/utils";
+import { sanitizeString } from "@/lib/utils";
 import Todo from "../shared/note/NotePicker";
 import { revalidatePath } from "@/lib/revalidate";
+import {
+  getData,
+  patchData,
+  postData,
+  revalidateUpdate,
+} from "@/lib/api.services";
 
 const ProductForm = ({ categories }) => {
   const router = useRouter();
@@ -59,35 +65,37 @@ const ProductForm = ({ categories }) => {
     let urlArr = [];
 
     for (const image of images) {
-      let imageToUpload = image.file;
-      if (!imageToUpload) {
+      // If the image is already uploaded (has a URL but no file), keep the existing URL
+      if (!image.file) {
         urlArr.push(image.url);
         continue;
       }
 
+      // Prepare the file to upload
+      let fileToUpload = image.file;
       if (image.cropped) {
-        imageToUpload = dataURLToBlob(image.url);
+        fileToUpload = dataURLToBlob(image.url);
       }
-      const imageName = sanitizeString(image.name);
 
-      // File doesn't exist, upload it
-      const { data, error: uploadError } = await supabase.storage
-        .from("eastLine_images")
-        .upload(imageName, imageToUpload);
+      const formData = new FormData();
+      formData.append("file", fileToUpload, sanitizeString(image.name));
 
-      if (uploadError) {
-        console.log("Error uploading image:", uploadError);
-        const { data: newPublicUrlData } = supabase.storage
-          .from("eastLine_images")
-          .getPublicUrl(imageName);
+      try {
+        // Make API call to Cloudflare R2 upload endpoint
+        const response = await axios.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-        urlArr.push(newPublicUrlData.publicUrl);
-      } else {
-        const { data: newPublicUrlData } = supabase.storage
-          .from("eastLine_images")
-          .getPublicUrl(imageName);
-
-        urlArr.push(newPublicUrlData.publicUrl);
+        if (response.data.success) {
+          urlArr.push(response.data.url);
+        } else {
+          throw new Error("Upload failed");
+        }
+      } catch (error) {
+        console.error("Error uploading to Cloudflare R2:", error);
+        toast.error(`Failed to upload ${image.name}`);
       }
     }
 
@@ -109,18 +117,28 @@ const ProductForm = ({ categories }) => {
     try {
       const imagesUpload = await upload();
       if (id) {
-        const res = await axios.patch(`/api/product?id=${id}`, {
-          ...values,
-          images: imagesUpload,
-        });
+        const res = await patchData(
+          `/api/product?id=${id}`,
+          {
+            ...values,
+            images: imagesUpload,
+          },
+          "product"
+        );
         if (res) {
           toast.success("Товар изменена успешно!");
           router.back();
         }
       } else {
-        await axios.post("/api/product", { ...values, images: imagesUpload });
+        await postData(
+          "/api/product",
+          { ...values, images: imagesUpload },
+          "product"
+        );
         toast.success("Товар создан успешно!");
       }
+      await revalidateUpdate("category");
+      await revalidateUpdate("topCategory");
 
       form.reset();
       revalidatePath("product");
@@ -138,7 +156,7 @@ const ProductForm = ({ categories }) => {
   useEffect(() => {
     async function updateData() {
       try {
-        const res = await axios.get(`/api/product?id=${id}`);
+        const res = await getData(`/api/product?id=${id}`, "product");
         if (res) {
           const {
             name,
@@ -148,7 +166,7 @@ const ProductForm = ({ categories }) => {
             price,
             categoryId,
             image,
-          } = res.data.data[0];
+          } = res[0];
           form.setValue("name", name);
           form.setValue("description", description);
           form.setValue("feature", feature);
@@ -183,7 +201,6 @@ const ProductForm = ({ categories }) => {
           />
           <p>{id ? "Изменить" : "Создать"} товар</p>
         </div>
-        {/* <Notes /> */}
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -222,12 +239,6 @@ const ProductForm = ({ categories }) => {
                   handleContentChange={handleContentChange}
                   content={content}
                 />
-                {/* <CustomFormField
-              fieldType={FormFieldType.TEXTAREA}
-              control={form.control}
-              name="feature"
-              label="Характеристика продукта"
-            /> */}
               </div>
               <CustomFormField
                 fieldType={FormFieldType.SELECT}

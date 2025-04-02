@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Suspense, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
 import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../shared/customFormField";
 import { Banner } from "@/lib/validation";
@@ -14,11 +13,12 @@ import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
 import DropTarget from "../shared/fileDnd";
-import { sanitizeString, supabase } from "@/lib/utils";
+import { sanitizeString } from "@/lib/utils";
 import { SelectItem } from "../ui/select";
 import { topCategory } from "../tableColumns/topCategory";
 import { revalidatePath } from "@/lib/revalidate";
 import { Button } from "../ui/button";
+import { getData, patchData, postData } from "@/lib/api.services";
 
 const BannerForm = ({ products, categories }) => {
   const router = useRouter();
@@ -48,12 +48,18 @@ const BannerForm = ({ products, categories }) => {
 
   const onSubmit = async (values) => {
     let categoryData;
+    console.log(categories);
+
     if (values.productId) {
       categoryData = categories.find((c) =>
-        c.products?.some((product) => +product.id === +values.productId)
+        c.products?.some(
+          (product) => String(product.id) == String(values.productId)
+        )
       );
     } else {
-      categoryData = categories.find((c) => +c.id === +values.categoryId);
+      categoryData = categories.find(
+        (c) => String(c.id) === String(values.categoryId)
+      );
     }
 
     if (!image.length) {
@@ -64,94 +70,102 @@ const BannerForm = ({ products, categories }) => {
     setIsLoading(true);
     let uploadedUrl = "";
 
-    let imageToUpload = image[0]?.file;
-    if (imageToUpload) {
-      if (image[0]?.cropped) {
-        imageToUpload = dataURLToBlob(image[0].url);
-      }
-
-      try {
-        const imageName = sanitizeString(image[0].name);
-
-        if (!imageName) {
-          throw new Error("Image name is undefined or invalid");
-        }
-
-        const { data, error: uploadError } = await supabase.storage
-          .from("eastLine_images")
-          .upload(imageName, imageToUpload);
-
-        if (uploadError && uploadError.statusCode == 409) {
-          const { data: newPublicUrlData } = await supabase.storage
-            .from("eastLine_images")
-            .getPublicUrl(imageName);
-
-          uploadedUrl = newPublicUrlData.publicUrl;
-        } else {
-          const { data: newPublicUrlData } = await supabase.storage
-            .from("eastLine_images")
-            .getPublicUrl(imageName);
-
-          uploadedUrl = newPublicUrlData.publicUrl;
-        }
-      } catch (error) {
-        console.error("Error uploading image:", error);
-        toast.error("Ошибка загрузки изображения. Попробуйте еще раз.");
-        setIsLoading(false);
-        return;
-      }
-    }
-
     try {
+      // If there's a file to upload (new or cropped image)
+      if (image[0]?.file) {
+        let imageToUpload = image[0].file;
+        if (image[0]?.cropped) {
+          imageToUpload = dataURLToBlob(image[0].url);
+        }
+
+        const formData = new FormData();
+        formData.append("file", imageToUpload, sanitizeString(image[0].name));
+
+        // Upload to Cloudflare R2 via API
+        const response = await axios.post("/api/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        if (response.data.success) {
+          uploadedUrl = response.data.url;
+        } else {
+          throw new Error("Upload failed");
+        }
+      } else {
+        // If no file (existing image), use the current URL
+        uploadedUrl = image[0].url;
+      }
+      console.log(categoryData);
+
+      // Handle form submission
       if (categoryData) {
-        const { topCategoryId } = categoryData;
-        const bannerD = await axios.get("/api/bannerSort");
-        const bannerSortData = bannerD.data.data;
+        const { topCategoryId, id: categoryId } = categoryData;
+        const bannerSortData = await getData("/api/bannerSort", "banner");
+
+        let data = {
+          topCategoryId: String(topCategoryId),
+          categoryId: String(categoryId),
+          image: uploadedUrl,
+        };
+
+        if (values?.productId) {
+          data.productId = String(values.productId);
+        }
+
         if (id) {
-          await axios.patch(`/api/banner?id=${id}`, {
-            productId: Number(values.productId),
-            topCategoryId: Number(topCategoryId),
-            categoryId: Number(categoryData?.id),
-            image: uploadedUrl ? uploadedUrl : image[0].url,
-          });
-          const findBanner = bannerSortData.find((c) => +c.bannerId === +id);
+          await patchData(`/api/banner?id=${id}`, data, "banner");
+
+          const findBanner = bannerSortData.find(
+            (c) => String(c.bannerId) === String(id)
+          );
+
           if (findBanner) {
-            await axios.patch(`/api/bannerSort?id=${findBanner.id}`, {
-              productId: Number(values.productId),
-              topCategoryId: Number(topCategoryId),
-              categoryId: Number(categoryData?.id),
-              image: uploadedUrl ? uploadedUrl : image[0].url,
-            });
+            let updatedData = {
+              topCategoryId: String(topCategoryId),
+              categoryId: String(categoryId),
+              image: uploadedUrl,
+            };
+
+            if (values?.productId) {
+              updatedData.productId = String(values.productId);
+            }
+
+            await patchData(
+              `/api/bannerSort?id=${findBanner.id}`,
+              updatedData,
+              "banner"
+            );
           }
+
           toast.success("Партнер изменена успешно!");
           router.back();
         } else {
-          const res = await axios.post("/api/banner", {
-            productId: Number(values.productId),
-            image: uploadedUrl,
-            topCategoryId: Number(topCategoryId),
-            categoryId: Number(categoryData?.id),
-          });
+          const res = await postData("/api/banner", data, "banner");
+
           if (res) {
-            const unqId = bannerSortData.length + 1;
-            axios.post("/api/bannerSort?one=one", {
-              productId: Number(values.productId),
-              image: uploadedUrl,
-              topCategoryId: Number(topCategoryId),
-              categoryId: Number(categoryData?.id),
-              bannerId: res.data.data.id,
-              uniqueId: unqId,
-            });
+            console.log(res, "banner data post");
+
+            await postData(
+              "/api/bannerSort?one=one",
+              {
+                ...data,
+                bannerId: res.data.id,
+                uniqueId: bannerSortData.length + 1,
+              },
+              "banner"
+            );
           }
+
           toast.success("Партнер создана успешно!");
         }
+
         form.reset();
         setImage([]);
-        revalidatePath("changeBanner");
-        revalidatePath("banner");
       }
     } catch (error) {
-      console.error("Error creating partner:", error);
+      console.error("Error processing banner:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
     } finally {
       setIsLoading(false);
@@ -163,12 +177,13 @@ const BannerForm = ({ products, categories }) => {
     form.setValue("productId", "");
     form.setValue("categoryId", "");
   };
+
   useEffect(() => {
     async function updateData() {
       try {
-        const res = await axios.get(`/api/banner?id=${id}`);
+        const res = await getData(`/api/banner?id=${id}`, "banner");
         if (res) {
-          const { productId, image } = res.data.data[0];
+          const { productId, image } = res[0];
           form.setValue("productId", productId);
           setImage([
             {

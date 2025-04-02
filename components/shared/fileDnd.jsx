@@ -28,7 +28,8 @@ function DropTarget({ images, setImages, limitImg }) {
 
   function handleFiles(files) {
     const newImages = [];
-    const maxSize = 10 * 1024 * 1024; // 4MB in bytes
+    const maxSize = 10 * 1024 * 1024; // 10MB in bytes
+    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
 
     if (images.length + files.length > limitImg) {
       toast.error(`Вы можете выбрать не более ${limitImg} изображений`);
@@ -36,11 +37,17 @@ function DropTarget({ images, setImages, limitImg }) {
     }
 
     for (let i = 0; i < files.length; i++) {
-      if (files[i].type.split("/")[0] !== "image") continue;
+      // Check if file type is JPG or PNG
+      if (!allowedTypes.includes(files[i].type)) {
+        toast.error(
+          `${files[i].name} имеет неподдерживаемый формат. Допустимы только JPG и PNG`
+        );
+        continue;
+      }
 
       if (files[i].size > maxSize) {
         toast.error(
-          `${files[i].name} слишком большой. Выберите файл размером менее 2 МБ`
+          `${files[i].name} слишком большой. Выберите файл размером менее 10 МБ`
         );
         continue;
       }
@@ -55,7 +62,7 @@ function DropTarget({ images, setImages, limitImg }) {
           name: newName,
           url: URL.createObjectURL(files[i]),
           file: files[i],
-          cropped: false, // To track if the image has been cropped
+          cropped: false,
         });
       }
     }
@@ -63,7 +70,7 @@ function DropTarget({ images, setImages, limitImg }) {
   }
 
   function deleteImage(index) {
-    setImages((prevImages) => prevImages.filter((_, i) => i != index));
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   }
 
   function onDragOver(event) {
@@ -90,7 +97,7 @@ function DropTarget({ images, setImages, limitImg }) {
     canvasEle.height = imgCroppedArea.height;
 
     const context = canvasEle.getContext("2d");
-    const imageObj1 = new window.Image(); // Using the native Image object
+    const imageObj1 = new window.Image();
     imageObj1.src = cropImageUrl;
 
     imageObj1.onload = function () {
@@ -108,7 +115,6 @@ function DropTarget({ images, setImages, limitImg }) {
 
       const dataUrl = canvasEle.toDataURL("image/jpeg");
 
-      // Update the specific image in the images array
       setImages((prevImages) =>
         prevImages.map((img, index) =>
           index === currentImageIndex
@@ -164,7 +170,7 @@ function DropTarget({ images, setImages, limitImg }) {
                   ref={fileInputRef}
                   onChange={onFileSelect}
                   name="file"
-                  accept="image/*"
+                  accept="image/png, image/jpeg, image/jpg"
                   multiple
                   className="hidden"
                 />

@@ -10,10 +10,16 @@ export async function PATCH(req) {
 
   const updateCurrency = await db.currency.update({
     where: {
-      id: 1,
+      id: "67e673a11dfa5322e99a3bb1",
     },
     data: data,
   });
 
   return Response.json({ data: updateCurrency });
+}
+
+export async function POST(req) {
+  const data = await req.json();
+  const createCurrency = await db.currency.create({ data });
+  return Response.json({ data: createCurrency });
 }

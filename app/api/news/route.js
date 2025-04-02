@@ -5,7 +5,7 @@ export async function GET(req) {
 
   if (id) {
     const getNews = await db.news.findMany({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
     return Response.json({ data: getNews });
   }
@@ -25,7 +25,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteNews = await db.news.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(JSON.stringify({ success: true, data: deleteNews }), {
@@ -45,7 +45,7 @@ export async function PATCH(req) {
 
   try {
     const updateNews = await db.news.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data,
     });
 

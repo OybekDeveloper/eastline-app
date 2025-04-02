@@ -4,17 +4,15 @@ export async function DELETE(req) {
   try {
     const id = req.nextUrl.searchParams.get("id");
 
-    // Ensure the id is valid
-    if (!id || isNaN(Number(id))) {
+    if (!id) {
       return new Response(
         JSON.stringify({ success: false, error: "Invalid or missing ID" }),
         { status: 400 }
       );
     }
 
-    // Delete based on the primary key (id) instead of topCategoryId
     const deleteTopCategory = await db.topCategorySort.delete({
-      where: { id: Number(id) }, // Use `id` instead of `topCategoryId`
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -30,44 +28,32 @@ export async function DELETE(req) {
 }
 
 export async function GET(req) {
-  const id = await req.nextUrl.searchParams.get("id");
-
-  const queryOptions = {};
-
-  if (id) {
-    queryOptions.where = {
-      id: Number(id),
-    };
-  }
-
+  const id = req.nextUrl.searchParams.get("id");
+  const queryOptions = id ? { where: { id: String(id) } } : {};
   const getTopCategories = await db.topCategorySort.findMany(queryOptions);
-
   return Response.json({ data: getTopCategories });
 }
 
 export async function POST(req) {
   const data = await req.json();
-  const one = await req.nextUrl.searchParams.get("one");
+  const one = req.nextUrl.searchParams.get("one");
 
   try {
     if (one) {
-      const createTopCategory = await db.topCategorySort.create({
-        data,
-      });
-
+      const createTopCategory = await db.topCategorySort.create({ data });
       return Response.json({ data: createTopCategory });
     } else {
       await db.topCategorySort.deleteMany();
-
-      const createTopCategory = await db.topCategorySort.createMany({
-        data,
-        skipDuplicates: true,
-      });
-
-      return Response.json({ data: createTopCategory });
+      const createdRecords = [];
+      
+      for (const item of data) {
+        const created = await db.topCategorySort.create({ data: item });
+        createdRecords.push(created);
+      }
+      
+      return Response.json({ data: createdRecords });
     }
   } catch (error) {
-    // Handle any potential errors during the process
     return Response.json(
       { error: "Failed to process the request" },
       { status: 500 }
@@ -76,13 +62,20 @@ export async function POST(req) {
 }
 
 export async function PATCH(req) {
-  const data = await req.json();
   try {
+    const data = await req.json();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
+    if (!id) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Missing ID" }),
+        { status: 400 }
+      );
+    }
+
     const updateTopCategory = await db.topCategorySort.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data: { name: data.name },
     });
 

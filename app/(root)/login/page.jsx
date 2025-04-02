@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie"; // Import js-cookie
 import Link from "next/link";
+import { postData } from "@/lib/api.services";
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,20 +28,13 @@ function Login() {
   });
 
   const onSubmit = async (values) => {
-    const response = await fetch(`/api/product`, {
-      next: { tags: [`product`] },
-      cache: "no-cache",
-      cache: "no-store",
-    });
-    const { data } = await response.json();
-    
     setIsLoading(true);
     try {
       const user = {
         name: values.name,
         password: values.password,
       };
-      const res = await axios.post("/api/admin", user);
+      const res = await postData("/api/admin", user, "admin");
       toast.success("Вы успешно авторизованы!");
       Cookies.set(
         "date",

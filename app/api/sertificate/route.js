@@ -13,7 +13,7 @@ export async function GET(req) {
 
   if (id) {
     const getSertificates = await db.sertificate.findMany({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
     return Response.json({ data: getSertificates });
   } else {
@@ -26,7 +26,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteSertificates = await db.sertificate.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -47,7 +47,7 @@ export async function PATCH(req) {
 
   try {
     const updateSertificates = await db.sertificate.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data,
     });
 

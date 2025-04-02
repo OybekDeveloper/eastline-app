@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import React, { useState } from "react";
 
-const CustomImage = ({ src, fill, alt, className, object }) => {
+const CustomImage = ({loadingRoot, src, fill, alt, className, object }) => {
   const lazyRoot = React.useRef(null);
   const [loading, setLoading] = useState(true);
   return (
@@ -17,6 +17,7 @@ const CustomImage = ({ src, fill, alt, className, object }) => {
           lazyRoot={lazyRoot}
           src={src}
           alt={alt}
+          loading={loadingRoot ? loadingRoot : "lazy"}
           fill
           className={`${
             object ? `${object}` : "object-contain h-full"
@@ -33,6 +34,7 @@ const CustomImage = ({ src, fill, alt, className, object }) => {
           lazyRoot={lazyRoot}
           src={src}
           alt={alt}
+          loading={loadingRoot ? loadingRoot : "lazy"}
           width={100}
           height={100}
           layout="responsive"

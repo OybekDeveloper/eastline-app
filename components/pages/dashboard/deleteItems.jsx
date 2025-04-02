@@ -19,16 +19,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import axios from "axios";
 import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useEvent } from "@/store/event";
 import { revalidatePath } from "@/lib/revalidate";
-import { ApiService } from "@/lib/api.services";
+import { deleteData, getData } from "@/lib/api.services";
 
 const DeleteItem = ({ payment, only }) => {
-  const { setReflesh } = useEvent();
   const { setTableData, changeTableData } = useEvent();
 
   const pathname = usePathname();
@@ -40,49 +38,39 @@ const DeleteItem = ({ payment, only }) => {
       pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
       pathname.split("/")[2].slice(6).slice(1);
     try {
-      const response = await axios.delete(`/api/${pathName}`, {
-        params: {
-          id: payment.id,
-        },
-      });
+      const response = await deleteData(
+        `/api/${pathName}?id=${payment.id}`,
+        pathName
+      );
 
       if (pathName == "topCategory") {
-        const topCategorySortData = await axios.get(`/api/topCategorySort`);
+        const topCategorySortData = await getData(
+          `/api/topCategorySort`,
+          "topCategory"
+        );
         const delId = topCategorySortData.find(
-          (c) => +c.topCategoryId === payment.id
+          (c) => String(c.topCategoryId) === String(payment.id)
         ).id;
         if (delId) {
-          await axios.delete(`/api/topCategorySort`, {
-            params: {
-              id: delId,
-            },
-          });
+          await deleteData(`/api/topCategorySort?id=${delId}`, "topCategory");
         }
       }
       if (pathName == "banner") {
-        const bannerSortData = await axios.get(`/api/bannerSort`);
-        const delId = bannerSortData.data.data.find(
-          (c) => +c.bannerId === payment.id
+        const bannerSortData = await getData(`/api/bannerSort`, "banner");
+        const delId = bannerSortData.find(
+          (c) => String(c.bannerId) === String(payment.id)
         ).id;
         if (delId) {
-          await axios.delete(`/api/bannerSort`, {
-            params: {
-              id: delId,
-            },
-          });
+          await deleteData(`/api/bannerSort?id=${delId}`, "banner");
         }
       }
       if (pathName == "category") {
-        const categorySort = await axios.get(`/api/categorySort`);
-        const delId = categorySort.data.data.find(
-          (c) => +c.categoryId === payment.id
+        const categorySort = await getData(`/api/categorySort`, "category");
+        const delId = categorySort.find(
+          (c) => String(c.categoryId) === String(payment.id)
         ).id;
         if (delId) {
-          await axios.delete(`/api/categorySort`, {
-            params: {
-              id: delId,
-            },
-          });
+          await deleteData(`/api/categorySort?id=${delId}`, "category");
         }
       }
       if (response) {

@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
 import { revalidatePath } from "@/lib/revalidate";
+import { getData, patchData, postData } from "@/lib/api.services";
 // import Todo from "../shared/note/NotePicker";
 
 const ContactsForm = () => {
@@ -45,16 +46,16 @@ const ContactsForm = () => {
 
   const onSubmit = async (values) => {
     console.log(values);
-    
+
     setIsLoading(true);
     try {
       if (id) {
         // Update existing contact
-        await axios.patch(`/api/contact?id=${id}`, values);
+        await patchData(`/api/contact?id=${id}`, values, "contact");
         toast.success("Контакт обновлен успешно!");
       } else {
         // Create new contact
-        await axios.post("/api/contact", values);
+        await postData("/api/contact", values, "contact");
         toast.success("Контакт создан успешно!");
       }
     } catch (error) {
@@ -70,7 +71,7 @@ const ContactsForm = () => {
   useEffect(() => {
     async function updateData() {
       try {
-        const res = await axios.get(`/api/contact?id=${id}`);
+        const res = await getData(`/api/contact?id=${id}`, "contact");
         if (res) {
           const contactData = res.data.data;
           form.setValue("company_name", contactData.company_name);

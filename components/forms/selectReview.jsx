@@ -40,6 +40,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "../shared/dataTableColumnHeader";
 import toast from "react-hot-toast";
 import DeleteItemReview from "../pages/dashboard/delete-review";
+import { getData, postData } from "@/lib/api.services";
 
 export default function SelectReview() {
   const router = useRouter();
@@ -91,17 +92,16 @@ export default function SelectReview() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const reviews = await axios.get(`/api/review`, {
-          next: { tags: [`selectReview`] },
-        });
-        const selectReviewData = await axios.get(`/api/selectReview`, {
-          next: { tags: [`selectReview`] },
-        });
-        const selectReviewIds = selectReviewData?.data?.data?.map(
+        const reviews = await getData(
+          `/api/review`,
+          "review"
+        );
+        const selectReviewData = await getData(`/api/selectReview`, "review");
+        const selectReviewIds = selectReviewData?.map(
           (selectReview) => selectReview.reviewId
         );
 
-        const filteredReviews = reviews?.data?.data?.filter(
+        const filteredReviews = reviews?.filter(
           (review) => !selectReviewIds?.includes(review?.id)
         );
 
@@ -134,9 +134,13 @@ export default function SelectReview() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("/api/selectReview", {
-        updatedReviews,
-      });
+      const response = await postData(
+        "/api/selectReview",
+        {
+          updatedReviews,
+        },
+        "review"
+      );
 
       if (response.status === 200) {
         setReflesh();

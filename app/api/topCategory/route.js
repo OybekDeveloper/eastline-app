@@ -4,7 +4,7 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteTopCategory = await db.topCategory.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
@@ -30,7 +30,7 @@ export async function GET(req) {
 
   if (id) {
     queryOptions.where = {
-      id: Number(id),
+      id: String(id),
     };
   }
 
@@ -53,7 +53,7 @@ export async function PATCH(req) {
     const id = searchParams.get("id");
 
     const updateTopCategory = await db.topCategory.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data: { name: data.name },
     });
 

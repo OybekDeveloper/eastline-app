@@ -5,7 +5,7 @@ export async function GET(req) {
 
   if (id) {
     const getBannerSort = await db.bannerSort.findMany({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
     return Response.json({ data: getBannerSort });
   } else {
@@ -18,14 +18,12 @@ export async function DELETE(req) {
   try {
     const id = await req.nextUrl.searchParams.get("id");
     const deleteBannerSort = await db.bannerSort.delete({
-      where: { id: Number(id) },
+      where: { id: String(id) },
     });
 
     return new Response(
       JSON.stringify({ success: true, data: deleteBannerSort }),
-      {
-        status: 200,
-      }
+      { status: 200 }
     );
   } catch (error) {
     return new Response(
@@ -38,23 +36,22 @@ export async function DELETE(req) {
 export async function POST(req) {
   const data = await req.json();
   const one = await req.nextUrl.searchParams.get("one");
+  console.log(data);
 
   try {
     if (one) {
-      const createBannerSort = await db.bannerSort.create({
-        data,
-      });
+      const createBannerSort = await db.bannerSort.create({ data });
       return Response.json({ data: createBannerSort });
     } else {
       await db.bannerSort.deleteMany();
-      const createBannerSort = await db.bannerSort.createMany({
-        data,
-        skipDuplicates: true,
-      });
-      return Response.json({ data: createBannerSort });
+      const createdRecords = [];
+      for (const item of data) {
+        const created = await db.bannerSort.create({ data: item });
+        createdRecords.push(created);
+      }
+      return Response.json({ data: createdRecords });
     }
   } catch (error) {
-    // Handle any potential errors during the process
     return Response.json(
       { error: "Failed to process the request" },
       { status: 500 }
@@ -68,7 +65,7 @@ export async function PATCH(req) {
     const id = await req.nextUrl.searchParams.get("id");
 
     const updateBanner = await db.bannerSort.update({
-      where: { id: Number(id) },
+      where: { id: String(id) },
       data,
     });
 

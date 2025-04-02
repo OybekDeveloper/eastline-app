@@ -9,10 +9,10 @@ import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../shared/customFormField";
 import { AdminValidate, Currency } from "@/lib/validation";
 import SubmitButton from "../shared/submitButton";
-import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
+import { patchData } from "@/lib/api.services";
 
 const Admin = () => {
   const router = useRouter();
@@ -30,7 +30,7 @@ const Admin = () => {
     setIsLoading(true);
 
     try {
-      await axios.patch("/api/admin", values);
+      await patchData("/api/admin", values, "admin");
 
       toast.success("Админ успешно изменена!");
 

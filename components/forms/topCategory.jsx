@@ -16,6 +16,7 @@ import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
 import { revalidatePath } from "@/lib/revalidate";
 import DragDropComponent from "../shared/dragDropComponent";
+import { getData, patchData, postData } from "@/lib/api.services";
 
 const TopCategoryForm = () => {
   const router = useRouter();
@@ -36,37 +37,43 @@ const TopCategoryForm = () => {
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
-      const topCategories = await axios.get("/api/topCategorySort");
-      const topCategorySortData = topCategories.data.data;
+      const topCategories = await getData(
+        "/api/topCategorySort",
+        "topCategorySort"
+      );
+      const topCategorySortData = topCategories;
       if (id) {
-        await axios.patch(`/api/topCategory?id=${id}`, values);
+        await patchData(`/api/topCategory?id=${id}`, values, "topCategory");
         toast.success("Если нужно что-то изменить или уточнить, дайте знать!");
         const findCategory = topCategorySortData.find(
           (c) => +c.topCategoryId === +id
         );
         if (findCategory) {
-          await axios.patch(
+          await patchData(
             `/api/topCategorySort?id=${findCategory.id}`,
-            values
+            values,
+            "topCategory"
           );
         }
         router.back();
       } else {
-        const res = await axios.post("/api/topCategory", values);
+        const res = await postData("/api/topCategory", values, "topCategory");
         if (res.data.data) {
           const { name, id } = res.data.data;
           const unqId = topCategorySortData.length + 1;
-          await axios.post("/api/topCategorySort?one=one", {
-            name: name,
-            topCategoryId: id,
-            uniqueId: unqId,
-          });
+          await postData(
+            "/api/topCategorySort?one=one",
+            {
+              name: name,
+              topCategoryId: id,
+              uniqueId: unqId,
+            },
+            "topCategory"
+          );
         }
-
+        router.back();
         toast.success("Верхняя категория создана успешно!");
       }
-      revalidatePath("changeTopCategory");
-      revalidatePath("topCategory");
       form.reset();
       setIsLoading(false);
     } catch (error) {
@@ -79,15 +86,17 @@ const TopCategoryForm = () => {
   useEffect(() => {
     async function updateData() {
       try {
-        const res = await axios.get(`/api/topCategory?id=${id}`);
-        const categorySort = await axios.get(`/api/categorySort`);
-        const filterCategoryData = categorySort?.data?.data?.filter(
-          (c) => +c.topCategorySortId === +id
+        const res = await getData(`/api/topCategory?id=${id}`, "topCategory");
+        const categorySort = await getData(`/api/categorySort`, "categorySort");
+        console.log({ res });
+
+        const filterCategoryData = categorySort?.filter(
+          (c) => String(c.topCategorySortId) === String(id)
         );
         console.log(filterCategoryData, "This is filter");
 
         if (res) {
-          const { name } = res.data.data[0];
+          const { name } = res[0];
           form.setValue("name", name);
           setCategorySort(filterCategoryData);
         }

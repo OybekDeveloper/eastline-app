@@ -22,13 +22,13 @@ const Product = async ({ params }) => {
 
   async function getProduct() {
     const products = await db.product.findMany({
-      where: { id: Number(product) },
+      where: { id: String(product) },
     });
     const category = await db.category.findMany({
-      where: { id: Number(products[0]?.categoryId) },
+      where: { id: String(products[0]?.categoryId) },
     });
     const topCategory = await db.topCategory.findMany({
-      where: { id: Number(category[0]?.topCategoryId) },
+      where: { id: String(category[0]?.topCategoryId) },
     });
     return { products, category, topCategory };
   }
