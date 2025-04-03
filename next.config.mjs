@@ -9,10 +9,15 @@ const nextConfig = {
   },
 
   images: {
-    domains: ["pub-5e988c10ea9548079f2f0823b8675c2d.r2.dev", "elt.uz"],
+    domains: [
+      "pub-5e988c10ea9548079f2f0823b8675c2d.r2.dev",
+      "elt.uz",
+      "elt-server.uz",
+    ],
     remotePatterns: [
       { protocol: "https", hostname: "letsenhance.io" },
       { protocol: "https", hostname: "elt.uz" },
+      { protocol: "https", hostname: "elt-server.uz" },
       {
         protocol: "https",
         hostname: "pub-5e988c10ea9548079f2f0823b8675c2d.r2.dev",
