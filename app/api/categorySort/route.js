@@ -1,3 +1,4 @@
+import { topCategory } from "@/components/tableColumns/topCategory";
 import db from "@/db/db";
 
 export async function GET(req) {
@@ -65,21 +66,22 @@ export async function POST(req) {
 }
 
 export async function PATCH(req) {
+  const id = req.nextUrl.searchParams.get("id");
+  const all = req.nextUrl.searchParams.get("all");
+  const data = await req.json();
+  console.log(data);
   try {
-    const id = req.nextUrl.searchParams.get("id");
-    const all = req.nextUrl.searchParams.get("all");
-    const data = await req.json();
-    console.log(data);
-
     if (all) {
       if (Array.isArray(data)) {
         for (const item of data) {
-          await db.categorySort.update({
+          const { id, ...dataU } = item;
+          const res = await db.categorySort.update({
             where: { id: String(item.id) },
             data: {
               uniqueId: item.uniqueId,
             },
           });
+          console.log(res);
         }
         return new Response(
           JSON.stringify({ success: true, message: "All items updated" }),
@@ -110,6 +112,23 @@ export async function PATCH(req) {
       );
     }
   } catch (error) {
+    if (all) {
+      if (Array.isArray(data)) {
+        for (const item of data) {
+          const res = await db.categorySort.create({
+            data: {
+              name: item?.name,
+              categoryId: item?.id,
+              uniqueId: item?.uniqueId,
+              topCategorySortId: item?.topCategorySortId
+                ? item?.topCategorySortId
+                : "1",
+            },
+          });
+          console.log(res);
+        }
+      }
+    }
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
       { status: 500 }

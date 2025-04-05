@@ -216,10 +216,10 @@ const CategoryForm = () => {
                 label="Верхнюю категория"
                 placeholder="Выберите верхнюю категорию"
               >
-                {topCategories.map((category) => (
+                {topCategories.map((category, idx) => (
                   <SelectItem
                     className="z-[99999]"
-                    key={`${category.id}`}
+                    key={idx}
                     value={`${category.id}`}
                   >
                     <p>{category.name}</p>

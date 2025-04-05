@@ -228,8 +228,8 @@ const BannerForm = ({ products, categories }) => {
                 label="Категория"
                 placeholder="Выбрать категория"
               >
-                {categories.map((item) => (
-                  <SelectItem key={item.id} value={`${item.id}`}>
+                {categories.map((item, idx) => (
+                  <SelectItem key={idx} value={`${item.id}`}>
                     <p>{item.name}</p>
                   </SelectItem>
                 ))}
@@ -246,8 +246,8 @@ const BannerForm = ({ products, categories }) => {
                 label="Продукт"
                 placeholder="Выбрать продукт"
               >
-                {products.map((item) => (
-                  <SelectItem key={item.id} value={`${item.id}`}>
+                {products.map((item,idx) => (
+                  <SelectItem key={idx} value={`${item.id}`}>
                     <p>{item.name}</p>
                   </SelectItem>
                 ))}

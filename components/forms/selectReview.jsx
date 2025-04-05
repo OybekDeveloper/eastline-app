@@ -92,10 +92,7 @@ export default function SelectReview() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const reviews = await getData(
-          `/api/review`,
-          "review"
-        );
+        const reviews = await getData(`/api/review`, "review");
         const selectReviewData = await getData(`/api/selectReview`, "review");
         const selectReviewIds = selectReviewData?.map(
           (selectReview) => selectReview.reviewId
@@ -188,8 +185,8 @@ export default function SelectReview() {
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
-                  {table1?.getHeaderGroups()?.map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
+                  {table1?.getHeaderGroups()?.map((headerGroup, idx) => (
+                    <TableRow key={idx}>
                       {headerGroup.headers.map((header) => {
                         return (
                           <TableHead key={header.id}>

@@ -11,6 +11,7 @@ const SideBarCategory = ({
   categorySortData,
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
+  let updatedTopCategorySort;
   const topCategorySort = topCategoryData
     .map((category) => {
       const matchingItems = topCategoriesSort.filter(
@@ -25,17 +26,28 @@ const SideBarCategory = ({
     })
     .filter((category) => category.uniqueIds)
     .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
+  if (topCategorySort?.length == topCategoryData?.length) {
+    updatedTopCategorySort = topCategorySort.map((item) => {
+      if (categorySortData?.length > 0) {
+        const filterCategories = categorySortData
+          .filter((c) => String(c.topCategorySortId) === String(item.id))
+          .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
 
-  const updatedTopCategorySort = topCategorySort.map((item) => {
-    const filterCategories = categorySortData
-      .filter((c) => String(c.topCategorySortId) === String(item.id))
-      .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
-
-    return {
-      ...item,
-      categories: filterCategories,
-    };
-  });
+        return {
+          ...item,
+          categories: filterCategories,
+        };
+      } else {
+        return {
+          ...item,
+          categories: item?.categories,
+        };
+      }
+    });
+  } else {
+    updatedTopCategorySort = topCategoryData;
+  }
+  console.log("updatedTopCategorySort", updatedTopCategorySort);
 
   useEffect(() => {
     setActiveCategory(topCategoryId);
@@ -75,9 +87,9 @@ const SideBarCategory = ({
                       : "max-h-0"
                   }`}
                 >
-                  {topCategory?.categories.map((category) => (
+                  {topCategory?.categories.map((category, idx) => (
                     <Link
-                      key={category.uniqueId}
+                      key={idx}
                       className={`${
                         String(category.categoryId) === String(categoryId)
                           ? "opacity-1 font-medium"

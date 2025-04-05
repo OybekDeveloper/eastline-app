@@ -150,8 +150,8 @@ const Products = ({
                     <div className="max-sm:hidden">
                       {topCategory?.categories.length > 0 ? (
                         <DropdownMenuSubContent side="right">
-                          {topCategory.categories.map((category) => (
-                            <DropdownMenuItem asChild key={category.id}>
+                          {topCategory.categories.map((category, idx) => (
+                            <DropdownMenuItem asChild key={idx}>
                               <Link
                                 className="textSmall2"
                                 href={`/${topCategory.id}/${category.categoryId}`}

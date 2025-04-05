@@ -46,7 +46,7 @@ const TopCategoryForm = () => {
         await patchData(`/api/topCategory?id=${id}`, values, "topCategory");
         toast.success("Если нужно что-то изменить или уточнить, дайте знать!");
         const findCategory = topCategorySortData.find(
-          (c) => +c.topCategoryId === +id
+          (c) => String(c.topCategoryId) === String(id)
         );
         if (findCategory) {
           await patchData(
@@ -58,8 +58,10 @@ const TopCategoryForm = () => {
         router.back();
       } else {
         const res = await postData("/api/topCategory", values, "topCategory");
-        if (res.data.data) {
-          const { name, id } = res.data.data;
+        console.log(res,"category data");
+        
+        if (res.data) {
+          const { name, id } = res.data;
           const unqId = topCategorySortData.length + 1;
           await postData(
             "/api/topCategorySort?one=one",
@@ -98,7 +100,11 @@ const TopCategoryForm = () => {
         if (res) {
           const { name } = res[0];
           form.setValue("name", name);
-          setCategorySort(filterCategoryData);
+          if (filterCategoryData?.length > 0) {
+            setCategorySort(filterCategoryData);
+          } else {
+            setCategorySort(res[0]?.categories);
+          }
         }
       } catch (error) {
         console.log(error);

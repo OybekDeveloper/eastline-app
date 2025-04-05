@@ -4,7 +4,7 @@ import SideBarCategory from "@/components/pages/product/sidebar-category";
 import { getData } from "@/lib/api.services";
 
 const Category = async ({ params }) => {
-  const { topCategory, category } = params;
+  const { topCategory, category } = await params;
 
   const [
     topProductsData,
@@ -25,8 +25,6 @@ const Category = async ({ params }) => {
     getData("/api/currency", "currency"),
     getData("/api/categorySort", "category"),
   ]);
-  console.log({ topProductsData });
-
   return (
     <main className="min-h-[50%] py-10 flex flex-col">
       <NavigationProduct

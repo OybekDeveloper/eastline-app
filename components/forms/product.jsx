@@ -247,8 +247,8 @@ const ProductForm = ({ categories }) => {
                 label="Категория"
                 placeholder="Выберите категорию"
               >
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={`${category.id}`}>
+                {categories.map((category, idx) => (
+                  <SelectItem key={idx} value={`${category.id}`}>
                     <p>{category.name}</p>
                   </SelectItem>
                 ))}

@@ -88,6 +88,7 @@ export default function DragDropComponent({
         await postData("/api/topCategorySort", filterData, "topCategory");
       } else if (param === "categorySort") {
         const filterData = updatedUsersList.map((item) => ({
+          ...item,
           uniqueId: item.uniqueId,
           id: item.id,
         }));
