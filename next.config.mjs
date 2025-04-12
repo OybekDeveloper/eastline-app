@@ -9,6 +9,7 @@ const nextConfig = {
   },
 
   images: {
+    unoptimized: true,
     domains: [
       "pub-5e988c10ea9548079f2f0823b8675c2d.r2.dev",
       "elt.uz",
