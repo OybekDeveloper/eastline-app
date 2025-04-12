@@ -13,7 +13,7 @@ import Link from "next/link";
 const BannerProducts = ({ randomProducts, categories }) => {
   const findTopCategoryId = (categoryId) => {
     const category = categories?.find((cat) => cat.id === categoryId);
-    return category ? category.id : null;
+    return category ? category.id : "top";
   };
   return (
     <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
@@ -77,9 +77,11 @@ const BannerProducts = ({ randomProducts, categories }) => {
                   className="text-center text-black basis-full md:basis-[45%] min-h-[300px] border-2 py-3 rounded-xl mr-2"
                 >
                   <Link
-                    href={`/${findTopCategoryId(item.categoryId)?.id}/${
-                      item?.categoryId
-                    }/${item?.id}`}
+                    href={`/${
+                      findTopCategoryId(item.categoryId)?.id
+                        ? findTopCategoryId(item.categoryId)?.id
+                        : "top"
+                    }/${item?.categoryId}/${item?.id}`}
                     className="h-full px-3 flex flex-col gap-y-1 rounded-md justify-between"
                   >
                     <h1 className="textSmall3 font-bold">
