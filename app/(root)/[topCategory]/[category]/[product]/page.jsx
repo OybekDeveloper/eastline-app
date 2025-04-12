@@ -8,24 +8,35 @@ import { getRandomItems } from "@/lib/utils";
 import { getData } from "@/lib/api.services";
 
 const Product = async ({ params }) => {
-  
   const { product, category, topCategory } = await params;
 
   // Fetch all required data using getData in parallel
-  const [products1, contactData, productData, categoryData, topCategoryData] =
-    await Promise.all([
+  const [products1, contactData, productData, categoryData] = await Promise.all(
+    [
       getData("/api/product", "product"), // All products for random selection
       getData("/api/contact", "contact"),
       getData(`/api/product?id=${product}`, "product"), // Specific product
       getData(`/api/category?id=${category}`, "category"), // Category of the product
-      getData(`/api/topCategory?id=${topCategory}`, "topCategory"), // Top category
-    ]);
+    ]
+  );
   console.log({
     productData,
     categoryData,
-    topCategoryData,
     contactData,
   });
+  let topCategoryData = [
+    {
+      name: "",
+      id: 1,
+    },
+  ];
+  if (categoryData) {
+    const { topCategoryId } = categoryData[0] || {};
+    topCategoryData = await getData(
+      `/api/topCategory?id=${topCategoryId}`,
+      "topCategory"
+    );
+  }
 
   const randomProducts = getRandomItems(products1);
   const { name, price, brand, description, feature } = productData[0] || {};
