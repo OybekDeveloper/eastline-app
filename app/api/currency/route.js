@@ -10,7 +10,7 @@ export async function PATCH(req) {
 
   const updateCurrency = await db.currency.update({
     where: {
-      id: "67e673a11dfa5322e99a3bb1",
+      id: "68133566490320e950d1f3da",
     },
     data: data,
   });

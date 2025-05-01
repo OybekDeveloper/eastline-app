@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { Form } from "@/components/ui/form";
@@ -13,7 +13,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
-import { patchData } from "@/lib/api.services";
+import { getData, patchData } from "@/lib/api.services";
 
 const CurrencySum = () => {
   const router = useRouter();
@@ -27,15 +27,13 @@ const CurrencySum = () => {
   });
 
   const onSubmit = async (values) => {
-    // setIsLoading(true);
+    setIsLoading(true);
 
     try {
       await patchData("/api/currency", values, "currency");
 
       toast.success("Валюта успешно изменена!");
       localStorage.setItem("sum", values.sum);
-
-      form.reset();
     } catch (error) {
       console.error("Error creating currency:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
@@ -43,6 +41,21 @@ const CurrencySum = () => {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getData("/api/currency", "currency");
+        console.log(response);
+
+        const data = response[0];
+        form.setValue("sum", data.sum);
+      } catch (error) {
+        console.error("Error fetching currency data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <Container className="my-10 lg:my-20 flex-col items-start">
