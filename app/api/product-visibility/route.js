@@ -7,7 +7,7 @@ export async function GET() {
   return NextResponse.json({ data: visibility });
 }
 
-export async function PUT(req) {
+export async function POST(req) {
   const body = await req.json();
   const { show } = body;
 

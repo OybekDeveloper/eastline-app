@@ -37,7 +37,7 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 };
 import { useEvent } from "@/store/event";
 import DragDropComponent from "./dragDropComponent";
-import { getData, putData } from "@/lib/api.services";
+import { getData, postData, putData } from "@/lib/api.services";
 import { Label } from "../ui/label";
 
 export function DataTable({
@@ -129,7 +129,7 @@ export function DataTable({
   const handleShowPrice = async (bool) => {
     try {
       setLoadingPrice(true);
-      const show = await putData(
+      const show = await postData(
         `/api/product-visibility`,
         { show: bool },
         "product-visibility"
