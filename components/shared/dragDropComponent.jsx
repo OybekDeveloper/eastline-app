@@ -98,12 +98,14 @@ export default function DragDropComponent({
           categoryId: item.categoryId,
           name: item.name,
         }));
-        const productS = await postData(
-          "/api/productSort",
-          { products: filterData },
-          "product"
+
+        await Promise.all(
+          filterData.map((product) =>
+            postData("/api/productSort", product, "product").then((res) => {
+              console.log({ productS: res });
+            })
+          )
         );
-        console.log({ productS });
       }
       toast.success("Изменено успешно!");
     } catch (error) {

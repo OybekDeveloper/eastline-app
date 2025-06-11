@@ -37,50 +37,108 @@ export async function GET(req) {
   }
 }
 
+// export async function POST(req) {
+//   try {
+//     const reqD = await req.json();
+//     console.log(reqD);
+//     const products = reqD.products;
+
+//     if (!products || !Array.isArray(products)) {
+//       return new Response(
+//         JSON.stringify({ success: false, error: "Invalid input" }),
+//         { status: 400 }
+//       );
+//     }
+
+//     for (const product of products) {
+//       const { productId, categoryId, uniqueId, name } = product;
+
+//       const existingSort = await prisma.sortProduct.findUnique({
+//         where: {
+//           productId_categoryId: { productId, categoryId },
+//         },
+//       });
+
+//       if (existingSort) {
+//         await prisma.sortProduct.update({
+//           where: {
+//             productId_categoryId: { productId, categoryId },
+//           },
+//           data: { uniqueId },
+//         });
+//       } else {
+//         await prisma.sortProduct.create({
+//           data: {
+//             name,
+//             productId,
+//             categoryId,
+//             uniqueId,
+//           },
+//         });
+//       }
+//     }
+
+//     return Response.json({
+//       data: { message: "Product sort order saved successfully" },
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return new Response(
+//       JSON.stringify({ success: false, error: error.message }),
+//       { status: 500 }
+//     );
+//   } finally {
+//     await prisma.$disconnect();
+//   }
+// }
+
 export async function POST(req) {
   try {
-    const reqD = await req.json();
-    console.log(reqD);
-    const products = reqD.products;
+    const body = await req.json();
+    const { productId, categoryId, uniqueId, name } = body;
 
-    if (!products || !Array.isArray(products)) {
+    if (!productId || !categoryId || !uniqueId || !name) {
       return new Response(
-        JSON.stringify({ success: false, error: "Invalid input" }),
+        JSON.stringify({ success: false, error: "Missing required fields" }),
         { status: 400 }
       );
     }
 
-    for (const product of products) {
-      const { productId, categoryId, uniqueId, name } = product;
+    const existingSort = await prisma.sortProduct.findUnique({
+      where: {
+        productId_categoryId: { productId, categoryId },
+      },
+    });
 
-      const existingSort = await prisma.sortProduct.findUnique({
+    if (existingSort) {
+      const updated = await prisma.sortProduct.update({
         where: {
           productId_categoryId: { productId, categoryId },
         },
+        data: { uniqueId },
       });
 
-      if (existingSort) {
-        await prisma.sortProduct.update({
-          where: {
-            productId_categoryId: { productId, categoryId },
-          },
-          data: { uniqueId },
-        });
-      } else {
-        await prisma.sortProduct.create({
-          data: {
-            name,
-            productId,
-            categoryId,
-            uniqueId,
-          },
-        });
-      }
-    }
+      return Response.json({
+        success: true,
+        message: "Product sort updated",
+        data: updated,
+      });
+    } else {
+      const created = await prisma.sortProduct.create({
+        data: {
+          name,
+          productId,
+          categoryId,
+          uniqueId,
+        },
+      });
 
-    return Response.json({
-      data: { message: "Product sort order saved successfully" },
-    });
+      return Response.json({
+        success: true,
+        message: "Product sort created",
+        data: created,
+      });
+    }
   } catch (error) {
     console.error(error);
     return new Response(
