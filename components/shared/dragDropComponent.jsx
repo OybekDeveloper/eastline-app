@@ -175,7 +175,7 @@ export default function DragDropComponent({
         </DndContext>
       </ul>
       <div className="w-full flex justify-end items-center">
-        <Button onClick={handleSave}>
+        <Button disabled={loading} onClick={handleSave}>
           {loading ? (
             <div className="flex items-center gap-4">
               <Loader />
