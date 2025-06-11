@@ -167,7 +167,8 @@ const CategoryForm = () => {
         const productSortRes = await getData(`/api/productSort`, "product");
         const product = await getData(`/api/product`, "product");
         setProducts(product);
-        console.log(res);
+        console.log({ res });
+        console.log({ productSortRes });
 
         if (res) {
           const { name, topCategoryId, image, products } = res[0];
