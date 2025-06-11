@@ -127,6 +127,7 @@ export default function DragDropComponent({
         } else if (param === "productSort") {
           res = await getData("/api/productSort", "product");
           res = res.filter((rs) => String(rs.categoryId) == String(id));
+          console.log({ data, res });
         }
         if (res?.length > 0) {
           setUsersList(res.sort((a, b) => a.uniqueId - b.uniqueId));
