@@ -29,7 +29,7 @@ const CategoryForm = () => {
   const [productSort, setProductSort] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState([]);
-  const [products, setProducts] = useState([]);
+  const [productsData, setProducts] = useState([]);
 
   const form = useForm({
     resolver: zodResolver(Category),
@@ -263,7 +263,7 @@ const CategoryForm = () => {
             <DragDropComponent
               param="productSort"
               data={productSort}
-              products={products}
+              products={productsData}
               categories={[]}
               id={id}
             />
