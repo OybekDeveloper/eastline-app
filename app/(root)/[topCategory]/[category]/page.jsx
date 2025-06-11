@@ -15,6 +15,8 @@ const Category = async ({ params }) => {
     categorysData,
     currency,
     categorySortData,
+    productsSort,
+    productVisibility,
   ] = await Promise.all([
     getData(`/api/topCategory?id=${topCategory}`, "topCategory"),
     getData("/api/topCategory", "topCategory"),
@@ -24,7 +26,11 @@ const Category = async ({ params }) => {
     getData(`/api/category?topCategoryId=${topCategory}`, "category"),
     getData("/api/currency", "currency"),
     getData("/api/categorySort", "category"),
+    getData(`/api/productSort?categoryId=${category}`, "product"),
+    getData(`/api/product-visibility`, "product-visibility"),
   ]);
+  console.log({ productVisibility });
+  
   return (
     <main className="min-h-[50%] py-10 flex flex-col">
       <NavigationProduct
@@ -40,6 +46,8 @@ const Category = async ({ params }) => {
           categorySortData={categorySortData}
         />
         <Products
+          productVisibility={productVisibility}
+          productsSort={productsSort}
           topProductsData={topProductsData}
           topCategoryData={topCategoryData}
           productsData={productsData}

@@ -1,5 +1,6 @@
 import db from "@/db/db";
 
+
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
   const categoryId = await req.nextUrl.searchParams.get("categoryId");

@@ -23,6 +23,7 @@ async function Home() {
       currency,
       banner,
       bannerSort,
+      productVisibility,
     ] = await Promise.all([
       getData("/api/product", "product").catch(() => []),
       getData("/api/category", "category").catch(() => []),
@@ -35,6 +36,7 @@ async function Home() {
       getData("/api/currency", "currency").catch(() => []),
       getData("/api/banner", "banner").catch(() => []),
       getData("/api/bannerSort", "banner").catch(() => []),
+      getData("/api/product-visibility", "product-visibility").catch(() => []),
     ]);
 
     const randomLicense = getRandomItems(license);
@@ -47,8 +49,12 @@ async function Home() {
           <Banner banner={banner} bannerSort={bannerSort} />
         </Suspense>
         <div className="w-full space-y-6">
-          <AllCategories categories={categories} topCategories={topCategories} />
+          <AllCategories
+            categories={categories}
+            topCategories={topCategories}
+          />
           <AllProducts
+            productVisibility={productVisibility}
             products={lastProducts}
             categories={categories}
             currency={currency}

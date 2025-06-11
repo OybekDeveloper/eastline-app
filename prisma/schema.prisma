@@ -175,6 +175,7 @@ model CategorySort {
   createdAt         DateTime @default(now())
   updateAt          DateTime @updatedAt
 }
+
 model CategorySortTest {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   uniqueId          Int
@@ -183,4 +184,22 @@ model CategorySortTest {
   name              String
   createdAt         DateTime @default(now())
   updateAt          DateTime @updatedAt
+}
+
+model SortProduct {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId  String   @db.ObjectId
+  categoryId String   @db.ObjectId
+  name       String
+  uniqueId   Int // Saralash tartibi uchun
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([productId, categoryId]) // Har bir product-category juftligi unik bo‘lishi uchun
+}
+
+model ProductVisibility {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  show      Boolean  @default(true)
+  updatedAt DateTime @updatedAt
 }

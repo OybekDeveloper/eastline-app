@@ -31,51 +31,98 @@ import { f, truncateText } from "@/lib/utils";
 
 const Products = ({
   productsData,
+  productVisibility,
   topCategoryData,
   topProductsData,
   categorySortData,
   topCategoriesSort,
+  productsSort,
+  currency,
+  categoryId, // Optional: Add categoryId prop if filtering by category is needed
 }) => {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(12);
   const [activeCategory, setActiveCategory] = useState(null);
-
+  const getCurrencySum = (dollar) => {
+    if (currency.length) {
+      const sum = currency[0].sum;
+      return Number(sum) * Number(dollar);
+    }
+  };
   const handleSubcategoryToggle = (categoryId) => {
     setActiveCategory((prev) => (prev === categoryId ? null : categoryId));
   };
 
+  // Sort top categories by uniqueId from topCategoriesSort
   const topCategorySort = topCategoryData
     .map((category) => {
       const matchingItems = topCategoriesSort.filter(
         (item) => String(item.topCategoryId) === String(category.id)
       );
-
       const uniqueIds = matchingItems
         .map((item) => item.uniqueId)
         .filter(Boolean);
-
       return { ...category, uniqueIds };
     })
     .filter((category) => category.uniqueIds)
     .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
 
+  // Add sorted subcategories to top categories
   const updatedTopCategorySort = topCategorySort.map((item) => {
     const filterCategories = categorySortData
       .filter((c) => String(c.topCategorySortId) === String(item.id))
-      .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
-
+      .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId));
     return {
       ...item,
       categories: filterCategories,
     };
   });
 
+  // Sort productsData based on productsSort uniqueId
+  const sortedProducts = useMemo(() => {
+    if (productsSort.length > 0) {
+      // Filter productsSort by categoryId if provided
+      const relevantSort = categoryId
+        ? productsSort.filter(
+            (sort) => String(sort.categoryId) === String(categoryId)
+          )
+        : productsSort;
+
+      // Sort by uniqueId
+      const sortedSort = [...relevantSort].sort(
+        (a, b) => Number(a.uniqueId) - Number(b.uniqueId)
+      );
+
+      // Map sorted productsSort to productsData
+      const sortedProducts = sortedSort
+        .map((sort) => {
+          const product = productsData.find(
+            (p) => String(p.id) === String(sort.productId)
+          );
+          return product ? { ...product, sortUniqueId: sort.uniqueId } : null;
+        })
+        .filter(Boolean); // Remove null entries
+
+      // Append remaining products not in productsSort
+      const sortedProductIds = new Set(
+        sortedSort.map((sort) => sort.productId)
+      );
+      const unsortedProducts = productsData.filter(
+        (p) => !sortedProductIds.has(p.id)
+      );
+
+      return [...sortedProducts, ...unsortedProducts];
+    }
+    // If no productsSort, return productsData as-is
+    return productsData;
+  }, [productsData, productsSort, categoryId]);
+
   // Paginated Data
   const paginatedData = useMemo(() => {
     const start = page * pageSize;
     const end = start + pageSize;
-    return productsData.slice(start, end);
-  }, [page, pageSize, productsData]);
+    return sortedProducts.slice(start, end);
+  }, [page, pageSize, sortedProducts]);
 
   const columns = useMemo(
     () => [
@@ -97,7 +144,7 @@ const Products = ({
   const table = useReactTable({
     data: paginatedData,
     columns,
-    pageCount: Math.ceil(productsData.length / pageSize),
+    pageCount: Math.ceil(sortedProducts.length / pageSize),
     state: {
       pagination: {
         pageIndex: page,
@@ -186,7 +233,7 @@ const Products = ({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {/* Price Sorting Dropdown */}
+        {/* Price Sorting Dropdown (Commented out as in original) */}
         {/* <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="flex gap-3 max-md:bg-white bg-secondary px-2 text-xs lg:text-base py-1 outline-none rounded-md justify-between">
@@ -224,7 +271,7 @@ const Products = ({
               const item = row.original;
               return (
                 <Link
-                  href={`/${topProductsData[0].id}/${item.categoryId}/${item.id}`}
+                  href={`/${topProductsData[0]?.id}/${item.categoryId}/${item.id}`}
                   key={item.id}
                   className="relative w-full flex max-md:bg-secondary rounded-md flex-col gap-4 p-5 border"
                 >
@@ -232,18 +279,18 @@ const Products = ({
                     <CustomImage
                       src={`${item.image[0]}`}
                       alt={`${item.name}`}
-                      className={
-                        "w-[70%] mx-auto aspect-square object-contain mb-5"
-                      }
+                      className="w-[70%] mx-auto aspect-square object-contain mb-5"
                     />
                   </div>
                   <div className="w-full flex flex-col gap-2">
                     <h1 className="font-bold textNormal2">
                       {truncateText(item.name, 50)}
                     </h1>
-                    <p className="flex justify-between w-full">
-                      {/* Цена:<span>{f(getCurrencySum(+item.price))} сум</span> */}
-                    </p>
+                    {productVisibility?.show && (
+                      <p className="flex justify-between w-full">
+                        Цена: <span>{f(getCurrencySum(+item.price))} сум</span>,
+                      </p>
+                    )}
                   </div>
                 </Link>
               );
@@ -255,6 +302,7 @@ const Products = ({
           </div>
         )}
       </div>
+
       {/* Pagination */}
       <Pagination>
         <PaginationContent>
@@ -268,7 +316,7 @@ const Products = ({
           {Array.from({ length: table.getPageCount() }).map((_, idx) => (
             <PaginationItem key={idx}>
               <PaginationLink
-                className={"cursor-pointer hover:bg-secondary"}
+                className="cursor-pointer hover:bg-secondary"
                 onClick={() => table.setPageIndex(idx)}
                 isActive={
                   idx === table.getState().pagination.pageIndex

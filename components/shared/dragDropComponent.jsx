@@ -1,5 +1,5 @@
-// components/UserList.tsx
 "use client";
+
 import {
   DndContext,
   KeyboardSensor,
@@ -29,6 +29,7 @@ export default function DragDropComponent({
   products,
   categories,
   param,
+  id,
 }) {
   const [usersList, setUsersList] = useState(
     data.sort((a, b) => a.uniqueId - b.uniqueId)
@@ -64,8 +65,7 @@ export default function DragDropComponent({
 
     try {
       setLoading(true);
-      if (param == "changeBanner") {
-        // change banner code
+      if (param === "changeBanner") {
         const filterData = updatedUsersList.map((item) => ({
           uniqueId: item.uniqueId,
           bannerId: item.bannerId ? item.bannerId : item.id,
@@ -74,10 +74,8 @@ export default function DragDropComponent({
           categoryId: item.categoryId,
           productId: item.productId,
         }));
-        console.log(filterData, "update banner sort");
         await postData("/api/bannerSort", filterData, "banner");
-      } else if (param == "changeTopCategory") {
-        // change top category code
+      } else if (param === "changeTopCategory") {
         const filterData = updatedUsersList.map((item) => ({
           uniqueId: Number(item.uniqueId),
           name: item.name,
@@ -92,8 +90,15 @@ export default function DragDropComponent({
           uniqueId: item.uniqueId,
           id: item.id,
         }));
-
         await patchData("/api/categorySort?all=true", filterData, "category");
+      } else if (param === "productSort") {
+        const filterData = updatedUsersList.map((item) => ({
+          uniqueId: item.uniqueId,
+          productId: item.productId ? item.productId : item.id,
+          categoryId: item.categoryId,
+          name: item.name,
+        }));
+        await postData("/api/productSort", { products: filterData }, "product");
       }
       toast.success("Изменено успешно!");
     } catch (error) {
@@ -107,29 +112,34 @@ export default function DragDropComponent({
     const fetchData = async () => {
       let res = null;
       try {
-        if (param == "changeBanner") {
+        if (param === "changeBanner") {
           res = await getData("/api/bannerSort", "banner");
-        }
-        if (param == "changeTopCategory") {
+        } else if (param === "changeTopCategory") {
           res = await getData("/api/topCategorySort", "topCategory");
+        } else if (param === "productSort") {
+          res = await getData("/api/productSort", "product");
+          res = res.filter((rs) => String(rs.categoryId) == String(id));
         }
-        console.log(res);
-
-        if (res.length > 0) {
-          setUsersList(res?.sort((a, b) => a.uniqueId - b.uniqueId));
+        if (res?.length > 0) {
+          setUsersList(res.sort((a, b) => a.uniqueId - b.uniqueId));
         } else {
           setUsersList(data?.sort((a, b) => a.uniqueId - b.uniqueId));
         }
       } catch (error) {
+        console.error(error);
       } finally {
         setIsLoading(false);
       }
     };
     fetchData();
   }, [data, param]);
+
   if (isLoading) {
     return null;
   }
+
+  console.log({ usersList });
+
   return (
     <div className="space-y-2">
       <ul className="bg-white shadow-md rounded-lg">
@@ -171,8 +181,6 @@ export default function DragDropComponent({
   );
 }
 
-// components/SortableUser.tsx
-
 export function SortableUser({ param, user, categories, products, index }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: user.id });
@@ -181,17 +189,20 @@ export function SortableUser({ param, user, categories, products, index }) {
     transition,
     transform: CSS.Transform.toString(transform),
   };
+
   let name = "";
-  if (param == "changeBanner") {
+  if (param === "changeBanner") {
     if (user.productId) {
-      const productFind = products.find((c) => c.id == user.productId);
-      name = productFind?.name;
+      const productFind = products.find((c) => c.id === user.productId);
+      name = productFind?.name || "Unknown Product";
     } else {
-      const categoryFind = categories.find((c) => c.id == user.categoryId);
-      name = categoryFind?.name;
+      const categoryFind = categories.find((c) => c.id === user.categoryId);
+      name = categoryFind?.name || "Unknown Category";
     }
+  } else if (param === "productSort") {
+    name = user?.name;
   } else {
-    name = user.name;
+    name = user.name || "Unknown";
   }
 
   return (

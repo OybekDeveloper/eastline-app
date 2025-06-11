@@ -23,11 +23,11 @@ import { DataTablePagination } from "./dataTablePagination";
 import { DataTableViewOptions } from "./dataTableViewOptions";
 import { rankItem, compareItems } from "@tanstack/match-sorter-utils";
 import { formatFullDate, truncateText } from "@/lib/utils";
-import axios from "axios";
 import CustomImage from "./customImage";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import Loader from "./loader";
+import { Switch } from "@/components/ui/switch";
 
 // Custom fuzzy filter and sorting functions
 const fuzzyFilter = (row, columnId, value, addMeta) => {
@@ -37,6 +37,8 @@ const fuzzyFilter = (row, columnId, value, addMeta) => {
 };
 import { useEvent } from "@/store/event";
 import DragDropComponent from "./dragDropComponent";
+import { getData, putData } from "@/lib/api.services";
+import { Label } from "../ui/label";
 
 export function DataTable({
   topCategories,
@@ -56,6 +58,7 @@ export function DataTable({
   const [globalFilter, setGlobalFilter] = useState("");
   const [columnVisibility, setColumnVisibility] = useState({});
   const [rowSelection, setRowSelection] = useState({});
+  const [showPrice, setShowPrice] = useState(false);
 
   const table = useReactTable({
     data: changeTableData,
@@ -81,6 +84,7 @@ export function DataTable({
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
   });
+  const [loadingPrice, setLoadingPrice] = useState(false);
 
   useEffect(() => {
     if (table?.getState().columnFilters[0]?.id === "fullName") {
@@ -88,7 +92,58 @@ export function DataTable({
         table.setSorting([{ id: "fullName", desc: false }]);
       }
     }
+    const fetchData = async () => {
+      try {
+        const show = await getData(
+          "/api/product-visibility",
+          "product-visibility"
+        );
+        console.log({ show });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    if (param == "changeProduct") {
+      fetchData();
+    }
   }, [table]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const show = await getData(
+          `/api/product-visibility`,
+          "product-visibility"
+        );
+        if (show) {
+          setShowPrice(Boolean(show?.show));
+        }
+        console.log(show);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleShowPrice = async (bool) => {
+    try {
+      setLoadingPrice(true);
+      const show = await putData(
+        `/api/product-visibility`,
+        { show: bool },
+        "product-visibility"
+      );
+      console.log(show);
+      if (show) {
+        setShowPrice(bool);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingPrice(false);
+    }
+  };
 
   return (
     <>
@@ -107,6 +162,33 @@ export function DataTable({
           onChange={(e) => setGlobalFilter(String(e.target.value))}
           className="max-w-[250px]"
         />
+        {param === "changeProduct" && (
+          <div className="w-full justify-end items-center flex">
+            <div className="flex items-center space-x-2">
+              <div className="relative flex justify-center items-center">
+                <Switch
+                  id="show_price"
+                  checked={showPrice}
+                  onCheckedChange={() => {
+                    handleShowPrice(!showPrice);
+                  }}
+                  disabled={loadingPrice}
+                  className={`${
+                    loadingPrice
+                      ? "opacity-50 cursor-not-allowed border-2 border-gray-300"
+                      : ""
+                  }`}
+                />
+                {loadingPrice && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-4 h-4 border-2 border-t-2 border-gray-200 border-t-blue-500 rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </div>
+              <Label htmlFor="show_price">Показать сумму</Label>
+            </div>
+          </div>
+        )}
         <DataTableViewOptions table={table} />
       </div>
       <>
@@ -121,7 +203,7 @@ export function DataTable({
               <TableHeader>
                 {table?.getHeaderGroups()?.map((headerGroup) => (
                   <TableRow key={headerGroup.id}>
-                      {headerGroup.headers.map((header) => {
+                    {headerGroup.headers.map((header) => {
                       return (
                         <TableHead key={header.id}>
                           {header.isPlaceholder

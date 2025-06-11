@@ -10,11 +10,24 @@ import { f, truncateText } from "@/lib/utils";
 import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 
-const BannerProducts = ({ randomProducts, categories }) => {
+const BannerProducts = ({
+  productVisibility,
+  currency,
+  randomProducts,
+  categories,
+}) => {
   const findTopCategoryId = (categoryId) => {
     const category = categories?.find((cat) => cat.id === categoryId);
     return category ? category.id : "top";
   };
+
+  const getCurrencySum = (dollar) => {
+    if (currency.length) {
+      const sum = currency[0].sum;
+      return Number(sum) * Number(dollar);
+    }
+  };
+
   return (
     <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
       {randomProducts[0] && (
@@ -42,6 +55,12 @@ const BannerProducts = ({ randomProducts, categories }) => {
                 {truncateText(randomProducts[0].description, 50)}
               </p>
             </div>
+            {productVisibility?.show && (
+              <p className="textSmall4 font-bold">
+                {" "}
+                {f(getCurrencySum(randomProducts[0].price))} сум
+              </p>
+            )}
             {/* <Link
               className="mt-1"
               href={`/${findTopCategoryId(randomProducts[0].categoryId).id}/${
@@ -96,10 +115,12 @@ const BannerProducts = ({ randomProducts, categories }) => {
                         className={`w-[70%] mx-auto aspect-square object-contain mb-5`}
                       />
                     </div>
-                    {/* <p className="textSmall4 font-bold">
-                      {" "}
-                      {f(getCurrencySum(item.price))} сум
-                    </p> */}
+                    {productVisibility?.show && (
+                      <p className="textSmall4 font-bold">
+                        {" "}
+                        {f(getCurrencySum(item.price))} сум
+                      </p>
+                    )}
                     <p className="textSmall">
                       {truncateText(item.description, 20)}
                     </p>

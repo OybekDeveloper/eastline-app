@@ -18,6 +18,7 @@ import { revalidatePath } from "@/lib/revalidate";
 import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import { getData, patchData, postData } from "@/lib/api.services";
+import DragDropComponent from "../shared/dragDropComponent";
 
 const CategoryForm = () => {
   const router = useRouter();
@@ -25,8 +26,10 @@ const CategoryForm = () => {
   const id = searchParams.get("id");
 
   const [topCategories, setTopCategories] = useState([]);
+  const [productSort, setProductSort] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const form = useForm({
     resolver: zodResolver(Category),
@@ -161,8 +164,13 @@ const CategoryForm = () => {
     async function updateData() {
       try {
         const res = await getData(`/api/category?id=${id}`, "category");
-        const { name, topCategoryId, image } = res[0];
+        const productSortRes = await getData(`/api/productSort`, "product");
+        const product = await getData(`/api/product`, "product");
+        setProducts(product);
+        console.log(res);
+
         if (res) {
+          const { name, topCategoryId, image, products } = res[0];
           form.setValue("name", name);
           form.setValue("topCategoryId", topCategoryId);
           setImage([
@@ -171,15 +179,27 @@ const CategoryForm = () => {
               name: image,
             },
           ]);
+
+          // Filter products by categoryId
+          const filterProductData = productSortRes?.filter(
+            (p) => String(p.categoryId) === String(id)
+          );
+          if (filterProductData?.length > 0) {
+            setProductSort(filterProductData);
+          } else {
+            setProductSort(products || []);
+          }
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
+
     const getCategories = async () => {
       const topCategory = await getData("/api/topCategory", "topCategory");
       setTopCategories(topCategory);
     };
+
     getCategories();
 
     if (id) {
@@ -213,7 +233,7 @@ const CategoryForm = () => {
                 fieldType={FormFieldType.SELECT}
                 control={form.control}
                 name="topCategoryId"
-                label="Верхнюю категория"
+                label="Верхнюю категорию"
                 placeholder="Выберите верхнюю категорию"
               >
                 {topCategories.map((category, idx) => (
@@ -235,6 +255,20 @@ const CategoryForm = () => {
             </SubmitButton>
           </form>
         </Form>
+        {productSort.length > 0 && (
+          <div className="p-4 rounded-md border mt-2 w-full">
+            <h2 className="font-bold mb-4 textNormal3">
+              Регулирование продуктов
+            </h2>
+            <DragDropComponent
+              param="productSort"
+              data={productSort}
+              products={products}
+              categories={[]}
+              id={id}
+            />
+          </div>
+        )}
       </Container>
     </Suspense>
   );

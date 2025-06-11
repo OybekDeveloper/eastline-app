@@ -7,11 +7,17 @@ export async function GET(req) {
   if (id) {
     const getTopCategroies = await db.category.findMany({
       where: { id: String(id) },
+      include: {
+        products: true,
+      },
     });
     return Response.json({ data: getTopCategroies });
   } else if (topCategoryId) {
     const getTopCategroies = await db.category.findMany({
       where: { topCategoryId: String(topCategoryId) },
+      include: {
+        products: true,
+      },
     });
     return Response.json({ data: getTopCategroies });
   } else {

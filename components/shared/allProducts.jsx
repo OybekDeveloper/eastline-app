@@ -8,7 +8,13 @@ import { f, getLastItems, truncateText } from "@/lib/utils";
 import CustomImage from "./customImage";
 import Link from "next/link";
 
-const AllProducts = ({ products, categories, currency, topCategories }) => {
+const AllProducts = ({
+  productVisibility,
+  products,
+  categories,
+  currency,
+  topCategories,
+}) => {
   const [currentCategory, setCurrentCategory] = useState(0);
   const [renderedProducts, setRenderedProducts] = useState(products);
 
@@ -70,6 +76,7 @@ const AllProducts = ({ products, categories, currency, topCategories }) => {
               .slice(0, 2)
               .map((item, i) => (
                 <Cards
+                  productVisibility={productVisibility}
                   variant={"first"}
                   props={item}
                   categories={categories}
@@ -93,6 +100,7 @@ const AllProducts = ({ products, categories, currency, topCategories }) => {
                       className="basis-[90%] sm:basis-[50%] md:basis-[40%]"
                     >
                       <Cards
+                        productVisibility={productVisibility}
                         variant={"second"}
                         categories={categories}
                         props={item}
@@ -108,6 +116,7 @@ const AllProducts = ({ products, categories, currency, topCategories }) => {
             {renderedProducts.length > 0 &&
               renderedProducts.map((item, i) => (
                 <Cards
+                  productVisibility={productVisibility}
                   variant={"second"}
                   categories={categories}
                   props={item}
@@ -124,7 +133,14 @@ const AllProducts = ({ products, categories, currency, topCategories }) => {
 };
 
 const Cards = memo(
-  ({ props, categories, variant, currency, getCurrencySum }) => {
+  ({
+    props,
+    categories,
+    variant,
+    currency,
+    getCurrencySum,
+    productVisibility,
+  }) => {
     const { name, image, price } = props;
     const findCategory = categories?.find((c) => c?.id == props?.categoryId);
 
@@ -146,7 +162,7 @@ const Cards = memo(
                 alt={`${image[0]}`}
               />
             </div>
-            {/* <p>{f(getCurrencySum(price))} сум</p> */}
+            {productVisibility?.show && <p>{f(getCurrencySum(price))} сум</p>}
           </Link>
         ) : (
           <Link
@@ -165,7 +181,7 @@ const Cards = memo(
               <span className="text-xs bg-black text-white rounded-md px-2 py-1 ">
                 NEW
               </span>
-              {/* <p>{f(getCurrencySum(price))} сум</p> */}
+              {productVisibility?.show && <p>{f(getCurrencySum(price))} сум</p>}
             </div>
           </Link>
         )}

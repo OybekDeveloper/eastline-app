@@ -4,21 +4,36 @@ import BannerProducts from "@/components/pages/product/banner-category";
 import ProductFeature from "@/components/pages/product/product-feature";
 import ProductType from "@/components/pages/product/product-type";
 import NavigationProduct from "@/components/pages/product/navigation";
-import { getRandomItems } from "@/lib/utils";
+import { f, getRandomItems } from "@/lib/utils";
 import { getData } from "@/lib/api.services";
 
 const Product = async ({ params }) => {
   const { product, category, topCategory } = await params;
 
   // Fetch all required data using getData in parallel
-  const [products1, contactData, productData, categoryData] = await Promise.all(
-    [
-      getData("/api/product", "product"), // All products for random selection
-      getData("/api/contact", "contact"),
-      getData(`/api/product?id=${product}`, "product"), // Specific product
-      getData(`/api/category?id=${category}`, "category"), // Category of the product
-    ]
-  );
+  const [
+    products1,
+    contactData,
+    productData,
+    categoryData,
+    productVisibility,
+    currency,
+  ] = await Promise.all([
+    getData("/api/product", "product"), // All products for random selection
+    getData("/api/contact", "contact"),
+    getData(`/api/product?id=${product}`, "product"), // Specific product
+    getData(`/api/category?id=${category}`, "category"), // Category of the product
+    getData(`/api/product-visibility`, "product-visibility"), // Category of the product
+    getData(`/api/currency`, "currency"), // Category of the product
+  ]);
+
+  const getCurrencySum = (dollar) => {
+    if (currency.length) {
+      const sum = currency[0].sum;
+      return Number(sum) * Number(dollar);
+    }
+  };
+
   console.log({
     productData,
     categoryData,
@@ -54,7 +69,11 @@ const Product = async ({ params }) => {
         </div>
         <div className="col-span-3 space-y-3">
           <h1 className="font-bold textNormal4">{name}</h1>
-          {/* <p className="font-bold textNormal3">{f(getCurrencySum(price))} сум</p> */}
+          {productVisibility?.show && (
+            <p className="font-bold textNormal3">
+              {f(getCurrencySum(price))} сум
+            </p>
+          )}
           <div className="lg:hidden col-span-4">
             <ProductCarousel item={productData[0]} />
           </div>
@@ -91,6 +110,8 @@ const Product = async ({ params }) => {
       <section className="w-[95%] lg:w-10/12 mx-auto space-y-4">
         <h1 className="text-primary textNormal3 font-bold">Другие товары</h1>
         <BannerProducts
+          currency={currency}
+          productVisibility={productVisibility}
           randomProducts={randomProducts}
           categories={categoryData}
         />
