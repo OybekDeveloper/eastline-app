@@ -129,11 +129,7 @@ export default function DragDropComponent({
           res = res.filter((rs) => String(rs.categoryId) == String(id));
           console.log({ data, res });
         }
-        if (res?.length > 0) {
-          setUsersList(res.sort((a, b) => a.uniqueId - b.uniqueId));
-        } else {
           setUsersList(data?.sort((a, b) => a.uniqueId - b.uniqueId));
-        }
       } catch (error) {
         console.error(error);
       } finally {

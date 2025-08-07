@@ -167,9 +167,7 @@ const CategoryForm = () => {
         const productSortRes = await getData(`/api/productSort`, "product");
         const product = await getData(`/api/product`, "product");
         setProducts(product);
-        console.log({ res });
-        console.log({ productSortRes });
-
+        const filterProduct = product?.filter((p) => String(p.categoryId) === String(id))
         if (res) {
           const { name, topCategoryId, image, products } = res[0];
           form.setValue("name", name);
@@ -185,8 +183,21 @@ const CategoryForm = () => {
           const filterProductData = productSortRes?.filter(
             (p) => String(p.categoryId) === String(id)
           );
+          console.log({ filterProductData, filterProduct })
+          const noSortDatas = filterProductData?.filter(pr => filterProduct?.find(pd => pd?.id == pr?.productId))
+          const noSortDatasProduct = filterProduct?.filter(pr => !filterProductData?.find(pd => pd?.productId == pr?.id)).map((p, idx) => {
+            return {
+              categoryId: p?.categoryId,
+              productId: p?.id,
+              uniqueId: 999 + idx,
+              name: p?.name,
+              id: 1000 + idx
+            }
+          })
+          const filterSortData = [...noSortDatas, ...noSortDatasProduct]
+          console.log({ noSortDatas, filterSortData, noSortDatasProduct })
           if (filterProductData?.length > 0) {
-            setProductSort(filterProductData);
+            setProductSort(filterSortData);
           } else {
             setProductSort(products || []);
           }
