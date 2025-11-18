@@ -8,13 +8,23 @@ import SubmitButton from "@/components/shared/submitButton";
 import { Form } from "@/components/ui/form";
 import { LoginValidate } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie"; // Import js-cookie
 import Link from "next/link";
 import { postData } from "@/lib/api.services";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Вход в систему EAST LINE TELEKOM",
+  description: "Авторизация для менеджеров и администраторов EAST LINE TELEKOM.",
+  path: "/login",
+  robots: {
+    index: false,
+    follow: false,
+  },
+});
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);

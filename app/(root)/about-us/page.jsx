@@ -1,19 +1,51 @@
 import AnimatedCounter from "@/components/shared/animatedCounter";
 import Container from "@/components/shared/container";
-import { AboutBanner, AboutCard1, AboutCard2, Logo } from "@/public/img";
+import { AboutBanner, AboutCard1, AboutCard2 } from "@/public/img";
 import Image from "next/image";
-import React, { Suspense } from "react";
+import React from "react";
+import JsonLd from "@/components/seo/json-ld";
+import {
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildMetadata,
+  siteConfig,
+} from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "О компании EAST LINE TELEKOM",
+  description:
+    "История, компетенции и ценности EAST LINE TELEKOM – официального поставщика систем безопасности и мини АТС в Узбекистане.",
+  path: "/about-us",
+});
 
 async function AboutUs() {
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Главная", path: "/" },
+    { name: "О компании", path: "/about-us" },
+  ]);
+  const aboutSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    name: "О компании EAST LINE TELEKOM",
+    description: metadata.description,
+    url: absoluteUrl("/about-us"),
+    mainEntity: {
+      "@type": "Organization",
+      name: siteConfig.company,
+    },
+  };
+
   return (
     <main className="mb-40">
+      <JsonLd id="about-breadcrumbs" data={breadcrumbJsonLd} />
+      <JsonLd id="about-schema" data={aboutSchema} />
       <Container className={`flex-col`}>
         <section className="mt-5 lg:mt-20 lg:border rounded-lg">
           <div className="flex flex-col items-start justify-center space-y-3 lg:shadow-lg rounded-lg lg:px-12 py-3 lg:py-8 relative overflow-hidden min-h-[130px]">
             <Image
               src={AboutBanner}
               className="w-full h-full absolute top-0 right-0 -z-10"
-              alt="bgBanner"
+              alt="Команда EAST LINE TELEKOM"
             />
             <p className="textBig font-semibold w-[75%]">
               Более 10-ти лет успешно работаем на рынке систем безопасности и
@@ -79,7 +111,7 @@ async function AboutUs() {
           <Image
             src={AboutCard1}
             className="hidden xl:block w-[50vw]"
-            alt="AboutCard1"
+            alt="Эксперты EAST LINE TELEKOM за работой"
           />
           <Container className="xl:bg-primary xl:text-secondary w-full flex-col justify-center items-start rounded-lg px-10 py-4 gap-8 overflow-hidden">
             <div>
@@ -147,7 +179,7 @@ async function AboutUs() {
           <Image
             src={AboutCard2}
             className="hidden xl:block w-[50vw]"
-            alt="AboutCard2"
+            alt="Лицензии и сертификаты EAST LINE TELEKOM"
           />
         </section>
         <p className="textNormal3 text-primary font-bold text-center w-10/12 mt-8 lg:mt-20">

@@ -2,6 +2,17 @@ import Container from "@/components/shared/container";
 import { crudPage } from "@/lib/iterationDetails";
 import Link from "next/link";
 import React from "react";
+import { buildMetadata } from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Панель управления EAST LINE TELEKOM",
+  description: "Рабочая зона для администраторов сайта.",
+  path: "/dashboard",
+  robots: {
+    index: false,
+    follow: false,
+  },
+});
 
 async function Dashboard() {
   return (

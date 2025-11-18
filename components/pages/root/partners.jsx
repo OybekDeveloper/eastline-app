@@ -37,7 +37,7 @@ const Partners = ({ partner }) => {
               >
                 <CustomImage
                   src={item.image}
-                  alt={item.image}
+                  alt={item.name || "Логотип партнера EAST LINE TELEKOM"}
                   className="w-full h-[300px] max-md:border rounded-lg"
                 />
               </CarouselItem>

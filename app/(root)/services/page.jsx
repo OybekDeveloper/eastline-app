@@ -2,20 +2,60 @@ import Container from "@/components/shared/container";
 import { Sertificate1, Sertificate2, ServiceBanner } from "@/public/img";
 import Image from "next/image";
 import React from "react";
+import JsonLd from "@/components/seo/json-ld";
+import {
+  absoluteUrl,
+  buildBreadcrumbJsonLd,
+  buildMetadata,
+  siteConfig,
+} from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Услуги EAST LINE TELEKOM",
+  description:
+    "Проектирование, монтаж и настройка систем безопасности, мини АТС и контроля доступа от EAST LINE TELEKOM.",
+  path: "/services",
+});
 
 async function Services() {
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Главная", path: "/" },
+    { name: "Услуги", path: "/services" },
+  ]);
+  const servicesSchema = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: "Монтаж и настройка систем безопасности",
+    description: metadata.description,
+    areaServed: "UZ",
+    serviceType: [
+      "Системы видеонаблюдения",
+      "Охранно-пожарная сигнализация",
+      "Мини АТС",
+      "Системы контроля доступа",
+    ],
+    provider: {
+      "@type": "Organization",
+      name: siteConfig.company,
+      url: siteConfig.siteUrl,
+    },
+    url: absoluteUrl("/services"),
+  };
+
   return (
     <section className="relative min-h-screen flex items-center">
+      <JsonLd id="services-breadcrumbs" data={breadcrumbJsonLd} />
+      <JsonLd id="services-schema" data={servicesSchema} />
       <div className="lg:hidden block w-full h-full absolute top-20 right-0 -z-10">
         <Image
           className="absolute right-0 top-0"
           src={Sertificate1}
-          alt="sertificate1"
+          alt="Лицензия EAST LINE TELEKOM"
         />
         <Image
           className="absolute right-0 top-14"
           src={Sertificate2}
-          alt="sertificate2"
+          alt="Лицензии компании EAST LINE TELEKOM"
         />
       </div>
       <Container className="py-10 flex-col gap-5 items-start">
@@ -25,7 +65,7 @@ async function Services() {
             <Image
               src={ServiceBanner}
               className="lg:block hidden w-full h-full absolute top-0 right-0 -z-10"
-              alt="bgBanner"
+              alt="Монтаж и настройка оборудования EAST LINE TELEKOM"
             />
             <p className="titleBig font-semibold w-[70%]">
               Компания «East LineTelekom» осуществляет не только продажу

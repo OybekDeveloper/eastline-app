@@ -24,7 +24,7 @@ const AllCategories = ({ categories }) => {
                       src={`${item.image}`}
                       width={100}
                       height={100}
-                      alt={`banner-img-${item.id}`}
+                      alt={`Категория ${item.name}`}
                       className="w-full mx-auto  object-contain"
                     />
                   </div>

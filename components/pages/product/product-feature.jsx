@@ -22,7 +22,10 @@ const ProductFeature = ({ contactData, feature }) => {
     phone1,
     phone2,
     more_call_info,
-  } = contactData;
+  } = contactData || {};
+  const sanitizePhone = (phone) => phone?.replace(/[^+\d]/g, "");
+  const phone1Href = sanitizePhone(phone1);
+  const phone2Href = sanitizePhone(phone2);
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -107,16 +110,24 @@ const ProductFeature = ({ contactData, feature }) => {
             </li>
           )}
         </ul>
-        <p className="textSmall cursor-pointer bg-black text-center inline-block text-secondary py-1 px-2 rounded-md">
-          {more_call_info}
-        </p>
+        {more_call_info && (
+          <p className="textSmall cursor-pointer bg-black text-center inline-block text-secondary py-1 px-2 rounded-md">
+            {more_call_info}
+          </p>
+        )}
         {phone1 && (
-          <a className="font-bold textSmall3" href="tel:(55) 510-80-33">
+          <a
+            className="font-bold textSmall3"
+            href={phone1Href ? `tel:${phone1Href}` : undefined}
+          >
             {phone1}
           </a>
         )}
         {phone2 && (
-          <a className="font-bold textSmall3" href="tel:(55) 510-81-33">
+          <a
+            className="font-bold textSmall3"
+            href={phone2Href ? `tel:${phone2Href}` : undefined}
+          >
             {phone2}
           </a>
         )}

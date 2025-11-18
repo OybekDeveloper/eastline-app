@@ -20,10 +20,18 @@ export default function Home({
   topCategoriesSort,
   categorySortData,
 }) {
-  const { experience_info, work_hours, email, phone1, phone2, telegram } =
-    contactData;
+  const {
+    experience_info = "",
+    work_hours = "",
+    email = "",
+    phone1,
+    phone2,
+    telegram,
+  } = contactData || {};
   const pathname = usePathname();
-  const urlBack = background[0]?.image;
+  const urlBack = background?.[0]?.image;
+  const sanitizedPhone1 = phone1?.replace(/\s+/g, "");
+  const sanitizedPhone2 = phone2?.replace(/\s+/g, "");
   return (
     <Suspense>
       <header className={`textSmall ${pathname === "/login" ? "hidden" : ""}`}>
@@ -46,12 +54,18 @@ export default function Home({
                 <p>{email}</p>
               </div>
               {phone1 && (
-                <a href="tel:+998555108033" className="flex items-center">
+                <a
+                  href={sanitizedPhone1 ? `tel:${sanitizedPhone1}` : undefined}
+                  className="flex items-center"
+                >
                   {phone1}
                 </a>
               )}
               {phone2 && (
-                <a href="tel:+998555108133" className="flex items-center">
+                <a
+                  href={sanitizedPhone2 ? `tel:${sanitizedPhone2}` : undefined}
+                  className="flex items-center"
+                >
                   {phone2}
                 </a>
               )}
@@ -120,13 +134,19 @@ export default function Home({
               <p>{email}</p>
             </div>
             {phone1 && (
-              <a href="tel:+998555108033" className="flex items-center gap-2">
+              <a
+                href={sanitizedPhone1 ? `tel:${sanitizedPhone1}` : undefined}
+                className="flex items-center gap-2"
+              >
                 <Phone size={16} />
                 {phone1}
               </a>
             )}
             {phone2 && (
-              <a href="tel:+998555108133" className="flex items-center gap-2">
+              <a
+                href={sanitizedPhone2 ? `tel:${sanitizedPhone2}` : undefined}
+                className="flex items-center gap-2"
+              >
                 <Phone size={16} />
                 {phone2}
               </a>

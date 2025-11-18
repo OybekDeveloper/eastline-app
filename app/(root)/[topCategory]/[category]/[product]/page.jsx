@@ -6,9 +6,57 @@ import ProductType from "@/components/pages/product/product-type";
 import NavigationProduct from "@/components/pages/product/navigation";
 import { f, getRandomItems } from "@/lib/utils";
 import { getData } from "@/lib/api.services";
+import { notFound } from "next/navigation";
+import JsonLd from "@/components/seo/json-ld";
+import {
+  buildBreadcrumbJsonLd,
+  buildMetadata,
+  buildProductJsonLd,
+} from "@/lib/seo";
+
+export async function generateMetadata({ params }) {
+  const { product, category, topCategory } = params;
+  const path = `/${topCategory}/${category}/${product}`;
+  try {
+    const [productData, categoryData] = await Promise.all([
+      getData(`/api/product?id=${product}`, "product"),
+      getData(`/api/category?id=${category}`, "category"),
+    ]);
+    const productDetails = productData?.[0];
+    if (!productDetails) {
+      return buildMetadata({
+        title: "Товар не найден",
+        description: "Страница товара недоступна.",
+        path,
+      });
+    }
+    const description = productDetails.description
+      ? productDetails.description.slice(0, 160)
+      : `${productDetails.name} в наличии.`;
+    const images =
+      productDetails?.image?.map((img) => ({
+        url: img,
+        alt: productDetails.name,
+      })) || [];
+
+    return buildMetadata({
+      title: `${productDetails.name} – описание и цена`,
+      description,
+      path,
+      images,
+      type: "product",
+    });
+  } catch (error) {
+    return buildMetadata({
+      title: "Каталог товаров",
+      description: "Оборудование EAST LINE TELEKOM.",
+      path,
+    });
+  }
+}
 
 const Product = async ({ params }) => {
-  const { product, category, topCategory } = await params;
+  const { product, category, topCategory } = params;
 
   // Fetch all required data using getData in parallel
   const [
@@ -18,27 +66,27 @@ const Product = async ({ params }) => {
     categoryData,
     productVisibility,
     currency,
+    categoriesAll,
   ] = await Promise.all([
     getData("/api/product", "product"), // All products for random selection
     getData("/api/contact", "contact"),
     getData(`/api/product?id=${product}`, "product"), // Specific product
     getData(`/api/category?id=${category}`, "category"), // Category of the product
     getData(`/api/product-visibility`, "product-visibility"), // Category of the product
-    getData(`/api/currency`, "currency"), // Category of the product
+    getData(`/api/currency`, "currency"), // Currency rate
+    getData("/api/category", "category"),
   ]);
 
   const getCurrencySum = (dollar) => {
-    if (currency.length) {
-      const sum = currency[0].sum;
-      return Number(sum) * Number(dollar);
+    if (Array.isArray(currency) && currency.length && dollar) {
+      const sum = Number(currency[0].sum);
+      if (Number.isFinite(sum)) {
+        return sum * Number(dollar);
+      }
     }
+    return null;
   };
 
-  console.log({
-    productData,
-    categoryData,
-    contactData,
-  });
   let topCategoryData = [
     {
       name: "",
@@ -53,13 +101,40 @@ const Product = async ({ params }) => {
     );
   }
 
-  const randomProducts = getRandomItems(products1);
-  const { name, price, brand, description, feature } = productData[0] || {};
+  if (!productData?.length || !categoryData?.length) {
+    notFound();
+  }
 
-  return (
-    <main className="min-h-[50%] py-10 flex flex-col gap-4">
-      <NavigationProduct
-        topProductsData={topCategoryData}
+  const randomProducts = getRandomItems(products1 || []);
+  const { name, price, brand, description, feature } = productData[0] || {};
+  const canonicalPath = `/${topCategory}/${category}/${product}`;
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Главная", path: "/" },
+    { name: topCategoryData?.[0]?.name || "Каталог", path: "/" },
+    {
+      name: categoryData?.[0]?.name || "Категория",
+      path: `/${topCategory}/${category}`,
+    },
+    { name: name || "Товар", path: canonicalPath },
+  ]);
+  const priceInSum = getCurrencySum(price);
+  const normalizedPrice = priceInSum
+    ? Number(priceInSum).toFixed(0)
+    : price || "";
+  const productSchema = buildProductJsonLd({
+    product: productData?.[0],
+    url: canonicalPath,
+    categoryName: categoryData?.[0]?.name,
+    price: normalizedPrice,
+    currency: "UZS",
+  });
+
+    return (
+      <main className="min-h-[50%] py-10 flex flex-col gap-4">
+        <JsonLd id="product-breadcrumbs" data={breadcrumbJsonLd} />
+        <JsonLd id="product-schema" data={productSchema} />
+        <NavigationProduct
+          topProductsData={topCategoryData}
         categoryData={categoryData}
         product={productData}
       />
@@ -113,7 +188,7 @@ const Product = async ({ params }) => {
           currency={currency}
           productVisibility={productVisibility}
           randomProducts={randomProducts}
-          categories={categoryData}
+          categories={categoriesAll}
         />
       </section>
     </main>

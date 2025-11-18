@@ -13,6 +13,7 @@ import {
   FaYoutube,
 } from "react-icons/fa6";
 import { usePathname } from "next/navigation";
+import { siteConfig } from "@/lib/seo";
 
 const Footer = ({ contactData }) => {
   const pathname = usePathname();
@@ -24,7 +25,9 @@ const Footer = ({ contactData }) => {
     instagram,
     facebook,
     youtube,
-  } = contactData;
+  } = contactData || {};
+  const companyTitle = company_name || siteConfig.company;
+  const resolvedAddress = address || siteConfig.address;
 
   return (
     <footer className={`${pathname === "/login" ? "hidden" : ""} relative`}>
@@ -47,13 +50,13 @@ const Footer = ({ contactData }) => {
             </ul>
             <ul className="space-y-2 lg:space-y-4 textSmall3">
               <li className="font-semibold textNormal4 lg:text-black">
-                {company_name}
+                {companyTitle}
               </li>
               <li className="space-y-2 lg:space-y-4">
-                <p>{`ООО «${company_name}»`}</p>
+                <p>{`ООО «${companyTitle}»`}</p>
                 <p>
                   Адрес:{" "}
-                  {address.split(", ").map((line, index) => (
+                  {resolvedAddress.split(", ").map((line, index) => (
                     <span key={index}>
                       {line}
                       <br />

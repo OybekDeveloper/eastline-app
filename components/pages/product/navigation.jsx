@@ -11,7 +11,6 @@ import React from "react";
 
 const NavigationProduct = (props) => {
   const { topProductsData, categoryData, product } = props;
-  console.log({ props });
 
   return (
     <div className="w-[95%] flex-col lg:w-10/12 lg:mx-auto justify-end items-start md:justify-center mx-0 ml-auto">

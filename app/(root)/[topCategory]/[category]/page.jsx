@@ -2,9 +2,48 @@ import NavigationProduct from "@/components/pages/product/navigation";
 import Products from "@/components/pages/product/products";
 import SideBarCategory from "@/components/pages/product/sidebar-category";
 import { getData } from "@/lib/api.services";
+import { notFound } from "next/navigation";
+import JsonLd from "@/components/seo/json-ld";
+import {
+  buildBreadcrumbJsonLd,
+  buildCollectionPageJsonLd,
+  buildMetadata,
+  siteConfig,
+} from "@/lib/seo";
+
+export async function generateMetadata({ params }) {
+  const { topCategory, category } = params;
+  try {
+    const categoryData = await getData(
+      `/api/category?id=${category}`,
+      "category"
+    );
+    const categoryName = categoryData?.[0]?.name;
+    if (!categoryName) {
+      return buildMetadata({
+        title: "Каталог товаров",
+        description: siteConfig.description,
+        path: `/${topCategory}/${category}`,
+      });
+    }
+    const title = `${categoryName} – каталог оборудования`;
+    const description = `Категория ${categoryName} от ${siteConfig.name}: поставка, монтаж и обслуживание по всему Узбекистану.`;
+    return buildMetadata({
+      title,
+      description,
+      path: `/${topCategory}/${category}`,
+    });
+  } catch (error) {
+    return buildMetadata({
+      title: "Каталог товаров",
+      description: siteConfig.description,
+      path: `/${topCategory}/${category}`,
+    });
+  }
+}
 
 const Category = async ({ params }) => {
-  const { topCategory, category } = await params;
+  const { topCategory, category } = params;
 
   const [
     topProductsData,
@@ -29,10 +68,31 @@ const Category = async ({ params }) => {
     getData(`/api/productSort?categoryId=${category}`, "product"),
     getData(`/api/product-visibility`, "product-visibility"),
   ]);
-  console.log({ productVisibility });
-  
+  if (!categoryData?.length) {
+    notFound();
+  }
+
+  const canonicalPath = `/${topCategory}/${category}`;
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Главная", path: "/" },
+    { name: "Каталог", path: "/" },
+    { name: categoryData?.[0]?.name || "Категория", path: canonicalPath },
+  ]);
+  const productList = Array.isArray(productsData) ? productsData : [];
+  const categorySchema = buildCollectionPageJsonLd({
+    name: `${categoryData?.[0]?.name || "Категория"} – товары`,
+    description: `Подборка товаров категории ${categoryData?.[0]?.name || ""} в ${siteConfig.name}.`,
+    url: canonicalPath,
+    items: productList.slice(0, 10).map((product) => ({
+      name: product.name,
+      path: `/${topCategory}/${category}/${product.id}`,
+    })),
+  });
+
   return (
     <main className="min-h-[50%] py-10 flex flex-col">
+      <JsonLd id="category-breadcrumbs" data={breadcrumbJsonLd} />
+      <JsonLd id="category-collection" data={categorySchema} />
       <NavigationProduct
         topProductsData={topProductsData}
         categoryData={categoryData}

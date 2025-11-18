@@ -8,6 +8,18 @@ import Banner from "@/components/shared/banner";
 import { getData } from "@/lib/api.services";
 import { getLastItems, getRandomItems } from "@/lib/utils";
 import { Suspense } from "react";
+import JsonLd from "@/components/seo/json-ld";
+import {
+  buildCollectionPageJsonLd,
+  buildMetadata,
+  siteConfig,
+} from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: siteConfig.name,
+  description: siteConfig.description,
+  path: "/",
+});
 
 async function Home() {
   try {
@@ -43,8 +55,20 @@ async function Home() {
     const lastProducts = getLastItems(products, 4);
     const lastNews = getLastItems(newsData, 10);
 
+    const collectionSchema = buildCollectionPageJsonLd({
+      name: `${siteConfig.name} – каталог`,
+      description:
+        "Новинки и ключевые категории оборудования для систем безопасности и связи.",
+      url: "/",
+      items: categories.slice(0, 10).map((category) => ({
+        name: category.name,
+        path: `/${category.topCategoryId}/${category.id}`,
+      })),
+    });
+
     return (
       <div className="min-h-[50%] w-full flex flex-col space-y-2 items-center justify-center">
+        <JsonLd id="home-collection-schema" data={collectionSchema} />
         <Suspense fallback={<div>Loading banner...</div>}>
           <Banner banner={banner} bannerSort={bannerSort} />
         </Suspense>

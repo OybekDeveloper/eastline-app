@@ -11,9 +11,24 @@ import SelectReview from "@/components/forms/selectReview";
 import SertificateForm from "@/components/forms/sertificate";
 import TopCategoryForm from "@/components/forms/topCategory";
 import Getelements from "@/components/pages/dashboard/getElements";
-import db from "@/db/db";
 import { getData } from "@/lib/api.services";
 import React from "react";
+import { buildMetadata } from "@/lib/seo";
+
+export async function generateMetadata({ params }) {
+  const formatted =
+    params?.details?.replace(/([A-Z])/g, " $1").replace(/^\w/, (c) => c.toUpperCase()) ||
+    "Панель управления";
+  return buildMetadata({
+    title: formatted,
+    description: "Рабочая зона для администраторов EAST LINE TELEKOM.",
+    path: `/dashboard/${params?.details || ""}`,
+    robots: {
+      index: false,
+      follow: false,
+    },
+  });
+}
 
 // If you're using Next.js app directory, use this function to handle server-side data fetching
 const Create = async ({ params }) => {

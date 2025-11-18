@@ -17,6 +17,11 @@ const Banner = ({ banner, bannerSort }) => {
   const filterBanner = bannerSort
     .filter((category) => category.uniqueId) // Faqat uniqueId mavjud bo'lganlarni qoldirish
     .sort((a, b) => a.uniqueId - b.uniqueId);
+  const getBannerAlt = (item) => {
+    if (item.productId) return `Промо баннер товара ${item.productId}`;
+    if (item.categoryId) return `Промо баннер категории ${item.categoryId}`;
+    return "Промо баннер EAST LINE TELEKOM";
+  };
 
   return (
     <Container
@@ -56,7 +61,7 @@ const Banner = ({ banner, bannerSort }) => {
                         <CustomImage
                           object={"object-contain rounded-md"}
                           src={item.image}
-                          alt={`banner-img`}
+                          alt={getBannerAlt(item)}
                           loading="eager"
                           className="w-full mx-auto max-sm:aspect-video aspect-square mb-5"
                         />
@@ -103,7 +108,7 @@ const Banner = ({ banner, bannerSort }) => {
                         <CustomImage
                           object={"dd rounded-md"}
                           src={item.image}
-                          alt={`banner-img`}
+                          alt={getBannerAlt(item)}
                           className={`w-[100%] h-full aspect-video mx-auto mb-5`}
                           fill
                         />

@@ -142,6 +142,7 @@ const Cards = memo(
     productVisibility,
   }) => {
     const { name, image, price } = props;
+    const primaryImage = Array.isArray(image) ? image[0] : image;
     const findCategory = categories?.find((c) => c?.id == props?.categoryId);
 
     return (
@@ -157,9 +158,9 @@ const Cards = memo(
             </span>
             <div className="w-full cursor-pointer relative flex justify-center items-center">
               <CustomImage
-                src={`${image[0]}`}
+                src={primaryImage || "/img/productImage.svg"}
                 className="w-[70%] md:w-[50%] lg:w-[60%] aspect-square"
-                alt={`${image[0]}`}
+                alt={name}
               />
             </div>
             {productVisibility?.show && <p>{f(getCurrencySum(price))} сум</p>}
@@ -171,9 +172,9 @@ const Cards = memo(
           >
             <div className="relative w-full flex justify-center items-center">
               <CustomImage
-                src={`${image[0]}`}
+                src={primaryImage || "/img/productImage.svg"}
                 className="md:w-[50%] aspect-square"
-                alt={`${image[0]}`}
+                alt={name}
               />
             </div>
             <div className="flex flex-col gap-5 items-start justify-between h-[80%]">

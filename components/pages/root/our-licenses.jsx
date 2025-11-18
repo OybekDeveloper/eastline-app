@@ -28,7 +28,7 @@ const OurLicenses = ({ sertificate, license }) => {
                     <div className="relative">
                       <CustomImage
                         src={item.image}
-                        alt="img"
+                        alt={item.name || "Сертификат EAST LINE TELEKOM"}
                         className="h-[320px] w-full hidden lg:block"
                         fill
                       />
@@ -62,7 +62,7 @@ const OurLicenses = ({ sertificate, license }) => {
                 >
                   <CustomImage
                     src={item.image}
-                    alt={`${item.image}`}
+                    alt={item.name || "Лицензия EAST LINE TELEKOM"}
                     className="w-full h-full"
                   />
                 </CarouselItem>

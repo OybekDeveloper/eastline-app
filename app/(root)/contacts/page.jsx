@@ -1,10 +1,43 @@
 import { ContactForm } from "@/components/forms/contact";
 import Container from "@/components/shared/container";
 import React from "react";
+import { getData } from "@/lib/api.services";
+import JsonLd from "@/components/seo/json-ld";
+import {
+  buildBreadcrumbJsonLd,
+  buildContactPageJsonLd,
+  buildMetadata,
+  siteConfig,
+} from "@/lib/seo";
+
+export const metadata = buildMetadata({
+  title: "Контакты EAST LINE TELEKOM",
+  description:
+    "Свяжитесь с EAST LINE TELEKOM: телефон, адрес офиса в Ташкенте и форма обратной связи.",
+  path: "/contacts",
+});
 
 async function Contacts() {
+  const contactResponse = await getData("/api/contact", "contact").catch(
+    () => []
+  );
+  const contact = contactResponse?.[0];
+  const addressText = contact?.address || siteConfig.address;
+  const phoneNumbers = [contact?.phone1, contact?.phone2].filter(Boolean);
+  const email = contact?.email || siteConfig.contactEmail;
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "Главная", path: "/" },
+    { name: "Контакты", path: "/contacts" },
+  ]);
+  const contactSchema = buildContactPageJsonLd(contact);
+
+  const formatPhoneHref = (phone) =>
+    phone ? `tel:${phone.replace(/[^+\d]/g, "")}` : undefined;
+
   return (
     <Container className="min-h-[80vh] py-10 flex-col lg:flex-row gap-5">
+      <JsonLd id="contacts-breadcrumbs" data={breadcrumbJsonLd} />
+      <JsonLd id="contacts-schema" data={contactSchema} />
       <div className="w-[40%] max-lg:w-full">
         <ContactForm />
       </div>
@@ -14,21 +47,34 @@ async function Contacts() {
           className="w-full aspect-video rounded-lg"
           allowFullScreen=""
           loading="lazy"
+          title="Офис EAST LINE TELEKOM на карте"
           referrerPolicy="no-referrer-when-downgrade"
         ></iframe>
         <ul className="space-y-2 lg:space-y-4 font-semibold textNormal2">
           <li>
-            г. Ташкент, Яшнабадский район, ул. Махзуна, 1-тупик, дом 14А.
-            Ориентир: Масложирокомбинат.
+            <address className="not-italic">{addressText}</address>
           </li>
+          {phoneNumbers.length > 0 && (
+            <li>
+              {phoneNumbers.map((phone, index) => (
+                <div key={`${phone}-${index}`} className="flex flex-col">
+                  <span>
+                    Телефон {index + 1}:{" "}
+                    <a href={formatPhoneHref(phone)}>{phone}</a>
+                  </span>
+                </div>
+              ))}
+            </li>
+          )}
           <li>
-            Моб.: <a href={`tel: +998555108033`}>+998 55 510-80-33</a>
-            <br /> Тел.: <a href={`tel: +998555108133`}>+998 55 510-81-33</a>
+            Эл. почта:{" "}
+            <a className="underline" href={`mailto:${email}`}>
+              {email}
+            </a>
           </li>
-          <li>Эл. Почта: info@elt.uz</li>
         </ul>
       </div>
     </Container>
   );
-};
-export default Contacts
+}
+export default Contacts;
