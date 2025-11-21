@@ -18,7 +18,8 @@ export async function generateMetadata({ params }) {
       `/api/category?id=${category}`,
       "category"
     );
-    const categoryName = categoryData?.[0]?.name;
+    const categoryDetails = categoryData?.[0];
+    const categoryName = categoryDetails?.name;
     if (!categoryName) {
       return buildMetadata({
         title: "Каталог товаров",
@@ -26,8 +27,13 @@ export async function generateMetadata({ params }) {
         path: `/${topCategory}/${category}`,
       });
     }
-    const title = `${categoryName} – каталог оборудования`;
-    const description = `Категория ${categoryName} от ${siteConfig.name}: поставка, монтаж и обслуживание по всему Узбекистану.`;
+    const title =
+      categoryDetails?.meta_title?.trim() ||
+      `${categoryName} – каталог оборудования`;
+    const description =
+      categoryDetails?.meta_description?.trim() ||
+      categoryDetails?.description ||
+      `Категория ${categoryName} от ${siteConfig.name}: поставка, монтаж и обслуживание по всему Узбекистану.`;
     return buildMetadata({
       title,
       description,

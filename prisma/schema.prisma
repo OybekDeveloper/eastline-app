@@ -28,6 +28,8 @@ model Category {
   id                String       @id @default(auto()) @map("_id") @db.ObjectId
   name              String
   image             String
+  meta_title        String?
+  meta_description  String?
   createdAt         DateTime     @default(now())
   updateAt          DateTime     @updatedAt
   topCategory       TopCategory? @relation("TopCategoryToCategory", fields: [topCategoryId], references: [id])
@@ -44,6 +46,8 @@ model Product {
   price       String
   brand       String
   image       String[]
+  meta_title       String?
+  meta_description String?
   createdAt   DateTime  @default(now())
   updateAt    DateTime  @updatedAt
   category    Category? @relation(fields: [categoryId], references: [id])

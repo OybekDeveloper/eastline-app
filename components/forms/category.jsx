@@ -36,6 +36,8 @@ const CategoryForm = () => {
     defaultValues: {
       name: "",
       topCategoryId: "",
+      meta_title: "",
+      meta_description: "",
     },
   });
 
@@ -169,9 +171,18 @@ const CategoryForm = () => {
         setProducts(product);
         const filterProduct = product?.filter((p) => String(p.categoryId) === String(id))
         if (res) {
-          const { name, topCategoryId, image, products } = res[0];
+          const {
+            name,
+            topCategoryId,
+            image,
+            products,
+            meta_title,
+            meta_description,
+          } = res[0];
           form.setValue("name", name);
           form.setValue("topCategoryId", topCategoryId);
+          form.setValue("meta_title", meta_title || "");
+          form.setValue("meta_description", meta_description || "");
           setImage([
             {
               url: image,
@@ -240,6 +251,18 @@ const CategoryForm = () => {
                 control={form.control}
                 name="name"
                 label="Название категории"
+              />
+              <CustomFormField
+                fieldType={FormFieldType.INPUT}
+                control={form.control}
+                name="meta_title"
+                label="Meta Title"
+              />
+              <CustomFormField
+                fieldType={FormFieldType.TEXTAREA}
+                control={form.control}
+                name="meta_description"
+                label="Meta Description"
               />
               <CustomFormField
                 fieldType={FormFieldType.SELECT}

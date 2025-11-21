@@ -62,6 +62,8 @@ export async function POST(req) {
         },
       },
       image: data.image,
+      meta_title: data.meta_title || null,
+      meta_description: data.meta_description || null,
     },
   });
   return Response.json({ data: createCategory });
@@ -82,6 +84,8 @@ export async function PATCH(req) {
           },
         },
         image: data.image,
+        meta_title: data.meta_title || null,
+        meta_description: data.meta_description || null,
       },
     });
 

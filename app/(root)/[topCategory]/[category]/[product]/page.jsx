@@ -30,9 +30,11 @@ export async function generateMetadata({ params }) {
         path,
       });
     }
-    const description = productDetails.description
-      ? productDetails.description.slice(0, 160)
-      : `${productDetails.name} в наличии.`;
+    const description =
+      productDetails?.meta_description?.trim() ||
+      (productDetails.description
+        ? productDetails.description.slice(0, 160)
+        : `${productDetails.name} в наличии.`);
     const images =
       productDetails?.image?.map((img) => ({
         url: img,
@@ -40,11 +42,13 @@ export async function generateMetadata({ params }) {
       })) || [];
 
     return buildMetadata({
-      title: `${productDetails.name} – описание и цена`,
+      title:
+        productDetails?.meta_title?.trim() ||
+        `${productDetails.name} – описание и цена`,
       description,
       path,
       images,
-      type: "product",
+      // Next.js metadata does not support "product" as an Open Graph type, so use website.
     });
   } catch (error) {
     return buildMetadata({

@@ -58,6 +58,8 @@ const ProductForm = ({ categories }) => {
       brand: "",
       name: "",
       topCategoryId: "",
+      meta_title: "",
+      meta_description: "",
     },
   });
 
@@ -166,6 +168,8 @@ const ProductForm = ({ categories }) => {
             price,
             categoryId,
             image,
+            meta_title,
+            meta_description,
           } = res[0];
           form.setValue("name", name);
           form.setValue("description", description);
@@ -173,6 +177,8 @@ const ProductForm = ({ categories }) => {
           form.setValue("brand", brand);
           form.setValue("price", price);
           form.setValue("categoryId", categoryId);
+          form.setValue("meta_title", meta_title || "");
+          form.setValue("meta_description", meta_description || "");
           setImages(
             image.map((img) => {
               return {
@@ -230,6 +236,18 @@ const ProductForm = ({ categories }) => {
                 control={form.control}
                 name="description"
                 label="Описание продукта"
+              />
+              <CustomFormField
+                fieldType={FormFieldType.INPUT}
+                control={form.control}
+                name="meta_title"
+                label="Meta Title"
+              />
+              <CustomFormField
+                fieldType={FormFieldType.TEXTAREA}
+                control={form.control}
+                name="meta_description"
+                label="Meta Description"
               />
               <div>
                 <FormLabel className="text-xs lg:text-base">

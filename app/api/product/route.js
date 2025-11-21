@@ -34,6 +34,8 @@ export async function POST(req) {
       price: data.price,
       brand: data.brand,
       image: data.images,
+      meta_title: data.meta_title || null,
+      meta_description: data.meta_description || null,
       category: {
         connect: {
           id: String(data.categoryId),
@@ -80,6 +82,8 @@ export async function PATCH(req) {
         price: data.price,
         brand: data.brand,
         image: data.images,
+        meta_title: data.meta_title || null,
+        meta_description: data.meta_description || null,
         category: {
           connect: {
             id: String(data.categoryId),
