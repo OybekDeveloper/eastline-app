@@ -17,12 +17,13 @@ import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import Todo from "../shared/note/NotePicker";
 import { revalidatePath } from "@/lib/revalidate";
+import { patchData, postData, revalidateUpdate } from "@/lib/api.services";
+import SeoMetadataForm, { createSeoDefaults } from "./seoMetadata";
 import {
-  getData,
-  patchData,
-  postData,
-  revalidateUpdate,
-} from "@/lib/api.services";
+  mapCustomMetaEntries,
+  stringifyStructuredData,
+  toCustomMetaArray,
+} from "./seoFormHelpers";
 
 const ProductForm = ({ categories }) => {
   const router = useRouter();
@@ -58,8 +59,7 @@ const ProductForm = ({ categories }) => {
       brand: "",
       name: "",
       topCategoryId: "",
-      meta_title: "",
-      meta_description: "",
+      seo: createSeoDefaults("product"),
     },
   });
 
@@ -118,11 +118,23 @@ const ProductForm = ({ categories }) => {
 
     try {
       const imagesUpload = await upload();
+      const customMetaMap = mapCustomMetaEntries(values.seo?.custom_meta);
+      const seoPayload = {
+        ...values.seo,
+        custom_meta: customMetaMap,
+      };
+      const payload = {
+        ...values,
+        seo: seoPayload,
+        meta_title: seoPayload.meta_title || null,
+        meta_description: seoPayload.meta_description || null,
+      };
+
       if (id) {
         const res = await patchData(
           `/api/product?id=${id}`,
           {
-            ...values,
+            ...payload,
             images: imagesUpload,
           },
           "product"
@@ -134,7 +146,7 @@ const ProductForm = ({ categories }) => {
       } else {
         await postData(
           "/api/product",
-          { ...values, images: imagesUpload },
+          { ...payload, images: imagesUpload },
           "product"
         );
         toast.success("Товар создан успешно!");
@@ -158,40 +170,99 @@ const ProductForm = ({ categories }) => {
   useEffect(() => {
     async function updateData() {
       try {
-        const res = await getData(`/api/product?id=${id}`, "product");
-        if (res) {
-          const {
-            name,
-            description,
-            feature,
-            brand,
-            price,
-            categoryId,
-            image,
-            meta_title,
-            meta_description,
-          } = res[0];
-          form.setValue("name", name);
-          form.setValue("description", description);
-          form.setValue("feature", feature);
-          form.setValue("brand", brand);
-          form.setValue("price", price);
-          form.setValue("categoryId", categoryId);
-          form.setValue("meta_title", meta_title || "");
-          form.setValue("meta_description", meta_description || "");
-          setImages(
-            image.map((img) => {
-              return {
-                url: img,
-              };
-            })
-          );
-          setContent(feature);
+        const response = await fetch(`/api/product?id=${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to load the product");
         }
+        const payload = await response.json();
+        const product = payload?.data?.[0];
+        if (!product) return;
+
+        const {
+          name,
+          description,
+          feature,
+          brand,
+          price,
+          categoryId,
+          image,
+          meta_title,
+          meta_description,
+          seo,
+        } = product;
+        const seoData = seo || {};
+
+        form.setValue("name", name);
+        form.setValue("description", description);
+        form.setValue("feature", feature);
+        form.setValue("brand", brand);
+        form.setValue("price", price);
+        form.setValue("categoryId", categoryId);
+        form.setValue("seo.meta_title", seoData.meta_title || meta_title || "");
+        form.setValue(
+          "seo.meta_description",
+          seoData.meta_description || meta_description || ""
+        );
+        form.setValue("seo.meta_keywords", seoData.meta_keywords || []);
+        form.setValue("seo.meta_robots", seoData.meta_robots || "");
+        form.setValue("seo.canonical_url", seoData.canonical_url || "");
+        form.setValue(
+          "seo.open_graph.og_title",
+          seoData.open_graph?.og_title || ""
+        );
+        form.setValue(
+          "seo.open_graph.og_description",
+          seoData.open_graph?.og_description || ""
+        );
+        form.setValue(
+          "seo.open_graph.og_image",
+          seoData.open_graph?.og_image || ""
+        );
+        form.setValue(
+          "seo.open_graph.og_type",
+          seoData.open_graph?.og_type || "product"
+        );
+        form.setValue("seo.open_graph.og_locale", seoData.open_graph?.og_locale || "");
+        form.setValue(
+          "seo.twitter.twitter_card",
+          seoData.twitter?.twitter_card || ""
+        );
+        form.setValue(
+          "seo.twitter.twitter_title",
+          seoData.twitter?.twitter_title || ""
+        );
+        form.setValue(
+          "seo.twitter.twitter_description",
+          seoData.twitter?.twitter_description || ""
+        );
+        form.setValue(
+          "seo.twitter.twitter_image",
+          seoData.twitter?.twitter_image || ""
+        );
+        form.setValue(
+          "seo.structured_data",
+          stringifyStructuredData(seoData.structured_data)
+        );
+        form.setValue("seo.custom_meta", toCustomMetaArray(seoData.custom_meta));
+
+        const existingImages = Array.isArray(image)
+          ? image
+          : image
+          ? [image]
+          : [];
+
+        setImages(
+          existingImages.map((img, idx) => ({
+            url: img,
+            name: `existing-${idx}`,
+          }))
+        );
+        setContent(feature || "");
       } catch (error) {
-        console.log(error);
+        console.error("Unable to load product for editing:", error);
       }
     }
+
     if (id) {
       updateData();
     }
@@ -237,18 +308,6 @@ const ProductForm = ({ categories }) => {
                 name="description"
                 label="Описание продукта"
               />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                control={form.control}
-                name="meta_title"
-                label="Meta Title"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.TEXTAREA}
-                control={form.control}
-                name="meta_description"
-                label="Meta Description"
-              />
               <div>
                 <FormLabel className="text-xs lg:text-base">
                   Характеристика продукта
@@ -272,6 +331,7 @@ const ProductForm = ({ categories }) => {
                 ))}
               </CustomFormField>
             </div>
+            <SeoMetadataForm form={form} />
             <div className="my-6">
               <DropTarget images={images} setImages={setImages} limitImg={3} />
             </div>

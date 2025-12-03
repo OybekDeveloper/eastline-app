@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { prepareSeoPayload } from "@/lib/seo";
 
 
 export async function GET(req) {
@@ -25,6 +26,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   const data = await req.json();
+  const seo = prepareSeoPayload(data);
 
   const createProduct = await db.product.create({
     data: {
@@ -34,8 +36,9 @@ export async function POST(req) {
       price: data.price,
       brand: data.brand,
       image: data.images,
-      meta_title: data.meta_title || null,
-      meta_description: data.meta_description || null,
+      meta_title: seo?.meta_title || data.meta_title || null,
+      meta_description: seo?.meta_description || data.meta_description || null,
+      seo,
       category: {
         connect: {
           id: String(data.categoryId),
@@ -68,6 +71,7 @@ export async function DELETE(req) {
 
 export async function PATCH(req) {
   const data = await req.json();
+  const seo = prepareSeoPayload(data);
 
   try {
     const { searchParams } = new URL(req.url);
@@ -82,8 +86,9 @@ export async function PATCH(req) {
         price: data.price,
         brand: data.brand,
         image: data.images,
-        meta_title: data.meta_title || null,
-        meta_description: data.meta_description || null,
+        meta_title: seo?.meta_title || data.meta_title || null,
+        meta_description: seo?.meta_description || data.meta_description || null,
+        seo,
         category: {
           connect: {
             id: String(data.categoryId),

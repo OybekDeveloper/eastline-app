@@ -13,6 +13,7 @@ import {
 
 export async function generateMetadata({ params }) {
   const { topCategory, category } = params;
+  const path = `/${topCategory}/${category}`;
   try {
     const categoryData = await getData(
       `/api/category?id=${category}`,
@@ -24,26 +25,30 @@ export async function generateMetadata({ params }) {
       return buildMetadata({
         title: "Каталог товаров",
         description: siteConfig.description,
-        path: `/${topCategory}/${category}`,
+        path,
+        type: "category",
       });
     }
-    const title =
-      categoryDetails?.meta_title?.trim() ||
-      `${categoryName} – каталог оборудования`;
-    const description =
-      categoryDetails?.meta_description?.trim() ||
-      categoryDetails?.description ||
-      `Категория ${categoryName} от ${siteConfig.name}: поставка, монтаж и обслуживание по всему Узбекистану.`;
+    const fallbackSeo = {
+      ...(categoryDetails?.seo || {}),
+      meta_title:
+        categoryDetails?.seo?.meta_title || `${categoryName} – каталог оборудования`,
+      meta_description:
+        categoryDetails?.seo?.meta_description ||
+        `Категория ${categoryName} от ${siteConfig.name}: поставка, монтаж и обслуживание по всему Узбекистану.`,
+    };
     return buildMetadata({
-      title,
-      description,
-      path: `/${topCategory}/${category}`,
+      seo: categoryDetails?.seo,
+      fallbackSeo,
+      path,
+      type: "category",
     });
   } catch (error) {
     return buildMetadata({
       title: "Каталог товаров",
       description: siteConfig.description,
-      path: `/${topCategory}/${category}`,
+      path,
+      type: "category",
     });
   }
 }
@@ -94,11 +99,18 @@ const Category = async ({ params }) => {
       path: `/${topCategory}/${category}/${product.id}`,
     })),
   });
+  const customCategoryStructuredData = categoryData?.[0]?.seo?.structured_data;
 
   return (
     <main className="min-h-[50%] py-10 flex flex-col">
       <JsonLd id="category-breadcrumbs" data={breadcrumbJsonLd} />
       <JsonLd id="category-collection" data={categorySchema} />
+      {customCategoryStructuredData && (
+        <JsonLd
+          id="category-custom-structured-data"
+          data={customCategoryStructuredData}
+        />
+      )}
       <NavigationProduct
         topProductsData={topProductsData}
         categoryData={categoryData}

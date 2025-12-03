@@ -18,6 +18,7 @@ import "react-phone-number-input/style.css";
 import { cn } from "@/lib/utils";
 import CurrencyInput from "react-currency-input-field";
 import { PasswordInput } from "../ui/password-input";
+import TagsInput from "../shared/tagsInput";
 
 export const FormFieldType = {
   INPUT: "input",
@@ -29,6 +30,7 @@ export const FormFieldType = {
   SELECT: "select",
   SKELETON: "skeleton",
   CURRENCY: "currency",
+  TAGS: "tags",
 };
 
 const RenderInput = ({ field, className, props }) => {
@@ -161,6 +163,17 @@ const RenderInput = ({ field, className, props }) => {
         </FormControl>
       );
 
+    case FormFieldType.TAGS:
+      return (
+        <FormControl>
+          <TagsInput
+            value={Array.isArray(field.value) ? field.value : []}
+            onChange={field.onChange}
+            placeholder={props.placeholder}
+            maxTags={props.maxTags || 12}
+          />
+        </FormControl>
+      );
     case FormFieldType.SKELETON:
       return props.renderSkeleton ? props.renderSkeleton(field) : null;
     default:

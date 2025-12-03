@@ -30,6 +30,7 @@ model Category {
   image             String
   meta_title        String?
   meta_description  String?
+  seo               Json?
   createdAt         DateTime     @default(now())
   updateAt          DateTime     @updatedAt
   topCategory       TopCategory? @relation("TopCategoryToCategory", fields: [topCategoryId], references: [id])
@@ -48,6 +49,7 @@ model Product {
   image       String[]
   meta_title       String?
   meta_description String?
+  seo               Json?
   createdAt   DateTime  @default(now())
   updateAt    DateTime  @updatedAt
   category    Category? @relation(fields: [categoryId], references: [id])

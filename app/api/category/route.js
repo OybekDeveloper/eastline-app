@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { prepareSeoPayload } from "@/lib/seo";
 
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
@@ -52,6 +53,7 @@ export async function DELETE(req) {
 export async function POST(req) {
   const data = await req.json();
   console.log(data);
+  const seo = prepareSeoPayload(data);
 
   const createCategory = await db.category.create({
     data: {
@@ -62,8 +64,9 @@ export async function POST(req) {
         },
       },
       image: data.image,
-      meta_title: data.meta_title || null,
-      meta_description: data.meta_description || null,
+      meta_title: seo?.meta_title || data.meta_title || null,
+      meta_description: seo?.meta_description || data.meta_description || null,
+      seo,
     },
   });
   return Response.json({ data: createCategory });
@@ -71,6 +74,7 @@ export async function POST(req) {
 
 export async function PATCH(req) {
   const data = await req.json();
+  const seo = prepareSeoPayload(data);
   try {
     const id = await req.nextUrl.searchParams.get("id");
 
@@ -84,8 +88,9 @@ export async function PATCH(req) {
           },
         },
         image: data.image,
-        meta_title: data.meta_title || null,
-        meta_description: data.meta_description || null,
+        meta_title: seo?.meta_title || data.meta_title || null,
+        meta_description: seo?.meta_description || data.meta_description || null,
+        seo,
       },
     });
 

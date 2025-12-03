@@ -14,6 +14,20 @@ import {
   buildProductJsonLd,
 } from "@/lib/seo";
 
+const enhanceProductSeoPayload = (details) => {
+  if (!details) return undefined;
+  const rawSeo = details?.seo;
+  const seoPayload =
+    rawSeo && typeof rawSeo === "object" ? { ...rawSeo } : {};
+  if (!seoPayload.meta_title && details?.meta_title) {
+    seoPayload.meta_title = details.meta_title;
+  }
+  if (!seoPayload.meta_description && details?.meta_description) {
+    seoPayload.meta_description = details.meta_description;
+  }
+  return Object.keys(seoPayload).length ? seoPayload : undefined;
+};
+
 export async function generateMetadata({ params }) {
   const { product, category, topCategory } = params;
   const path = `/${topCategory}/${category}/${product}`;
@@ -30,11 +44,23 @@ export async function generateMetadata({ params }) {
         path,
       });
     }
-    const description =
-      productDetails?.meta_description?.trim() ||
-      (productDetails.description
-        ? productDetails.description.slice(0, 160)
-        : `${productDetails.name} в наличии.`);
+    const categoryDetails = categoryData?.[0];
+    const fallbackTitle = `${productDetails.name} – описание и цена`;
+    const fallbackDescription = productDetails.description
+      ? productDetails.description.slice(0, 160)
+      : `${productDetails.name} в наличии.`;
+    const productSeo = enhanceProductSeoPayload(productDetails);
+    const fallbackSeo = {
+      ...(categoryDetails?.seo || {}),
+      meta_title:
+        categoryDetails?.seo?.meta_title ||
+        productSeo?.meta_title ||
+        fallbackTitle,
+      meta_description:
+        categoryDetails?.seo?.meta_description ||
+        productSeo?.meta_description ||
+        fallbackDescription,
+    };
     const images =
       productDetails?.image?.map((img) => ({
         url: img,
@@ -42,19 +68,18 @@ export async function generateMetadata({ params }) {
       })) || [];
 
     return buildMetadata({
-      title:
-        productDetails?.meta_title?.trim() ||
-        `${productDetails.name} – описание и цена`,
-      description,
+      seo: productSeo,
+      fallbackSeo,
       path,
       images,
-      // Next.js metadata does not support "product" as an Open Graph type, so use website.
+      type: "article",
     });
   } catch (error) {
     return buildMetadata({
       title: "Каталог товаров",
       description: "Оборудование EAST LINE TELEKOM.",
       path,
+      type: "article",
     });
   }
 }
@@ -132,11 +157,18 @@ const Product = async ({ params }) => {
     price: normalizedPrice,
     currency: "UZS",
   });
+  const customSeoStructuredData = productData?.[0]?.seo?.structured_data;
 
     return (
-      <main className="min-h-[50%] py-10 flex flex-col gap-4">
-        <JsonLd id="product-breadcrumbs" data={breadcrumbJsonLd} />
-        <JsonLd id="product-schema" data={productSchema} />
+    <main className="min-h-[50%] py-10 flex flex-col gap-4">
+      <JsonLd id="product-breadcrumbs" data={breadcrumbJsonLd} />
+      <JsonLd id="product-schema" data={productSchema} />
+      {customSeoStructuredData && (
+        <JsonLd
+          id="product-custom-structured-data"
+          data={customSeoStructuredData}
+        />
+      )}
         <NavigationProduct
           topProductsData={topCategoryData}
         categoryData={categoryData}

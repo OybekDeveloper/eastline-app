@@ -19,6 +19,12 @@ import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import { getData, patchData, postData } from "@/lib/api.services";
 import DragDropComponent from "../shared/dragDropComponent";
+import SeoMetadataForm, { createSeoDefaults } from "./seoMetadata";
+import {
+  mapCustomMetaEntries,
+  stringifyStructuredData,
+  toCustomMetaArray,
+} from "./seoFormHelpers";
 
 const CategoryForm = () => {
   const router = useRouter();
@@ -36,8 +42,7 @@ const CategoryForm = () => {
     defaultValues: {
       name: "",
       topCategoryId: "",
-      meta_title: "",
-      meta_description: "",
+      seo: createSeoDefaults("category"),
     },
   });
 
@@ -86,18 +91,30 @@ const CategoryForm = () => {
           },
         });
 
-        if (response.data.success) {
-          uploadedUrl = response.data.url;
-        } else {
-          throw new Error("Upload failed");
-        }
+      if (response.data.success) {
+        uploadedUrl = response.data.url;
       } else {
-        // If no file (existing image), use the current URL
-        uploadedUrl = image[0].url;
+        throw new Error("Upload failed");
       }
+    } else {
+      // If no file (existing image), use the current URL
+      uploadedUrl = image[0].url;
+    }
 
-      // Handle form submission
-      if (id) {
+      const customMetaMap = mapCustomMetaEntries(values.seo?.custom_meta);
+      const seoPayload = {
+        ...values.seo,
+        custom_meta: customMetaMap,
+      };
+      const payload = {
+        ...values,
+        seo: seoPayload,
+        meta_title: seoPayload.meta_title || null,
+        meta_description: seoPayload.meta_description || null,
+      };
+
+    // Handle form submission
+    if (id) {
         const categorySort = await getData(
           `/api/categorySort?categoryId=${id}`,
           "category"
@@ -105,7 +122,7 @@ const CategoryForm = () => {
         await patchData(
           `/api/category?id=${id}`,
           {
-            ...values,
+            ...payload,
             image: uploadedUrl,
           },
           "category"
@@ -129,7 +146,7 @@ const CategoryForm = () => {
         const res = await postData(
           "/api/category",
           {
-            ...values,
+            ...payload,
             image: uploadedUrl,
           },
           "category"
@@ -178,11 +195,59 @@ const CategoryForm = () => {
             products,
             meta_title,
             meta_description,
+            seo = {},
           } = res[0];
           form.setValue("name", name);
           form.setValue("topCategoryId", topCategoryId);
-          form.setValue("meta_title", meta_title || "");
-          form.setValue("meta_description", meta_description || "");
+          form.setValue("seo.meta_title", seo.meta_title || meta_title || "");
+          form.setValue(
+            "seo.meta_description",
+            seo.meta_description || meta_description || ""
+          );
+          form.setValue("seo.meta_keywords", seo.meta_keywords || []);
+          form.setValue("seo.meta_robots", seo.meta_robots || "");
+          form.setValue("seo.canonical_url", seo.canonical_url || "");
+          form.setValue(
+            "seo.open_graph.og_title",
+            seo.open_graph?.og_title || ""
+          );
+          form.setValue(
+            "seo.open_graph.og_description",
+            seo.open_graph?.og_description || ""
+          );
+          form.setValue(
+            "seo.open_graph.og_image",
+            seo.open_graph?.og_image || ""
+          );
+          form.setValue(
+            "seo.open_graph.og_type",
+            seo.open_graph?.og_type || "category"
+          );
+          form.setValue(
+            "seo.open_graph.og_locale",
+            seo.open_graph?.og_locale || ""
+          );
+          form.setValue(
+            "seo.twitter.twitter_card",
+            seo.twitter?.twitter_card || ""
+          );
+          form.setValue(
+            "seo.twitter.twitter_title",
+            seo.twitter?.twitter_title || ""
+          );
+          form.setValue(
+            "seo.twitter.twitter_description",
+            seo.twitter?.twitter_description || ""
+          );
+          form.setValue(
+            "seo.twitter.twitter_image",
+            seo.twitter?.twitter_image || ""
+          );
+          form.setValue(
+            "seo.structured_data",
+            stringifyStructuredData(seo.structured_data)
+          );
+          form.setValue("seo.custom_meta", toCustomMetaArray(seo.custom_meta));
           setImage([
             {
               url: image,
@@ -252,18 +317,7 @@ const CategoryForm = () => {
                 name="name"
                 label="Название категории"
               />
-              <CustomFormField
-                fieldType={FormFieldType.INPUT}
-                control={form.control}
-                name="meta_title"
-                label="Meta Title"
-              />
-              <CustomFormField
-                fieldType={FormFieldType.TEXTAREA}
-                control={form.control}
-                name="meta_description"
-                label="Meta Description"
-              />
+              <SeoMetadataForm form={form} />
               <CustomFormField
                 fieldType={FormFieldType.SELECT}
                 control={form.control}
