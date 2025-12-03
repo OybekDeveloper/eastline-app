@@ -265,7 +265,7 @@ const SeoMetadataForm = ({ form }) => {
               name="seo.meta_keywords"
               label="Meta Keywords"
               placeholder="Добавьте ключевые слова"
-              maxTags={12}
+              maxTags={25}
             />
             <CustomFormField
               fieldType={FormFieldType.SELECT}
