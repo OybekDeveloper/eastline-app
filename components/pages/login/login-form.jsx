@@ -33,7 +33,12 @@ const LoginForm = () => {
         name: values.name,
         password: values.password,
       };
-      await postData("/api/admin", user, "admin");
+      const result = await postData("/api/admin", user, "admin");
+      if (!result?.admin) {
+        throw new Error(
+          result?.message || "Неправильное имя пользователя или пароль."
+        );
+      }
       toast.success("Вы успешно авторизованы!");
       Cookies.set(
         "date",
@@ -44,8 +49,7 @@ const LoginForm = () => {
       window.location.href = "/dashboard";
     } catch (error) {
       toast.error(
-        error?.response?.data?.message ||
-          "Неправильное имя пользователя или пароль."
+        error?.message || "Неправильное имя пользователя или пароль."
       );
     } finally {
       setIsLoading(false);

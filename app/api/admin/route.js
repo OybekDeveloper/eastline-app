@@ -4,27 +4,53 @@ import { NextResponse } from "next/server";
 export async function POST(req) {
   try {
     const { name, password } = await req.json();
+    if (!name || !password) {
+      return NextResponse.json(
+        { message: "Имя и пароль обязательны" },
+        { status: 400 }
+      );
+    }
 
     // Find the admin by name
-    const admin = await db.admin.findMany({
+    const admin = await db.admin.findFirst({
       where: {
         name: name,
       },
+      orderBy: {
+        updateAt: "desc",
+      },
     });
 
-    if (admin.length === 0) {
+    if (!admin) {
+      const existingAdmin = await db.admin.findFirst({
+        orderBy: {
+          updateAt: "desc",
+        },
+      });
+
+      if (!existingAdmin) {
+        // Bootstrap the first admin if none exist yet.
+        const createdAdmin = await db.admin.create({
+          data: { name, password },
+        });
+        return NextResponse.json(
+          { message: "Админ создан", admin: createdAdmin },
+          { status: 201 }
+        );
+      }
+
       return NextResponse.json({ message: "Админ не найден" }, { status: 404 });
     }
 
     // Check if the provided password matches
-    const isPasswordValid = admin[0].password === password; // Replace with proper hashing comparison if needed
+    const isPasswordValid = admin.password === password; // Replace with proper hashing comparison if needed
 
     if (!isPasswordValid) {
       return NextResponse.json({ message: "Неверный пароль" }, { status: 401 });
     }
 
     return NextResponse.json(
-      { message: "Вход успешен!!!", admin: admin[0] },
+      { message: "Вход успешен!!!", admin: admin },
       { status: 200 }
     );
   } catch (error) {
@@ -41,16 +67,47 @@ export async function GET() {
 }
 
 export async function PATCH(req) {
-  const data = await req.json();
+  try {
+    const data = await req.json();
+    const { name } = data || {};
 
-  const updateAdmin = await db.admin.update({
-    where: {
-      id: String("67e66e9f1dfa5322e99a3bad"),
-    },
-    data: data,
-  });
+    let admin = null;
+    if (name) {
+      admin = await db.admin.findFirst({
+        where: { name },
+        orderBy: {
+          updateAt: "desc",
+        },
+      });
+    }
 
-  return Response.json({ data: updateAdmin });
+    if (!admin) {
+      admin = await db.admin.findFirst({
+        orderBy: {
+          updateAt: "desc",
+        },
+      });
+    }
+
+    if (!admin) {
+      const createdAdmin = await db.admin.create({ data });
+      return Response.json({ data: createdAdmin }, { status: 201 });
+    }
+
+    const updateAdmin = await db.admin.update({
+      where: {
+        id: admin.id,
+      },
+      data: data,
+    });
+
+    return Response.json({ data: updateAdmin });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Внутренняя ошибка сервера" },
+      { status: 500 }
+    );
+  }
 }
 export async function PUT(req) {
   const data = await req.json();
