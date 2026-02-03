@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
         title: "Каталог товаров",
         description: siteConfig.description,
         path,
-        type: "category",
+        type: "website",
       });
     }
     const fallbackSeo = {
@@ -41,14 +41,14 @@ export async function generateMetadata({ params }) {
       seo: categoryDetails?.seo,
       fallbackSeo,
       path,
-      type: "category",
+      type: "website",
     });
   } catch (error) {
     return buildMetadata({
       title: "Каталог товаров",
       description: siteConfig.description,
       path,
-      type: "category",
+      type: "website",
     });
   }
 }
