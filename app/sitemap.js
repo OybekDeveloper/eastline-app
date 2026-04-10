@@ -1,5 +1,5 @@
-import { getData } from "@/lib/api.services";
 import { absoluteUrl } from "@/lib/seo";
+import { getServerData } from "@/lib/server-data";
 
 export default async function sitemap() {
   const now = new Date().toISOString();
@@ -14,8 +14,8 @@ export default async function sitemap() {
   let products = [];
   try {
     const [categoriesResponse, productsResponse] = await Promise.all([
-      getData("/api/category", "category"),
-      getData("/api/product", "product"),
+      getServerData("/api/category"),
+      getServerData("/api/product"),
     ]);
     categories = categoriesResponse || [];
     products = productsResponse || [];

@@ -1,7 +1,6 @@
 import { ContactForm } from "@/components/forms/contact";
 import Container from "@/components/shared/container";
 import React from "react";
-import { getData } from "@/lib/api.services";
 import JsonLd from "@/components/seo/json-ld";
 import {
   buildBreadcrumbJsonLd,
@@ -9,6 +8,7 @@ import {
   buildMetadata,
   siteConfig,
 } from "@/lib/seo";
+import { getServerData } from "@/lib/server-data";
 
 export const metadata = buildMetadata({
   title: "Контакты EAST LINE TELEKOM",
@@ -18,7 +18,7 @@ export const metadata = buildMetadata({
 });
 
 async function Contacts() {
-  const contactResponse = await getData("/api/contact", "contact").catch(
+  const contactResponse = await getServerData("/api/contact").catch(
     () => []
   );
   const contact = contactResponse?.[0];

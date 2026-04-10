@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { normalizeMediaPayload } from "@/lib/media";
 import { prepareSeoPayload } from "@/lib/seo";
 
 export async function GET(req) {
@@ -12,7 +13,7 @@ export async function GET(req) {
         products: true,
       },
     });
-    return Response.json({ data: getTopCategroies });
+    return Response.json({ data: normalizeMediaPayload(getTopCategroies) });
   } else if (topCategoryId) {
     const getTopCategroies = await db.category.findMany({
       where: { topCategoryId: String(topCategoryId) },
@@ -20,14 +21,14 @@ export async function GET(req) {
         products: true,
       },
     });
-    return Response.json({ data: getTopCategroies });
+    return Response.json({ data: normalizeMediaPayload(getTopCategroies) });
   } else {
     const getTopCategroies = await db.category.findMany({
       include: {
         products: true,
       },
     });
-    return Response.json({ data: getTopCategroies });
+    return Response.json({ data: normalizeMediaPayload(getTopCategroies) });
   }
 }
 

@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { normalizeMediaPayload } from "@/lib/media";
 
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
@@ -6,10 +7,10 @@ export async function GET(req) {
     const getLicenses = await db.license.findMany({
       where: { id: String(id) },
     });
-    return Response.json({ data: getLicenses });
+    return Response.json({ data: normalizeMediaPayload(getLicenses) });
   }
   const getLicenses = await db.license.findMany();
-  return Response.json({ data: getLicenses });
+  return Response.json({ data: normalizeMediaPayload(getLicenses) });
 }
 
 export async function POST(req) {

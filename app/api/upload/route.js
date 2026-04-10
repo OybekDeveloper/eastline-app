@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { toStoredUploadPath } from "@/lib/media";
 
 export async function POST(req) {
   try {
@@ -21,7 +22,10 @@ export async function POST(req) {
 
     const result = await response.json();
 
-    return NextResponse.json({ success: true, url: `https://elt-server.uz${result.url}` });
+    return NextResponse.json({
+      success: true,
+      url: toStoredUploadPath(result.url),
+    });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json(

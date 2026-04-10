@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { normalizeMediaPayload } from "@/lib/media";
 
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
@@ -7,10 +8,10 @@ export async function GET(req) {
     const getBanner = await db.banner.findMany({
       where: { id: String(id) },
     });
-    return Response.json({ data: getBanner });
+    return Response.json({ data: normalizeMediaPayload(getBanner) });
   } else {
     const getBanner = await db.banner.findMany();
-    return Response.json({ data: getBanner });
+    return Response.json({ data: normalizeMediaPayload(getBanner) });
   }
 }
 

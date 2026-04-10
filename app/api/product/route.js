@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { normalizeMediaPayload } from "@/lib/media";
 import { prepareSeoPayload } from "@/lib/seo";
 
 
@@ -9,7 +10,7 @@ export async function GET(req) {
     const getProducts = await db.product.findMany({
       where: { id: String(id) },
     });
-    return Response.json({ data: getProducts });
+    return Response.json({ data: normalizeMediaPayload(getProducts) });
   }
   if (categoryId) {
     const getCategoryProduct = await db.product.findMany({
@@ -17,10 +18,10 @@ export async function GET(req) {
         categoryId: String(categoryId),
       },
     });
-    return Response.json({ data: getCategoryProduct });
+    return Response.json({ data: normalizeMediaPayload(getCategoryProduct) });
   } else {
     const getProducts = await db.product.findMany();
-    return Response.json({ data: getProducts });
+    return Response.json({ data: normalizeMediaPayload(getProducts) });
   }
 }
 

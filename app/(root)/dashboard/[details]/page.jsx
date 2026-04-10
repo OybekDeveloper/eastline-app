@@ -11,9 +11,9 @@ import SelectReview from "@/components/forms/selectReview";
 import SertificateForm from "@/components/forms/sertificate";
 import TopCategoryForm from "@/components/forms/topCategory";
 import Getelements from "@/components/pages/dashboard/getElements";
-import { getData } from "@/lib/api.services";
 import React from "react";
 import { buildMetadata } from "@/lib/seo";
+import { getServerData } from "@/lib/server-data";
 
 export async function generateMetadata({ params }) {
   const formatted =
@@ -34,9 +34,9 @@ export async function generateMetadata({ params }) {
 const Create = async ({ params }) => {
   // Fetch data here for pre-rendering
   const [topCategories, categories, products] = await Promise.all([
-    getData("/api/topCategory", "topCategory"),
-    getData("/api/category", "category"),
-    getData("/api/product", "product"),
+    getServerData("/api/topCategory"),
+    getServerData("/api/category"),
+    getServerData("/api/product"),
   ]);
 
   // Handle the page rendering based on params.details

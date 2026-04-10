@@ -20,7 +20,9 @@ export async function DELETE(req) {
 }
 
 export async function GET(req) {
-  const id = await req.nextUrl.searchParams.get("id");
+  const rawId = await req.nextUrl.searchParams.get("id");
+  const id =
+    rawId && rawId !== "undefined" && rawId !== "null" ? String(rawId) : null;
 
   const queryOptions = {
     include: {
@@ -30,7 +32,7 @@ export async function GET(req) {
 
   if (id) {
     queryOptions.where = {
-      id: String(id),
+      id,
     };
   }
 

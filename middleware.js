@@ -1,47 +1,40 @@
 import { NextResponse } from "next/server";
 
 export function middleware(request) {
-  const url = new URL(request.url);
-  const cookies = request.cookies;
-  const dateCookie = cookies.get("date");
+  const requestHeaders = new Headers(request.headers);
+  const { pathname } = request.nextUrl;
+  requestHeaders.set("x-pathname", pathname);
 
-  // Check if the request is for the login page
-  if (url.pathname === "/login") {
-    if (dateCookie) {
-      try {
-        const { expiresAt } = JSON.parse(dateCookie.value);
+  const rawSession = request.cookies.get("date")?.value;
+  let hasValidAdminSession = false;
 
-        // Redirect to dashboard if cookie is valid
-        if (expiresAt && Date.now() <= expiresAt) {
-          return NextResponse.redirect(new URL("/dashboard", request.url));
-        }
-      } catch (error) {
-        console.log("Error parsing cookie:", error);
-      }
-    }
-  }
-
-  // Check if the request is for the dashboard page
-  if (url.pathname === "/dashboard") {
-    if (!dateCookie) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-
+  if (rawSession) {
     try {
-      const { expiresAt } = JSON.parse(dateCookie.value);
-
-      if (!expiresAt || Date.now() > expiresAt) {
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
-    } catch (error) {
-      console.log("Error parsing cookie:", error);
-      return NextResponse.redirect(new URL("/login", request.url));
+      const parsed = JSON.parse(decodeURIComponent(rawSession));
+      hasValidAdminSession =
+        typeof parsed?.expiresAt === "number" && parsed.expiresAt > Date.now();
+    } catch {
+      hasValidAdminSession = false;
     }
   }
 
-  return NextResponse.next();
+  if (pathname.startsWith("/dashboard") && !hasValidAdminSession) {
+    const loginUrl = new URL("/login", request.url);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (pathname.startsWith("/login") && hasValidAdminSession) {
+    const dashboardUrl = new URL("/dashboard", request.url);
+    return NextResponse.redirect(dashboardUrl);
+  }
+
+  return NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
 }
 
 export const config = {
-  matcher: ['/login', '/dashboard'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

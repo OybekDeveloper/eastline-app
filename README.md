@@ -1,37 +1,50 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-fix
+# EAST LINE TELEKOM
 
-## Getting Started
+This project now supports a temporary local MongoDB runtime through Docker Compose for both development and production. It seeds business data from `db_cluster-14-04-2025@08-20-25.backup.gz` until the external MongoDB Atlas cluster is available again.
 
-First, run the development server:
+## What It Does
+
+- Runs MongoDB in Docker as a single-node replica set compatible with Prisma.
+- Runs the Next.js frontend in Docker for dev or prod.
+- Imports the old Supabase/Postgres `public` business data into MongoDB.
+- Skips re-import when the MongoDB database already contains data.
+
+Images are not copied into MongoDB. The imported documents still reference the existing public Supabase image URLs.
+
+## Development
+
+Start MongoDB and the Next.js dev server:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run docker:dev
 ```
 
-Open [${process.env.NEXT_PUBLIC_BACK_URL}}](${process.env.NEXT_PUBLIC_BACK_URL}}) with your browser to see the result.
+The app will be available at `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## Production
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Start MongoDB and the production Next.js container:
 
-## Learn More
+```bash
+npm run docker:prod
+```
 
-To learn more about Next.js, take a look at the following resources:
+Set `NEXT_PUBLIC_SITE_URL` before starting if you want canonical metadata to use your real domain:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+NEXT_PUBLIC_SITE_URL=https://elt.uz npm run docker:prod
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Manual Backup Import
 
-## Deploy on Vercel
+You can import the backup into the configured MongoDB connection manually:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+node scripts/import-backup-to-mongo.mjs --if-empty
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Force a full replacement of existing MongoDB business data:
+
+```bash
+node scripts/import-backup-to-mongo.mjs --force
+```

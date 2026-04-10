@@ -1,0 +1,86 @@
+services:
+  mongodb:
+    image: mongo:7.0
+    command: ["mongod", "--bind_ip_all", "--replSet", "rs0"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "echo \"try { rs.status().ok } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017'}]}).ok }\" | mongosh --quiet --port 27017"
+        ]
+      interval: 5s
+      timeout: 10s
+      retries: 20
+      start_period: 5s
+
+  frontend:
+    profiles: ["prod"]
+    build:
+      context: .
+      target: runner
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment: &frontend-env
+      DATABASE_URL: mongodb://mongodb:27017/eastline?replicaSet=rs0&directConnection=true
+      DIRECT_URL: mongodb://mongodb:27017/eastline?replicaSet=rs0&directConnection=true
+      BACK_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      BACKUP_PATH: /app/db_cluster-14-04-2025@08-20-25.backup.gz
+      SEED_BACKUP_IF_EMPTY: "1"
+      NODE_ENV: production
+    command:
+      [
+        "sh",
+        "./scripts/start-with-mongo.sh",
+        "npm",
+        "run",
+        "start",
+        "--",
+        "--hostname",
+        "0.0.0.0",
+        "--port",
+        "3000"
+      ]
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+
+  frontend-dev:
+    profiles: ["dev"]
+    build:
+      context: .
+      target: deps
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      <<: *frontend-env
+      NODE_ENV: development
+    command:
+      [
+        "sh",
+        "./scripts/start-with-mongo.sh",
+        "npm",
+        "run",
+        "dev",
+        "--",
+        "--hostname",
+        "0.0.0.0",
+        "--port",
+        "3000"
+      ]
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - frontend_node_modules:/app/node_modules
+
+volumes:
+  mongodb_data:
+  frontend_node_modules:

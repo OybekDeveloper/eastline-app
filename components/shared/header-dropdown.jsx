@@ -18,48 +18,52 @@ export function HeaderDropdown({
   topCategoriesSort = [],
   categorySortData = [],
 }) {
-  console.log({ topCategory, topCategoriesSort, categorySortData });
-
   const [activeCategory, setActiveCategory] = useState(null);
 
   const handleSubcategoryToggle = (categoryId) => {
     setActiveCategory((prev) => (prev === categoryId ? null : categoryId));
   };
 
-  // Ensure all top categories are included
-  let topCategorySort = topCategory.map((category) => {
-    const matchingItems = topCategoriesSort.filter(
-      (item) => String(item.topCategoryId) === String(category.id)
-    );
+  const topCategorySort = topCategory
+    .map((category) => {
+      const sortEntry = topCategoriesSort.find(
+        (item) => String(item.topCategoryId) === String(category.id)
+      );
 
-    const uniqueIds = matchingItems
-      .map((item) => item.uniqueId)
-      .filter(Boolean);
-
-    return { ...category, uniqueIds };
-  });
-
-  // Sorting only if uniqueIds exist
-  topCategorySort.sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
+      return {
+        ...category,
+        sortId: sortEntry?.id || null,
+        sortOrder: Number(sortEntry?.uniqueId ?? Number.MAX_SAFE_INTEGER),
+      };
+    })
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
   const updatedTopCategorySort = topCategorySort.map((item) => {
-    if (categorySortData?.length > 0) {
-      let filterCategories = categorySortData
-        .filter((c) => String(c.topCategorySortId) === String(item.id))
-        .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId));
+    const baseCategories = item?.categories || [];
+    const sortedCategories = categorySortData?.length
+      ? categorySortData
+          .filter((category) => {
+            const hasValidSortId = String(category.topCategorySortId) === String(item.sortId);
+            const hasLegacySortId = String(category.topCategorySortId) === String(item.id);
+            return hasValidSortId || hasLegacySortId;
+          })
+          .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId))
+      : [];
+    const mappedCategoryIds = new Set(
+      sortedCategories.map((category) => String(category.categoryId ?? category.id))
+    );
+    const missingCategories = baseCategories.filter(
+      (category) => !mappedCategoryIds.has(String(category.id))
+    );
+    const categories = sortedCategories.length
+      ? [...sortedCategories, ...missingCategories]
+      : baseCategories;
 
-      return {
-        ...item,
-        categories: filterCategories,
-      };
-    } else {
-      return {
-        ...item,
-        categories: item?.categories,
-      };
-    }
+    return {
+      ...item,
+      categories,
+    };
   });
-  console.log({ updatedTopCategorySort });
 
   return (
     <DropdownMenu>
@@ -112,7 +116,11 @@ export function HeaderDropdown({
                       <DropdownMenuItem asChild key={category.id}>
                         <Link
                           className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall1 hover:bg-secondary cursor-pointer"
-                          href={`/${topCategory.id}/${category.categoryId}`}
+                          href={`/${topCategory.id}/${
+                            category.categoryId
+                              ? category?.categoryId
+                              : category?.id
+                          }`}
                         >
                           {category.name}
                         </Link>

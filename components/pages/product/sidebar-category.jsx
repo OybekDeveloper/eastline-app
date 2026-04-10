@@ -11,43 +11,46 @@ const SideBarCategory = ({
   categorySortData,
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
-  let updatedTopCategorySort;
   const topCategorySort = topCategoryData
     .map((category) => {
-      const matchingItems = topCategoriesSort.filter(
+      const sortEntry = topCategoriesSort.find(
         (item) => String(item.topCategoryId) === String(category.id)
       );
 
-      const uniqueIds = matchingItems
-        .map((item) => item.uniqueId)
-        .filter(Boolean);
-
-      return { ...category, uniqueIds };
+      return {
+        ...category,
+        sortId: sortEntry?.id || null,
+        sortOrder: Number(sortEntry?.uniqueId ?? Number.MAX_SAFE_INTEGER),
+      };
     })
-    .filter((category) => category.uniqueIds)
-    .sort((a, b) => a.uniqueIds[0] - b.uniqueIds[0]);
-  if (topCategorySort?.length == topCategoryData?.length) {
-    updatedTopCategorySort = topCategorySort.map((item) => {
-      if (categorySortData?.length > 0) {
-        const filterCategories = categorySortData
-          .filter((c) => String(c.topCategorySortId) === String(item.id))
-          .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId)); // Sort by uniqueId in ascending order
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 
-        return {
-          ...item,
-          categories: filterCategories,
-        };
-      } else {
-        return {
-          ...item,
-          categories: item?.categories,
-        };
-      }
-    });
-  } else {
-    updatedTopCategorySort = topCategoryData;
-  }
-  console.log("updatedTopCategorySort", updatedTopCategorySort);
+  const updatedTopCategorySort = topCategorySort.map((item) => {
+    const baseCategories = item?.categories || [];
+    const sortedCategories = categorySortData?.length
+      ? categorySortData
+          .filter((category) => {
+            const hasValidSortId = String(category.topCategorySortId) === String(item.sortId);
+            const hasLegacySortId = String(category.topCategorySortId) === String(item.id);
+            return hasValidSortId || hasLegacySortId;
+          })
+          .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId))
+      : [];
+    const mappedCategoryIds = new Set(
+      sortedCategories.map((category) => String(category.categoryId ?? category.id))
+    );
+    const missingCategories = baseCategories.filter(
+      (category) => !mappedCategoryIds.has(String(category.id))
+    );
+    const categories = sortedCategories.length
+      ? [...sortedCategories, ...missingCategories]
+      : baseCategories;
+
+    return {
+      ...item,
+      categories,
+    };
+  });
 
   useEffect(() => {
     setActiveCategory(topCategoryId);
@@ -95,7 +98,9 @@ const SideBarCategory = ({
                           ? "opacity-1 font-medium"
                           : "opacity-[0.8]"
                       } w-full px-2 py-1 rounded-md textSmall2 hover:bg-secondary cursor-pointer`}
-                      href={`/${topCategory.id}/${category.categoryId}`}
+                      href={`/${topCategory.id}/${
+                        category.categoryId ? category.categoryId : category.id
+                      }`}
                     >
                       {category.name}
                     </Link>

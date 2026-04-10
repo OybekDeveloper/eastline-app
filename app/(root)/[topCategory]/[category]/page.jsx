@@ -1,7 +1,6 @@
 import NavigationProduct from "@/components/pages/product/navigation";
 import Products from "@/components/pages/product/products";
 import SideBarCategory from "@/components/pages/product/sidebar-category";
-import { getData } from "@/lib/api.services";
 import { notFound } from "next/navigation";
 import JsonLd from "@/components/seo/json-ld";
 import {
@@ -10,15 +9,13 @@ import {
   buildMetadata,
   siteConfig,
 } from "@/lib/seo";
+import { getServerData } from "@/lib/server-data";
 
 export async function generateMetadata({ params }) {
   const { topCategory, category } = params;
   const path = `/${topCategory}/${category}`;
   try {
-    const categoryData = await getData(
-      `/api/category?id=${category}`,
-      "category"
-    );
+    const categoryData = await getServerData(`/api/category?id=${category}`);
     const categoryDetails = categoryData?.[0];
     const categoryName = categoryDetails?.name;
     if (!categoryName) {
@@ -68,16 +65,16 @@ const Category = async ({ params }) => {
     productsSort,
     productVisibility,
   ] = await Promise.all([
-    getData(`/api/topCategory?id=${topCategory}`, "topCategory"),
-    getData("/api/topCategory", "topCategory"),
-    getData("/api/topCategorySort", "topCategory"),
-    getData(`/api/product?categoryId=${category}`, "product"),
-    getData(`/api/category?id=${category}`, "category"),
-    getData(`/api/category?topCategoryId=${topCategory}`, "category"),
-    getData("/api/currency", "currency"),
-    getData("/api/categorySort", "category"),
-    getData(`/api/productSort?categoryId=${category}`, "product"),
-    getData(`/api/product-visibility`, "product-visibility"),
+    getServerData(`/api/topCategory?id=${topCategory}`),
+    getServerData("/api/topCategory"),
+    getServerData("/api/topCategorySort"),
+    getServerData(`/api/product?categoryId=${category}`),
+    getServerData(`/api/category?id=${category}`),
+    getServerData(`/api/category?topCategoryId=${topCategory}`),
+    getServerData("/api/currency"),
+    getServerData("/api/categorySort"),
+    getServerData(`/api/productSort?categoryId=${category}`),
+    getServerData(`/api/product-visibility`),
   ]);
   if (!categoryData?.length) {
     notFound();

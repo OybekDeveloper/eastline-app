@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { normalizeMediaPayload } from "@/lib/media";
 
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
@@ -6,10 +7,10 @@ export async function GET(req) {
     const getPartners = await db.partner.findMany({
       where: { id: String(id) },
     });
-    return Response.json({ data: getPartners });
+    return Response.json({ data: normalizeMediaPayload(getPartners) });
   }
   const getPartners = await db.partner.findMany();
-  return Response.json({ data: getPartners });
+  return Response.json({ data: normalizeMediaPayload(getPartners) });
 }
 
 export async function POST(req) {

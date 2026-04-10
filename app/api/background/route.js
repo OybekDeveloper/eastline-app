@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { normalizeMediaPayload } from "@/lib/media";
 
 export async function POST(req) {
   const data = await req.json();
@@ -15,10 +16,10 @@ export async function GET(req) {
     const getBackground = await db.background.findMany({
       where: { id: String(id) },
     });
-    return Response.json({ data: getBackground });
+    return Response.json({ data: normalizeMediaPayload(getBackground) });
   } else {
     const getBackground = await db.background.findMany();
-    return Response.json({ data: getBackground });
+    return Response.json({ data: normalizeMediaPayload(getBackground) });
   }
 }
 

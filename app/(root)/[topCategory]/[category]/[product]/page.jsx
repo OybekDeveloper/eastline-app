@@ -5,7 +5,6 @@ import ProductFeature from "@/components/pages/product/product-feature";
 import ProductType from "@/components/pages/product/product-type";
 import NavigationProduct from "@/components/pages/product/navigation";
 import { f, getRandomItems } from "@/lib/utils";
-import { getData } from "@/lib/api.services";
 import { notFound } from "next/navigation";
 import JsonLd from "@/components/seo/json-ld";
 import {
@@ -13,6 +12,7 @@ import {
   buildMetadata,
   buildProductJsonLd,
 } from "@/lib/seo";
+import { getServerData } from "@/lib/server-data";
 
 const enhanceProductSeoPayload = (details) => {
   if (!details) return undefined;
@@ -33,8 +33,8 @@ export async function generateMetadata({ params }) {
   const path = `/${topCategory}/${category}/${product}`;
   try {
     const [productData, categoryData] = await Promise.all([
-      getData(`/api/product?id=${product}`, "product"),
-      getData(`/api/category?id=${category}`, "category"),
+      getServerData(`/api/product?id=${product}`),
+      getServerData(`/api/category?id=${category}`),
     ]);
     const productDetails = productData?.[0];
     if (!productDetails) {
@@ -97,13 +97,13 @@ const Product = async ({ params }) => {
     currency,
     categoriesAll,
   ] = await Promise.all([
-    getData("/api/product", "product"), // All products for random selection
-    getData("/api/contact", "contact"),
-    getData(`/api/product?id=${product}`, "product"), // Specific product
-    getData(`/api/category?id=${category}`, "category"), // Category of the product
-    getData(`/api/product-visibility`, "product-visibility"), // Category of the product
-    getData(`/api/currency`, "currency"), // Currency rate
-    getData("/api/category", "category"),
+    getServerData("/api/product"), // All products for random selection
+    getServerData("/api/contact"),
+    getServerData(`/api/product?id=${product}`), // Specific product
+    getServerData(`/api/category?id=${category}`), // Category of the product
+    getServerData(`/api/product-visibility`), // Category of the product
+    getServerData(`/api/currency`), // Currency rate
+    getServerData("/api/category"),
   ]);
 
   const getCurrencySum = (dollar) => {
@@ -124,10 +124,7 @@ const Product = async ({ params }) => {
   ];
   if (categoryData) {
     const { topCategoryId } = categoryData[0] || {};
-    topCategoryData = await getData(
-      `/api/topCategory?id=${topCategoryId}`,
-      "topCategory"
-    );
+    topCategoryData = await getServerData(`/api/topCategory?id=${topCategoryId}`);
   }
 
   if (!productData?.length || !categoryData?.length) {

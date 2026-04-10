@@ -58,6 +58,17 @@ const CategoryForm = () => {
     return new Blob([u8arr], { type: mime });
   }
 
+  const resolveTopCategorySortId = async (topCategoryId) => {
+    const topCategorySortData = await getData(
+      "/api/topCategorySort",
+      "topCategorySort"
+    );
+    const matchedTopCategorySort = topCategorySortData.find(
+      (item) => String(item.topCategoryId) === String(topCategoryId)
+    );
+    return matchedTopCategorySort?.id || topCategoryId;
+  };
+
   const onSubmit = async (values) => {
     if (!image.length) {
       toast.error("Пожалуйста, выберите изображение");
@@ -112,6 +123,9 @@ const CategoryForm = () => {
         meta_title: seoPayload.meta_title || null,
         meta_description: seoPayload.meta_description || null,
       };
+      const resolvedTopCategorySortId = await resolveTopCategorySortId(
+        values.topCategoryId
+      );
 
     // Handle form submission
     if (id) {
@@ -133,7 +147,7 @@ const CategoryForm = () => {
             `/api/categorySort?id=${sort_id}`,
             {
               categoryId: categoryId,
-              topCategorySortId: values.topCategoryId,
+              topCategorySortId: resolvedTopCategorySortId,
               name: values.name,
               uniqueId: uniqueId,
             },
@@ -152,12 +166,12 @@ const CategoryForm = () => {
           "category"
         );
         if (res.data) {
-          const { name, id, topCategoryId } = res.data;
+          const { name, id } = res.data;
           const ress = await postData(
             `/api/categorySort`,
             {
               name: name,
-              topCategorySortId: topCategoryId,
+              topCategorySortId: resolvedTopCategorySortId,
               categoryId: id,
               uniqueId: 9999,
             },

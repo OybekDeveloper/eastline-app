@@ -1,19 +1,17 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import { Toaster } from "react-hot-toast";
 import ChatBot from "@/components/shared/chat-bot";
-import { getData } from "@/lib/api.services";
+import { headers } from "next/headers";
 import JsonLd from "@/components/seo/json-ld";
 import {
   buildOrganizationJsonLd,
   buildWebsiteJsonLd,
   siteConfig,
 } from "@/lib/seo";
-
-const inter = Inter({ subsets: ["latin"] });
+import { getServerData } from "@/lib/server-data";
 
 export const metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -61,30 +59,35 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
+  const pathname = headers().get("x-pathname") || "";
+  const isLoginRoute = pathname.startsWith("/login");
+
   let topCategories = [];
   let categorySortData = [];
   let topCategoriesSort = [];
   let productsData = [];
   let background = [];
   let contactData = [];
-  try {
-    [
-      topCategories,
-      categorySortData,
-      topCategoriesSort,
-      productsData,
-      background,
-      contactData,
-    ] = await Promise.all([
-      getData("/api/topCategory", "topCategory"),
-      getData("/api/categorySort", "category"),
-      getData("/api/topCategorySort", "topCategory"),
-      getData("/api/product", "product"),
-      getData("/api/background", "background"),
-      getData("/api/contact", "contact"),
-    ]);
-  } catch (error) {
-    console.error("Error rendering RootLayout:", error);
+  if (!isLoginRoute) {
+    try {
+      [
+        topCategories,
+        categorySortData,
+        topCategoriesSort,
+        productsData,
+        background,
+        contactData,
+      ] = await Promise.all([
+        getServerData("/api/topCategory"),
+        getServerData("/api/categorySort"),
+        getServerData("/api/topCategorySort"),
+        getServerData("/api/product"),
+        getServerData("/api/background"),
+        getServerData("/api/contact"),
+      ]);
+    } catch (error) {
+      console.error("Error rendering RootLayout:", error);
+    }
   }
 
   const hasDataError = !topCategories.length && !categorySortData.length;
@@ -93,7 +96,7 @@ export default async function RootLayout({ children }) {
 
   return (
     <html lang="ru">
-      <body className={`${inter.className} min-h-screen relative flex flex-col`}>
+      <body className="min-h-screen relative flex flex-col">
         <JsonLd id="organization-schema" data={organizationSchema} />
         <JsonLd id="website-schema" data={websiteSchema} />
         <NextTopLoader
@@ -110,25 +113,31 @@ export default async function RootLayout({ children }) {
           zIndex={999999999}
           showAtBottom={false}
         />
-        <Header
-          categorySortData={categorySortData}
-          topCategoriesSort={topCategoriesSort}
-          contactData={contactData?.[0]}
-          background={background}
-          topCategories={topCategories}
-          productsData={productsData}
-        />
-        <div className="grow">
-          {hasDataError ? (
-            <div className="p-10 text-center text-sm text-red-600">
-              Не удалось загрузить контент. Попробуйте обновить страницу позже.
+        {isLoginRoute ? (
+          <div className="grow">{children}</div>
+        ) : (
+          <>
+            <Header
+              categorySortData={categorySortData}
+              topCategoriesSort={topCategoriesSort}
+              contactData={contactData?.[0]}
+              background={background}
+              topCategories={topCategories}
+              productsData={productsData}
+            />
+            <div className="grow">
+              {hasDataError ? (
+                <div className="p-10 text-center text-sm text-red-600">
+                  Не удалось загрузить контент. Попробуйте обновить страницу позже.
+                </div>
+              ) : (
+                children
+              )}
             </div>
-          ) : (
-            children
-          )}
-        </div>
-        <Footer contactData={contactData?.[0]} />
-        <ChatBot />
+            <Footer contactData={contactData?.[0]} />
+            <ChatBot />
+          </>
+        )}
         <Toaster position="bottom-left" reverseOrder={false} />
       </body>
     </html>

@@ -90,10 +90,18 @@ const TopCategoryForm = () => {
       try {
         const res = await getData(`/api/topCategory?id=${id}`, "topCategory");
         const categorySort = await getData(`/api/categorySort`, "categorySort");
+        const topCategorySort = await getData(
+          "/api/topCategorySort",
+          "topCategorySort"
+        );
         console.log({ res });
+        const matchedTopCategorySort = topCategorySort.find(
+          (c) => String(c.topCategoryId) === String(id)
+        );
+        const resolvedTopCategorySortId = matchedTopCategorySort?.id || id;
 
         const filterCategoryData = categorySort?.filter(
-          (c) => String(c.topCategorySortId) === String(id)
+          (c) => String(c.topCategorySortId) === String(resolvedTopCategorySortId)
         );
         console.log(filterCategoryData, "This is filter");
 
