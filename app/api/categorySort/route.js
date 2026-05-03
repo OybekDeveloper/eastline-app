@@ -74,14 +74,43 @@ export async function PATCH(req) {
     if (all) {
       if (Array.isArray(data)) {
         for (const item of data) {
-          const { id, ...dataU } = item;
-          const res = await db.categorySort.update({
-            where: { id: String(item.id) },
-            data: {
-              uniqueId: item.uniqueId,
-            },
-          });
-          console.log(res);
+          const normalizedCategoryId = String(item.categoryId ?? item.id);
+          const normalizedTopCategorySortId = String(item.topCategorySortId);
+
+          let existing = null;
+
+          if (item.id) {
+            existing = await db.categorySort.findFirst({
+              where: { id: String(item.id) },
+            });
+          }
+
+          if (!existing) {
+            existing = await db.categorySort.findFirst({
+              where: { categoryId: normalizedCategoryId },
+            });
+          }
+
+          if (existing) {
+            await db.categorySort.update({
+              where: { id: String(existing.id) },
+              data: {
+                name: item.name,
+                categoryId: normalizedCategoryId,
+                uniqueId: Number(item.uniqueId),
+                topCategorySortId: normalizedTopCategorySortId,
+              },
+            });
+          } else {
+            await db.categorySort.create({
+              data: {
+                name: item.name,
+                categoryId: normalizedCategoryId,
+                uniqueId: Number(item.uniqueId),
+                topCategorySortId: normalizedTopCategorySortId,
+              },
+            });
+          }
         }
         return new Response(
           JSON.stringify({ success: true, message: "All items updated" }),
@@ -112,23 +141,6 @@ export async function PATCH(req) {
       );
     }
   } catch (error) {
-    if (all) {
-      if (Array.isArray(data)) {
-        for (const item of data) {
-          const res = await db.categorySort.create({
-            data: {
-              name: item?.name,
-              categoryId: item?.id,
-              uniqueId: item?.uniqueId,
-              topCategorySortId: item?.topCategorySortId
-                ? item?.topCategorySortId
-                : "1",
-            },
-          });
-          console.log(res);
-        }
-      }
-    }
     return new Response(
       JSON.stringify({ success: false, error: error.message }),
       { status: 500 }

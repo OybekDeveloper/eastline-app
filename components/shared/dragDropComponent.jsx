@@ -32,7 +32,7 @@ export default function DragDropComponent({
   id,
 }) {
   const [usersList, setUsersList] = useState(
-    data.sort((a, b) => a.uniqueId - b.uniqueId)
+    [...data].sort((a, b) => Number(a.uniqueId ?? 0) - Number(b.uniqueId ?? 0))
   );
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,9 +86,11 @@ export default function DragDropComponent({
         await postData("/api/topCategorySort", filterData, "topCategory");
       } else if (param === "categorySort") {
         const filterData = updatedUsersList.map((item) => ({
-          ...item,
-          uniqueId: item.uniqueId,
           id: item.id,
+          name: item.name,
+          uniqueId: item.uniqueId,
+          categoryId: item.categoryId ? item.categoryId : item.id,
+          topCategorySortId: item.topCategorySortId ? item.topCategorySortId : id,
         }));
         await patchData("/api/categorySort?all=true", filterData, "category");
       } else if (param === "productSort") {
@@ -129,7 +131,11 @@ export default function DragDropComponent({
           res = res.filter((rs) => String(rs.categoryId) == String(id));
           console.log({ data, res });
         }
-          setUsersList(data?.sort((a, b) => a.uniqueId - b.uniqueId));
+          setUsersList(
+            [...(data || [])].sort(
+              (a, b) => Number(a.uniqueId ?? 0) - Number(b.uniqueId ?? 0)
+            )
+          );
       } catch (error) {
         console.error(error);
       } finally {

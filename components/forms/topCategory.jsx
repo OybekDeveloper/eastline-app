@@ -23,6 +23,7 @@ const TopCategoryForm = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [categorySort, setCategorySort] = useState([]);
+  const [resolvedTopCategorySortId, setResolvedTopCategorySortId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm({
@@ -98,10 +99,11 @@ const TopCategoryForm = () => {
         const matchedTopCategorySort = topCategorySort.find(
           (c) => String(c.topCategoryId) === String(id)
         );
-        const resolvedTopCategorySortId = matchedTopCategorySort?.id || id;
+        const resolvedSortId = matchedTopCategorySort?.id || id;
+        setResolvedTopCategorySortId(resolvedSortId);
 
         const filterCategoryData = categorySort?.filter(
-          (c) => String(c.topCategorySortId) === String(resolvedTopCategorySortId)
+          (c) => String(c.topCategorySortId) === String(resolvedSortId)
         );
         console.log(filterCategoryData, "This is filter");
 
@@ -111,7 +113,14 @@ const TopCategoryForm = () => {
           if (filterCategoryData?.length > 0) {
             setCategorySort(filterCategoryData);
           } else {
-            setCategorySort(res[0]?.categories);
+            setCategorySort(
+              (res[0]?.categories || []).map((category, index) => ({
+                ...category,
+                categoryId: category.id,
+                topCategorySortId: resolvedSortId,
+                uniqueId: index + 1,
+              }))
+            );
           }
         }
       } catch (error) {
@@ -160,7 +169,11 @@ const TopCategoryForm = () => {
             <h2 className="font-bold mb-4 textNormal3">
               Регулирование категория{" "}
             </h2>
-            <DragDropComponent param={"categorySort"} data={categorySort} />
+            <DragDropComponent
+              param={"categorySort"}
+              data={categorySort}
+              id={resolvedTopCategorySortId}
+            />
           </div>
         )}
       </Container>

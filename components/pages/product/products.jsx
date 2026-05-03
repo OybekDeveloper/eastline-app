@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ArrowDown, ArrowUp, ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import CustomImage from "@/components/shared/customImage";
 import {
   Pagination,
@@ -40,9 +41,41 @@ const Products = ({
   currency,
   categoryId, // Optional: Add categoryId prop if filtering by category is needed
 }) => {
-  const [page, setPage] = useState(0);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const pageFromUrl = Number(searchParams.get("page") || "1");
+  const normalizedPageFromUrl =
+    Number.isFinite(pageFromUrl) && pageFromUrl > 0 ? pageFromUrl - 1 : 0;
+
+  const [page, setPage] = useState(normalizedPageFromUrl);
   const [pageSize, setPageSize] = useState(12);
   const [activeCategory, setActiveCategory] = useState(null);
+
+  useEffect(() => {
+    setPage(normalizedPageFromUrl);
+  }, [normalizedPageFromUrl]);
+
+  const updatePageInUrl = (nextPage) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (nextPage <= 0) {
+      params.delete("page");
+    } else {
+      params.set("page", String(nextPage + 1));
+    }
+
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
+  };
+
+  const handlePageChange = (nextPage) => {
+    setPage(nextPage);
+    updatePageInUrl(nextPage);
+  };
+
   const getCurrencySum = (dollar) => {
     if (currency.length) {
       const sum = currency[0].sum;
@@ -173,11 +206,11 @@ const Products = ({
     onPaginationChange: (updater) => {
       if (typeof updater === "function") {
         const newState = updater({ pageIndex: page, pageSize });
-        setPage(newState.pageIndex);
+        handlePageChange(newState.pageIndex);
         setPageSize(newState.pageSize);
       } else {
         const { pageIndex, pageSize } = updater;
-        setPage(pageIndex);
+        handlePageChange(pageIndex);
         setPageSize(pageSize);
       }
     },
@@ -329,16 +362,23 @@ const Products = ({
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
-              href="#"
-              onClick={() => table.previousPage()}
+              href={page > 0 ? `?page=${page}` : pathname}
+              onClick={(event) => {
+                event.preventDefault();
+                table.previousPage();
+              }}
               disabled={!table.getCanPreviousPage()}
             />
           </PaginationItem>
           {Array.from({ length: table.getPageCount() }).map((_, idx) => (
             <PaginationItem key={idx}>
               <PaginationLink
+                href={idx === 0 ? pathname : `?page=${idx + 1}`}
                 className="cursor-pointer hover:bg-secondary"
-                onClick={() => table.setPageIndex(idx)}
+                onClick={(event) => {
+                  event.preventDefault();
+                  table.setPageIndex(idx);
+                }}
                 isActive={
                   idx === table.getState().pagination.pageIndex
                     ? "true"
@@ -351,7 +391,11 @@ const Products = ({
           ))}
           <PaginationItem>
             <PaginationNext
-              onClick={() => table.nextPage()}
+              href={`?page=${page + 2}`}
+              onClick={(event) => {
+                event.preventDefault();
+                table.nextPage();
+              }}
               disabled={!table.getCanNextPage()}
             />
           </PaginationItem>
