@@ -17,13 +17,17 @@ export const dynamicParams = true;
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const categories = await getServerData("/api/category?summary=1");
-  return (categories || [])
-    .filter((cat) => cat.topCategory)
-    .map((cat) => ({
-      topCategory: cat.topCategory.slug || cat.topCategory.id,
-      category: cat.slug || cat.id,
-    }));
+  try {
+    const categories = await getServerData("/api/category?summary=1");
+    return (categories || [])
+      .filter((cat) => cat.topCategory)
+      .map((cat) => ({
+        topCategory: cat.topCategory.slug || cat.topCategory.id,
+        category: cat.slug || cat.id,
+      }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }) {

@@ -8,10 +8,14 @@ export const dynamicParams = true;
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const topCategories = await getServerData("/api/topCategory?summary=1");
-  return (topCategories || []).map((tc) => ({
-    topCategory: tc.slug || tc.id,
-  }));
+  try {
+    const topCategories = await getServerData("/api/topCategory?summary=1");
+    return (topCategories || []).map((tc) => ({
+      topCategory: tc.slug || tc.id,
+    }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }) {
