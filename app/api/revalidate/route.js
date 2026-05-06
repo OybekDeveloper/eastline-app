@@ -26,6 +26,50 @@ const ALL_TAGS = [
 
 const ALL_PATHS = ["/", "/sitemap.xml", "/robots.txt"];
 
+const TAG_TO_PATHS = {
+  topCategory: [
+    { path: "/", type: "layout" },
+    { path: "/[topCategory]", type: "page" },
+    { path: "/[topCategory]/[category]", type: "page" },
+    { path: "/[topCategory]/[category]/[product]", type: "page" },
+  ],
+  topCategorySort: [
+    { path: "/", type: "layout" },
+    { path: "/[topCategory]", type: "page" },
+  ],
+  category: [
+    { path: "/", type: "layout" },
+    { path: "/[topCategory]", type: "page" },
+    { path: "/[topCategory]/[category]", type: "page" },
+    { path: "/[topCategory]/[category]/[product]", type: "page" },
+  ],
+  categorySort: [
+    { path: "/[topCategory]/[category]", type: "page" },
+  ],
+  product: [
+    { path: "/", type: "page" },
+    { path: "/[topCategory]/[category]", type: "page" },
+    { path: "/[topCategory]/[category]/[product]", type: "page" },
+  ],
+  productSort: [
+    { path: "/[topCategory]/[category]", type: "page" },
+  ],
+  "product-visibility": [
+    { path: "/[topCategory]/[category]", type: "page" },
+    { path: "/[topCategory]/[category]/[product]", type: "page" },
+  ],
+  banner: [{ path: "/", type: "page" }],
+  bannerSort: [{ path: "/", type: "page" }],
+  currency: [{ path: "/[topCategory]/[category]/[product]", type: "page" }],
+  contact: [{ path: "/", type: "layout" }],
+  background: [{ path: "/", type: "layout" }],
+  news: [{ path: "/", type: "page" }],
+  partner: [{ path: "/", type: "page" }],
+  selectReview: [{ path: "/", type: "page" }],
+  sertificate: [{ path: "/", type: "page" }],
+  license: [{ path: "/", type: "page" }],
+};
+
 function assertSecret(url) {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret) {
@@ -95,10 +139,16 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    console.log(tags);
-
-    tags.forEach((currentTag) => revalidateTag(currentTag));
-    return NextResponse.json({ success: true, tags });
+    const revalidatedPaths = [];
+    tags.forEach((currentTag) => {
+      revalidateTag(currentTag);
+      const paths = TAG_TO_PATHS[currentTag] || [];
+      paths.forEach(({ path, type }) => {
+        revalidatePath(path, type);
+        revalidatedPaths.push({ path, type });
+      });
+    });
+    return NextResponse.json({ success: true, tags, revalidatedPaths });
   } catch (error) {
     console.error("Revalidation error:", error);
     return NextResponse.json(

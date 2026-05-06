@@ -4,6 +4,16 @@ import { getServerData } from "@/lib/server-data";
 import { resolveTopCategoryRoute } from "@/lib/catalog";
 import { notFound, permanentRedirect } from "next/navigation";
 
+export const dynamicParams = true;
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const topCategories = await getServerData("/api/topCategory?summary=1");
+  return (topCategories || []).map((tc) => ({
+    topCategory: tc.slug || tc.id,
+  }));
+}
+
 export async function generateMetadata({ params }) {
   const { topCategory } = await params;
   const route = await resolveTopCategoryRoute(topCategory);

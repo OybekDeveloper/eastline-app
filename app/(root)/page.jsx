@@ -17,7 +17,7 @@ import { getServerData } from "@/lib/server-data";
 import { orderCategoriesFlat } from "@/lib/catalog-order";
 import { buildCategoryPath } from "@/lib/slugs";
 
-export const revalidate = 86400;
+export const revalidate = 3600;
 
 export const metadata = buildMetadata({
   title: siteConfig.name,

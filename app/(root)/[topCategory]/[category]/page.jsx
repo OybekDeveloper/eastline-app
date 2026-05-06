@@ -13,6 +13,19 @@ import { resolveCategoryRoute } from "@/lib/catalog";
 import { buildProductPath } from "@/lib/slugs";
 import { getServerData } from "@/lib/server-data";
 
+export const dynamicParams = true;
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const categories = await getServerData("/api/category?summary=1");
+  return (categories || [])
+    .filter((cat) => cat.topCategory)
+    .map((cat) => ({
+      topCategory: cat.topCategory.slug || cat.topCategory.id,
+      category: cat.slug || cat.id,
+    }));
+}
+
 export async function generateMetadata({ params }) {
   const { topCategory, category } = await params;
   const route = await resolveCategoryRoute(topCategory, category);

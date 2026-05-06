@@ -12,7 +12,7 @@ import {
 } from "@/lib/seo";
 import { getServerData } from "@/lib/server-data";
 
-export const revalidate = 86400;
+export const revalidate = 3600;
 
 export const metadata = {
   metadataBase: new URL(siteConfig.siteUrl),

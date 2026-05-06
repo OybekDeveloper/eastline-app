@@ -15,6 +15,20 @@ import {
 import { resolveProductRoute } from "@/lib/catalog";
 import { getServerData } from "@/lib/server-data";
 
+export const dynamicParams = true;
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const products = await getServerData("/api/product");
+  return (products || [])
+    .filter((p) => p.category?.topCategory)
+    .map((p) => ({
+      topCategory: p.category.topCategory.slug || p.category.topCategory.id,
+      category: p.category.slug || p.category.id,
+      product: p.slug || p.id,
+    }));
+}
+
 const enhanceProductSeoPayload = (details) => {
   if (!details) return undefined;
   const rawSeo = details?.seo;
