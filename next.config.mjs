@@ -9,6 +9,7 @@ const nextConfig = {
   },
 
   images: {
+    unoptimized: true,
     remotePatterns: [
       { protocol: "https", hostname: "letsenhance.io" },
       { protocol: "https", hostname: "elt.uz" },

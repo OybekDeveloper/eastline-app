@@ -124,11 +124,11 @@ const Product = async ({ params }) => {
     currency,
     categoriesAll,
   ] = await Promise.all([
-    getServerData("/api/product"), // All products for random selection
+    getServerData(`/api/product?categoryId=${currentCategory.id}`), // Same-category products for related display
     getServerData("/api/contact"),
     getServerData(`/api/product-visibility`), // Category of the product
     getServerData(`/api/currency`), // Currency rate
-    getServerData("/api/category"),
+    getServerData("/api/category?summary=1"),
   ]);
 
   const getCurrencySum = (dollar) => {
