@@ -9,28 +9,13 @@ import {
 } from "@headlessui/react";
 import clsx from "clsx";
 import { Search } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { getData } from "@/lib/api.services";
 import { buildProductPath } from "@/lib/slugs";
 
-export default function SearchComponent({ productsData }) {
+export default function SearchComponent({ productsData, categories = [] }) {
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
-  const [categories, setCategories] = useState([]);
-
-  // Fetch all categories once when component loads
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await getData("/api/category", "category");
-        setCategories(res);
-      } catch (error) {
-        console.error("Failed to fetch categories", error);
-      }
-    };
-    fetchCategories();
-  }, []);
 
   const filteredProducts =
     query === ""
@@ -75,8 +60,14 @@ export default function SearchComponent({ productsData }) {
         ) : (
           <div className="max-h-[400px]">
             {filteredProducts.map((product) => {
-              const category = categories.find((item) => item.id === product.categoryId);
-              const href = buildProductPath(category?.topCategory, category, product);
+              const category =
+                product.category ||
+                categories.find((item) => item.id === product.categoryId);
+              const href = buildProductPath(
+                category?.topCategory,
+                category,
+                product
+              );
               return (
                 <Link key={product.id} href={href}>
                   <ComboboxOption

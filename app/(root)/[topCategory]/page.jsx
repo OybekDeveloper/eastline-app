@@ -5,21 +5,23 @@ import { resolveTopCategoryRoute } from "@/lib/catalog";
 import { notFound, permanentRedirect } from "next/navigation";
 
 export async function generateMetadata({ params }) {
-  const route = await resolveTopCategoryRoute(params.topCategory);
-  const topCategory = route?.topCategory;
+  const { topCategory } = await params;
+  const route = await resolveTopCategoryRoute(topCategory);
+  const currentTopCategory = route?.topCategory;
 
   return buildMetadata({
-    title: topCategory?.name || "Каталог товаров",
-    description: topCategory?.name
-      ? `${topCategory.name} в каталоге ${siteConfig.name}.`
+    title: currentTopCategory?.name || "Каталог товаров",
+    description: currentTopCategory?.name
+      ? `${currentTopCategory.name} в каталоге ${siteConfig.name}.`
       : siteConfig.description,
-    path: route?.canonicalPath || `/${params.topCategory}`,
+    path: route?.canonicalPath || `/${topCategory}`,
     type: "website",
   });
 }
 
 export default async function Page({ params }) {
-  const route = await resolveTopCategoryRoute(params.topCategory);
+  const { topCategory } = await params;
+  const route = await resolveTopCategoryRoute(topCategory);
 
   if (!route?.topCategory) {
     notFound();

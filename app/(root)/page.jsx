@@ -17,6 +17,8 @@ import { getServerData } from "@/lib/server-data";
 import { orderCategoriesFlat } from "@/lib/catalog-order";
 import { buildCategoryPath } from "@/lib/slugs";
 
+export const revalidate = 86400;
+
 export const metadata = buildMetadata({
   title: siteConfig.name,
   description: siteConfig.description,
@@ -35,30 +37,29 @@ async function Home() {
       newsData,
       reviews,
       currency,
-      banner,
       bannerSort,
       productVisibility,
       categorySortData,
       topCategoriesSort,
+      bannerProducts,
     ] = await Promise.all([
-      getServerData("/api/product").catch(() => []),
-      getServerData("/api/category").catch(() => []),
-      getServerData("/api/topCategory").catch(() => []),
+      getServerData("/api/product?latest=4").catch(() => []),
+      getServerData("/api/category?summary=1").catch(() => []),
+      getServerData("/api/topCategory?summary=1").catch(() => []),
       getServerData("/api/sertificate").catch(() => []),
       getServerData("/api/license").catch(() => []),
       getServerData("/api/partner").catch(() => []),
       getServerData("/api/news").catch(() => []),
       getServerData("/api/selectReview").catch(() => []),
       getServerData("/api/currency").catch(() => []),
-      getServerData("/api/banner").catch(() => []),
       getServerData("/api/bannerSort").catch(() => []),
       getServerData("/api/product-visibility").catch(() => []),
       getServerData("/api/categorySort").catch(() => []),
       getServerData("/api/topCategorySort").catch(() => []),
+      getServerData("/api/product?search=1").catch(() => []),
     ]);
 
     const randomLicense = getRandomItems(license);
-    const lastProducts = getLastItems(products, 4);
     const lastNews = getLastItems(newsData, 10);
     const orderedCategories = orderCategoriesFlat(
       topCategories,
@@ -82,11 +83,10 @@ async function Home() {
         <JsonLd id="home-collection-schema" data={collectionSchema} />
         <Suspense fallback={<div>Loading banner...</div>}>
           <Banner
-            banner={banner}
             bannerSort={bannerSort}
             categories={categories}
             topCategories={topCategories}
-            products={products}
+            products={bannerProducts}
           />
         </Suspense>
         <div className="w-full space-y-6">
@@ -95,7 +95,7 @@ async function Home() {
           />
           <AllProducts
             productVisibility={productVisibility}
-            products={lastProducts}
+            products={products}
             categories={categories}
             currency={currency}
             topCategories={topCategories}

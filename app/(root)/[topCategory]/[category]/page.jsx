@@ -14,7 +14,7 @@ import { buildProductPath } from "@/lib/slugs";
 import { getServerData } from "@/lib/server-data";
 
 export async function generateMetadata({ params }) {
-  const { topCategory, category } = params;
+  const { topCategory, category } = await params;
   const route = await resolveCategoryRoute(topCategory, category);
   const path = route?.canonicalPath || `/${topCategory}/${category}`;
   try {
@@ -53,7 +53,7 @@ export async function generateMetadata({ params }) {
 }
 
 const Category = async ({ params }) => {
-  const { topCategory, category } = params;
+  const { topCategory, category } = await params;
   const route = await resolveCategoryRoute(topCategory, category);
 
   if (!route?.category || !route?.topCategory) {

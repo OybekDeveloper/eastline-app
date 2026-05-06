@@ -16,13 +16,16 @@ import { buildMetadata } from "@/lib/seo";
 import { getServerData } from "@/lib/server-data";
 
 export async function generateMetadata({ params }) {
+  const resolvedParams = await params;
   const formatted =
-    params?.details?.replace(/([A-Z])/g, " $1").replace(/^\w/, (c) => c.toUpperCase()) ||
+    resolvedParams?.details
+      ?.replace(/([A-Z])/g, " $1")
+      .replace(/^\w/, (c) => c.toUpperCase()) ||
     "Панель управления";
   return buildMetadata({
     title: formatted,
     description: "Рабочая зона для администраторов EAST LINE TELEKOM.",
-    path: `/dashboard/${params?.details || ""}`,
+    path: `/dashboard/${resolvedParams?.details || ""}`,
     robots: {
       index: false,
       follow: false,
@@ -32,6 +35,7 @@ export async function generateMetadata({ params }) {
 
 // If you're using Next.js app directory, use this function to handle server-side data fetching
 const Create = async ({ params }) => {
+  const resolvedParams = await params;
   // Fetch data here for pre-rendering
   const [topCategories, categories, products] = await Promise.all([
     getServerData("/api/topCategory"),
@@ -41,7 +45,7 @@ const Create = async ({ params }) => {
 
   // Handle the page rendering based on params.details
   const renderPage = () => {
-    switch (params.details) {
+    switch (resolvedParams.details) {
       case "createTopCategory":
         return <TopCategoryForm />;
       case "createCategory":
@@ -69,7 +73,7 @@ const Create = async ({ params }) => {
       default:
         return (
           <Getelements
-            param={params.details}
+            param={resolvedParams.details}
             topCategories={topCategories}
             products={products}
             categories={categories}

@@ -4,8 +4,17 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-const CustomImage = ({ loadingRoot, src, fill, alt, className, object }) => {
+const CustomImage = ({
+  loadingRoot,
+  loading: loadingProp,
+  src,
+  fill,
+  alt,
+  className,
+  object,
+}) => {
   const [loading, setLoading] = useState(true);
+  const loadingStrategy = loadingProp || loadingRoot || "lazy";
 
   useEffect(() => {
     setLoading(true);
@@ -19,7 +28,7 @@ const CustomImage = ({ loadingRoot, src, fill, alt, className, object }) => {
     object ? object : fill ? "object-contain h-full" : "object-contain h-auto",
     "duration-700 ease-in-out group-hover:opacity-75",
     !fill && "w-full",
-    loading ? "scale-105 blur-2xl grayscale" : "scale-100 blur-0 grayscale-0"
+    loading ? "opacity-70" : "opacity-100"
   );
 
   if (!src) {
@@ -32,7 +41,7 @@ const CustomImage = ({ loadingRoot, src, fill, alt, className, object }) => {
         <Image
           src={src}
           alt={alt}
-          loading={loadingRoot ? loadingRoot : "lazy"}
+          loading={loadingStrategy}
           fill
           sizes="100vw"
           className={imageClasses}
@@ -44,7 +53,7 @@ const CustomImage = ({ loadingRoot, src, fill, alt, className, object }) => {
         <Image
           src={src}
           alt={alt}
-          loading={loadingRoot ? loadingRoot : "lazy"}
+          loading={loadingStrategy}
           width={100}
           height={100}
           sizes="100vw"

@@ -4,7 +4,6 @@ import Header from "@/components/shared/header";
 import Footer from "@/components/shared/footer";
 import { Toaster } from "react-hot-toast";
 import ChatBot from "@/components/shared/chat-bot";
-import { headers } from "next/headers";
 import JsonLd from "@/components/seo/json-ld";
 import {
   buildOrganizationJsonLd,
@@ -12,6 +11,8 @@ import {
   siteConfig,
 } from "@/lib/seo";
 import { getServerData } from "@/lib/server-data";
+
+export const revalidate = 86400;
 
 export const metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
@@ -59,35 +60,30 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  const pathname = headers().get("x-pathname") || "";
-  const isLoginRoute = pathname.startsWith("/login");
-
   let topCategories = [];
   let categorySortData = [];
   let topCategoriesSort = [];
   let productsData = [];
   let background = [];
   let contactData = [];
-  if (!isLoginRoute) {
-    try {
-      [
-        topCategories,
-        categorySortData,
-        topCategoriesSort,
-        productsData,
-        background,
-        contactData,
-      ] = await Promise.all([
-        getServerData("/api/topCategory"),
-        getServerData("/api/categorySort"),
-        getServerData("/api/topCategorySort"),
-        getServerData("/api/product"),
-        getServerData("/api/background"),
-        getServerData("/api/contact"),
-      ]);
-    } catch (error) {
-      console.error("Error rendering RootLayout:", error);
-    }
+  try {
+    [
+      topCategories,
+      categorySortData,
+      topCategoriesSort,
+      productsData,
+      background,
+      contactData,
+    ] = await Promise.all([
+      getServerData("/api/topCategory?summary=1"),
+      getServerData("/api/categorySort"),
+      getServerData("/api/topCategorySort"),
+      getServerData("/api/product?search=1"),
+      getServerData("/api/background"),
+      getServerData("/api/contact"),
+    ]);
+  } catch (error) {
+    console.error("Error rendering RootLayout:", error);
   }
 
   const hasDataError = !topCategories.length && !categorySortData.length;
@@ -113,31 +109,25 @@ export default async function RootLayout({ children }) {
           zIndex={999999999}
           showAtBottom={false}
         />
-        {isLoginRoute ? (
-          <div className="grow">{children}</div>
-        ) : (
-          <>
-            <Header
-              categorySortData={categorySortData}
-              topCategoriesSort={topCategoriesSort}
-              contactData={contactData?.[0]}
-              background={background}
-              topCategories={topCategories}
-              productsData={productsData}
-            />
-            <div className="grow">
-              {hasDataError ? (
-                <div className="p-10 text-center text-sm text-red-600">
-                  Не удалось загрузить контент. Попробуйте обновить страницу позже.
-                </div>
-              ) : (
-                children
-              )}
+        <Header
+          categorySortData={categorySortData}
+          topCategoriesSort={topCategoriesSort}
+          contactData={contactData?.[0]}
+          background={background}
+          topCategories={topCategories}
+          productsData={productsData}
+        />
+        <div className="grow">
+          {hasDataError ? (
+            <div className="p-10 text-center text-sm text-red-600">
+              Не удалось загрузить контент. Попробуйте обновить страницу позже.
             </div>
-            <Footer contactData={contactData?.[0]} />
-            <ChatBot />
-          </>
-        )}
+          ) : (
+            children
+          )}
+        </div>
+        <Footer contactData={contactData?.[0]} />
+        <ChatBot />
         <Toaster position="bottom-left" reverseOrder={false} />
       </body>
     </html>

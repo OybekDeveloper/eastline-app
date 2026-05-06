@@ -30,7 +30,7 @@ const enhanceProductSeoPayload = (details) => {
 };
 
 export async function generateMetadata({ params }) {
-  const { product, category, topCategory } = params;
+  const { product, category, topCategory } = await params;
   const route = await resolveProductRoute(topCategory, category, product);
   const path = route?.canonicalPath || `/${topCategory}/${category}/${product}`;
   try {
@@ -83,7 +83,7 @@ export async function generateMetadata({ params }) {
 }
 
 const Product = async ({ params }) => {
-  const { product, category, topCategory } = params;
+  const { product, category, topCategory } = await params;
   const route = await resolveProductRoute(topCategory, category, product);
 
   if (!route?.product || !route?.category || !route?.topCategory) {

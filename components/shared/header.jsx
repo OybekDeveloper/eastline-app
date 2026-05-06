@@ -86,7 +86,15 @@ export default function Home({
               <Link href={"/"}>
                 <Image src={Logo} alt="Logo" className="w-[12vw] min-w-24" />
               </Link>
-              <SearchComponent productsData={productsData || []} />
+              <SearchComponent
+                productsData={productsData || []}
+                categories={topCategories?.flatMap((item) =>
+                  (item.categories || []).map((category) => ({
+                    ...category,
+                    topCategory: item,
+                  }))
+                )}
+              />
             </Container>
           </div>
         </Container>
