@@ -2,6 +2,7 @@ import Container from "./container";
 import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import Link from "next/link";
 import CustomImage from "./customImage";
+import { buildCategoryPath } from "@/lib/slugs";
 
 const AllCategories = ({ categories }) => {
   return (
@@ -16,7 +17,7 @@ const AllCategories = ({ categories }) => {
                 className="basis-[35%] md:basis-[25%] lg:basis-[20%] mr-5"
               >
                 <Link
-                  href={`/${item.topCategoryId}/${item.id}`}
+                  href={buildCategoryPath(item.topCategory, item)}
                   className="px-3 flex flex-col justify-center items-center gap-y-1"
                 >
                   <div className="relative h-[100px] md:h-[200px] overflow-hidden flex justify-center items-center">

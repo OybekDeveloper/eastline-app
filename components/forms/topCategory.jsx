@@ -14,9 +14,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
-import { revalidatePath } from "@/lib/revalidate";
 import DragDropComponent from "../shared/dragDropComponent";
 import { getData, patchData, postData } from "@/lib/api.services";
+import { orderCatalogTree } from "@/lib/catalog-order";
 
 const TopCategoryForm = () => {
   const router = useRouter();
@@ -44,35 +44,63 @@ const TopCategoryForm = () => {
       );
       const topCategorySortData = topCategories;
       if (id) {
-        await patchData(`/api/topCategory?id=${id}`, values, "topCategory");
-        toast.success("Если нужно что-то изменить или уточнить, дайте знать!");
+        const topCategoryRes = await patchData(
+          `/api/topCategory?id=${id}`,
+          values,
+          "topCategory"
+        );
+
+        if (!topCategoryRes?.success || topCategoryRes?.error) {
+          throw new Error(
+            topCategoryRes?.error || "Не удалось обновить верхнюю категорию"
+          );
+        }
+
         const findCategory = topCategorySortData.find(
           (c) => String(c.topCategoryId) === String(id)
         );
         if (findCategory) {
-          await patchData(
+          const topCategorySortRes = await patchData(
             `/api/topCategorySort?id=${findCategory.id}`,
             values,
-            "topCategory"
+            "topCategorySort"
           );
+
+          if (!topCategorySortRes?.success || topCategorySortRes?.error) {
+            throw new Error(
+              topCategorySortRes?.error ||
+                "Не удалось обновить сортировку верхней категории"
+            );
+          }
         }
+
+        toast.success("Верхняя категория изменена успешно!");
         router.back();
       } else {
         const res = await postData("/api/topCategory", values, "topCategory");
-        console.log(res,"category data");
-        
+
+        if (!res?.data || res?.error) {
+          throw new Error(res?.error || "Не удалось создать верхнюю категорию");
+        }
+
         if (res.data) {
           const { name, id } = res.data;
           const unqId = topCategorySortData.length + 1;
-          await postData(
+          const sortRes = await postData(
             "/api/topCategorySort?one=one",
             {
               name: name,
               topCategoryId: id,
               uniqueId: unqId,
             },
-            "topCategory"
+            "topCategorySort"
           );
+
+          if (!sortRes?.data || sortRes?.error) {
+            throw new Error(
+              sortRes?.error || "Не удалось создать сортировку верхней категории"
+            );
+          }
         }
         router.back();
         toast.success("Верхняя категория создана успешно!");
@@ -102,26 +130,22 @@ const TopCategoryForm = () => {
         const resolvedSortId = matchedTopCategorySort?.id || id;
         setResolvedTopCategorySortId(resolvedSortId);
 
-        const filterCategoryData = categorySort?.filter(
-          (c) => String(c.topCategorySortId) === String(resolvedSortId)
-        );
-        console.log(filterCategoryData, "This is filter");
-
         if (res) {
           const { name } = res[0];
           form.setValue("name", name);
-          if (filterCategoryData?.length > 0) {
-            setCategorySort(filterCategoryData);
-          } else {
-            setCategorySort(
-              (res[0]?.categories || []).map((category, index) => ({
-                ...category,
-                categoryId: category.id,
-                topCategorySortId: resolvedSortId,
-                uniqueId: index + 1,
-              }))
-            );
-          }
+          const orderedCategoryData = orderCatalogTree(
+            res,
+            topCategorySort,
+            categorySort
+          )[0]?.categories || [];
+          setCategorySort(
+            orderedCategoryData.map((category, index) => ({
+              ...category,
+              categoryId: category.id,
+              topCategorySortId: resolvedSortId,
+              uniqueId: Number(category.sortUniqueId ?? index + 1),
+            }))
+          );
         }
       } catch (error) {
         console.log(error);

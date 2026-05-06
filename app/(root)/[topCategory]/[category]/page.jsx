@@ -1,7 +1,7 @@
 import NavigationProduct from "@/components/pages/product/navigation";
 import Products from "@/components/pages/product/products";
 import SideBarCategory from "@/components/pages/product/sidebar-category";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import JsonLd from "@/components/seo/json-ld";
 import {
   buildBreadcrumbJsonLd,
@@ -9,14 +9,16 @@ import {
   buildMetadata,
   siteConfig,
 } from "@/lib/seo";
+import { resolveCategoryRoute } from "@/lib/catalog";
+import { buildProductPath } from "@/lib/slugs";
 import { getServerData } from "@/lib/server-data";
 
 export async function generateMetadata({ params }) {
   const { topCategory, category } = params;
-  const path = `/${topCategory}/${category}`;
+  const route = await resolveCategoryRoute(topCategory, category);
+  const path = route?.canonicalPath || `/${topCategory}/${category}`;
   try {
-    const categoryData = await getServerData(`/api/category?id=${category}`);
-    const categoryDetails = categoryData?.[0];
+    const categoryDetails = route?.category;
     const categoryName = categoryDetails?.name;
     if (!categoryName) {
       return buildMetadata({
@@ -52,35 +54,42 @@ export async function generateMetadata({ params }) {
 
 const Category = async ({ params }) => {
   const { topCategory, category } = params;
+  const route = await resolveCategoryRoute(topCategory, category);
+
+  if (!route?.category || !route?.topCategory) {
+    notFound();
+  }
+
+  if (route.shouldRedirect) {
+    permanentRedirect(route.canonicalPath);
+  }
+
+  const currentCategory = route.category;
+  const currentTopCategory = route.topCategory;
 
   const [
-    topProductsData,
     topCategoryData,
     topCategoriesSort,
     productsData,
-    categoryData,
     categorysData,
     currency,
     categorySortData,
     productsSort,
     productVisibility,
   ] = await Promise.all([
-    getServerData(`/api/topCategory?id=${topCategory}`),
     getServerData("/api/topCategory"),
     getServerData("/api/topCategorySort"),
-    getServerData(`/api/product?categoryId=${category}`),
-    getServerData(`/api/category?id=${category}`),
-    getServerData(`/api/category?topCategoryId=${topCategory}`),
+    getServerData(`/api/product?categoryId=${currentCategory.id}`),
+    getServerData(`/api/category?topCategoryId=${currentTopCategory.id}`),
     getServerData("/api/currency"),
     getServerData("/api/categorySort"),
-    getServerData(`/api/productSort?categoryId=${category}`),
+    getServerData(`/api/productSort?categoryId=${currentCategory.id}`),
     getServerData(`/api/product-visibility`),
   ]);
-  if (!categoryData?.length) {
-    notFound();
-  }
 
-  const canonicalPath = `/${topCategory}/${category}`;
+  const topProductsData = [currentTopCategory];
+  const categoryData = [currentCategory];
+  const canonicalPath = route.canonicalPath;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Главная", path: "/" },
     { name: "Каталог", path: "/" },
@@ -93,7 +102,7 @@ const Category = async ({ params }) => {
     url: canonicalPath,
     items: productList.slice(0, 10).map((product) => ({
       name: product.name,
-      path: `/${topCategory}/${category}/${product.id}`,
+      path: buildProductPath(currentTopCategory, currentCategory, product),
     })),
   });
   const customCategoryStructuredData = categoryData?.[0]?.seo?.structured_data;
@@ -114,8 +123,8 @@ const Category = async ({ params }) => {
       />
       <div className="pt-5 w-[95%] lg:w-10/12 mx-auto grid grid-cols-1 md:grid-cols-5 lg:grid-cols-4 gap-6">
         <SideBarCategory
-          topCategoryId={topCategory}
-          categoryId={category}
+          topCategoryId={currentTopCategory.id}
+          categoryId={currentCategory.id}
           topCategoryData={topCategoryData}
           topCategoriesSort={topCategoriesSort}
           categorySortData={categorySortData}

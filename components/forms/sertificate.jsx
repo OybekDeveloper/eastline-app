@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 import CustomFormField, { FormFieldType } from "../shared/customFormField";
@@ -12,7 +12,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
-import { revalidatePath } from "@/lib/revalidate";
 import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import { getData, patchData, postData } from "@/lib/api.services";
@@ -23,6 +22,7 @@ const SertificateForm = () => {
   const id = searchParams.get("id");
 
   const [isLoading, setIsLoading] = useState(false);
+  const isSubmittingRef = useRef(false);
   const [image, setImage] = useState([]);
 
   const form = useForm({
@@ -45,10 +45,13 @@ const SertificateForm = () => {
   }
 
   const onSubmit = async (values) => {
+    if (isSubmittingRef.current) return;
+
     if (!image.length) {
       toast.error("Пожалуйста, выберите изображение");
       return;
     }
+    isSubmittingRef.current = true;
     setIsLoading(true);
     let uploadedUrl = "";
 
@@ -104,11 +107,11 @@ const SertificateForm = () => {
 
       form.reset();
       setImage([]);
-      revalidatePath("sertificate"); // Add revalidation for consistency
     } catch (error) {
       console.error("Error processing sertificate:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
     } finally {
+      isSubmittingRef.current = false;
       setIsLoading(false);
     }
   };

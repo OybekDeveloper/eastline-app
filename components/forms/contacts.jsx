@@ -12,7 +12,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
-import { revalidatePath } from "@/lib/revalidate";
 import { getData, patchData, postData } from "@/lib/api.services";
 // import Todo from "../shared/note/NotePicker";
 
@@ -63,8 +62,6 @@ const ContactsForm = () => {
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
     } finally {
       setIsLoading(false);
-      revalidatePath("changecontact");
-      revalidatePath("contact");
     }
   };
 

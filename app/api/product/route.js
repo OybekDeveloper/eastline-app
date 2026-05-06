@@ -1,14 +1,36 @@
 import db from "@/db/db";
+import { generateUniqueSlug } from "@/lib/catalog";
 import { normalizeMediaPayload } from "@/lib/media";
 import { prepareSeoPayload } from "@/lib/seo";
 
 
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
+  const slug = await req.nextUrl.searchParams.get("slug");
   const categoryId = await req.nextUrl.searchParams.get("categoryId");
+  if (slug) {
+    const getProducts = await db.product.findMany({
+      where: { slug: String(slug) },
+      include: {
+        category: {
+          include: {
+            topCategory: true,
+          },
+        },
+      },
+    });
+    return Response.json({ data: normalizeMediaPayload(getProducts) });
+  }
   if (id) {
     const getProducts = await db.product.findMany({
       where: { id: String(id) },
+      include: {
+        category: {
+          include: {
+            topCategory: true,
+          },
+        },
+      },
     });
     return Response.json({ data: normalizeMediaPayload(getProducts) });
   }
@@ -17,10 +39,25 @@ export async function GET(req) {
       where: {
         categoryId: String(categoryId),
       },
+      include: {
+        category: {
+          include: {
+            topCategory: true,
+          },
+        },
+      },
     });
     return Response.json({ data: normalizeMediaPayload(getCategoryProduct) });
   } else {
-    const getProducts = await db.product.findMany();
+    const getProducts = await db.product.findMany({
+      include: {
+        category: {
+          include: {
+            topCategory: true,
+          },
+        },
+      },
+    });
     return Response.json({ data: normalizeMediaPayload(getProducts) });
   }
 }
@@ -28,10 +65,12 @@ export async function GET(req) {
 export async function POST(req) {
   const data = await req.json();
   const seo = prepareSeoPayload(data);
+  const slug = await generateUniqueSlug("product", data.name);
 
   const createProduct = await db.product.create({
     data: {
       name: data.name,
+      slug,
       description: data.description,
       feature: data.feature,
       price: data.price,
@@ -77,11 +116,13 @@ export async function PATCH(req) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+    const slug = await generateUniqueSlug("product", data.name, String(id));
 
     const updateProduct = await db.product.update({
       where: { id: String(id) },
       data: {
         name: data.name,
+        slug,
         description: data.description,
         feature: data.feature,
         price: data.price,

@@ -8,6 +8,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import React from "react";
+import { buildCategoryPath } from "@/lib/slugs";
 
 const NavigationProduct = (props) => {
   const { topProductsData, categoryData, product } = props;
@@ -25,7 +26,7 @@ const NavigationProduct = (props) => {
           <BreadcrumbItem>
             <BreadcrumbPage>
               <BreadcrumbLink
-                href={`/${topProductsData[0]?.id}/${categoryData[0]?.id}`}
+                href={buildCategoryPath(topProductsData[0], categoryData[0])}
               >
                 {categoryData[0]?.name}
               </BreadcrumbLink>

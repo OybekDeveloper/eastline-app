@@ -19,47 +19,35 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import axios from "axios";
-import { usePathname, useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useEvent } from "@/store/event";
-import { revalidatePath } from "@/lib/revalidate";
+import { deleteData } from "@/lib/api.services";
 
 const DeleteItemReview = ({ payment, path }) => {
   const { tableSelectReview, tableReview, setTableReview, setReflesh } =
     useEvent();
 
-  const pathname = usePathname();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const deleteItem = async (payment) => {
     try {
-      const response = await axios.delete(`/api/${path}`, {
-        params: {
-          id: payment.id,
-        },
-      });
-      if (response) {
-        // Force refresh by navigating to the same page
-        if (path === "review") {
-        }
-        router.push(pathname);
-      }
-
+      await deleteData(`/api/${path}?id=${payment.id}`, path);
       setOpen(false); // Close dialog after successful deletion
     } catch (error) {
       console.error(error); // Handle any errors during deletion
     }
   };
   const handleDelete = () => {
-    revalidatePath(`selectReview`);
     const callFunction = deleteItem(payment);
     if (path === "review") {
-      const filterData = tableReview.filter((c) => +c.id !== +payment.id);
+      const filterData = tableReview.filter(
+        (c) => String(c.id) !== String(payment.id)
+      );
       setTableReview(filterData, tableSelectReview);
     } else if (path === "selectReview") {
-      const filterData = tableSelectReview.filter((c) => +c.id !== +payment.id);
+      const filterData = tableSelectReview.filter(
+        (c) => String(c.id) !== String(payment.id)
+      );
       setTableReview(tableReview, filterData);
       setReflesh();
     }

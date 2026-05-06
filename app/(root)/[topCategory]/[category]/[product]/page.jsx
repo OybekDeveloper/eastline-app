@@ -5,13 +5,14 @@ import ProductFeature from "@/components/pages/product/product-feature";
 import ProductType from "@/components/pages/product/product-type";
 import NavigationProduct from "@/components/pages/product/navigation";
 import { f, getRandomItems } from "@/lib/utils";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import JsonLd from "@/components/seo/json-ld";
 import {
   buildBreadcrumbJsonLd,
   buildMetadata,
   buildProductJsonLd,
 } from "@/lib/seo";
+import { resolveProductRoute } from "@/lib/catalog";
 import { getServerData } from "@/lib/server-data";
 
 const enhanceProductSeoPayload = (details) => {
@@ -30,13 +31,10 @@ const enhanceProductSeoPayload = (details) => {
 
 export async function generateMetadata({ params }) {
   const { product, category, topCategory } = params;
-  const path = `/${topCategory}/${category}/${product}`;
+  const route = await resolveProductRoute(topCategory, category, product);
+  const path = route?.canonicalPath || `/${topCategory}/${category}/${product}`;
   try {
-    const [productData, categoryData] = await Promise.all([
-      getServerData(`/api/product?id=${product}`),
-      getServerData(`/api/category?id=${category}`),
-    ]);
-    const productDetails = productData?.[0];
+    const productDetails = route?.product;
     if (!productDetails) {
       return buildMetadata({
         title: "Товар не найден",
@@ -44,7 +42,7 @@ export async function generateMetadata({ params }) {
         path,
       });
     }
-    const categoryDetails = categoryData?.[0];
+    const categoryDetails = route?.category;
     const fallbackTitle = `${productDetails.name} – описание и цена`;
     const fallbackDescription = productDetails.description
       ? productDetails.description.slice(0, 160)
@@ -86,21 +84,30 @@ export async function generateMetadata({ params }) {
 
 const Product = async ({ params }) => {
   const { product, category, topCategory } = params;
+  const route = await resolveProductRoute(topCategory, category, product);
+
+  if (!route?.product || !route?.category || !route?.topCategory) {
+    notFound();
+  }
+
+  if (route.shouldRedirect) {
+    permanentRedirect(route.canonicalPath);
+  }
+
+  const currentProduct = route.product;
+  const currentCategory = route.category;
+  const currentTopCategory = route.topCategory;
 
   // Fetch all required data using getData in parallel
   const [
     products1,
     contactData,
-    productData,
-    categoryData,
     productVisibility,
     currency,
     categoriesAll,
   ] = await Promise.all([
     getServerData("/api/product"), // All products for random selection
     getServerData("/api/contact"),
-    getServerData(`/api/product?id=${product}`), // Specific product
-    getServerData(`/api/category?id=${category}`), // Category of the product
     getServerData(`/api/product-visibility`), // Category of the product
     getServerData(`/api/currency`), // Currency rate
     getServerData("/api/category"),
@@ -116,24 +123,13 @@ const Product = async ({ params }) => {
     return null;
   };
 
-  let topCategoryData = [
-    {
-      name: "",
-      id: 1,
-    },
-  ];
-  if (categoryData) {
-    const { topCategoryId } = categoryData[0] || {};
-    topCategoryData = await getServerData(`/api/topCategory?id=${topCategoryId}`);
-  }
-
-  if (!productData?.length || !categoryData?.length) {
-    notFound();
-  }
+  const productData = [currentProduct];
+  const categoryData = [currentCategory];
+  const topCategoryData = [currentTopCategory];
 
   const randomProducts = getRandomItems(products1 || []);
   const { name, price, brand, description, feature } = productData[0] || {};
-  const canonicalPath = `/${topCategory}/${category}/${product}`;
+  const canonicalPath = route.canonicalPath;
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "Главная", path: "/" },
     { name: topCategoryData?.[0]?.name || "Каталог", path: "/" },

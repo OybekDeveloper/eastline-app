@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { buildCategoryPath } from "@/lib/slugs";
+import { orderCatalogTree } from "@/lib/catalog-order";
 
 const SideBarCategory = ({
   topCategoryData,
@@ -11,46 +13,11 @@ const SideBarCategory = ({
   categorySortData,
 }) => {
   const [activeCategory, setActiveCategory] = useState(null);
-  const topCategorySort = topCategoryData
-    .map((category) => {
-      const sortEntry = topCategoriesSort.find(
-        (item) => String(item.topCategoryId) === String(category.id)
-      );
-
-      return {
-        ...category,
-        sortId: sortEntry?.id || null,
-        sortOrder: Number(sortEntry?.uniqueId ?? Number.MAX_SAFE_INTEGER),
-      };
-    })
-    .sort((a, b) => a.sortOrder - b.sortOrder);
-
-  const updatedTopCategorySort = topCategorySort.map((item) => {
-    const baseCategories = item?.categories || [];
-    const sortedCategories = categorySortData?.length
-      ? categorySortData
-          .filter((category) => {
-            const hasValidSortId = String(category.topCategorySortId) === String(item.sortId);
-            const hasLegacySortId = String(category.topCategorySortId) === String(item.id);
-            return hasValidSortId || hasLegacySortId;
-          })
-          .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId))
-      : [];
-    const mappedCategoryIds = new Set(
-      sortedCategories.map((category) => String(category.categoryId ?? category.id))
-    );
-    const missingCategories = baseCategories.filter(
-      (category) => !mappedCategoryIds.has(String(category.id))
-    );
-    const categories = sortedCategories.length
-      ? [...sortedCategories, ...missingCategories]
-      : baseCategories;
-
-    return {
-      ...item,
-      categories,
-    };
-  });
+  const orderedTopCategories = orderCatalogTree(
+    topCategoryData,
+    topCategoriesSort,
+    categorySortData
+  );
 
   useEffect(() => {
     setActiveCategory(topCategoryId);
@@ -65,7 +32,7 @@ const SideBarCategory = ({
       <div className="bg-secondary mx-auto h-auto p-4 rounded-md space-y-3">
         <h1 className="textNormal4 font-bold">Категории</h1>
         <div className="w-full space-y-2">
-          {updatedTopCategorySort?.map((topCategory, idx) => {
+          {orderedTopCategories?.map((topCategory, idx) => {
             if (topCategory?.categories.length <= 0) {
               return null;
             }
@@ -98,9 +65,7 @@ const SideBarCategory = ({
                           ? "opacity-1 font-medium"
                           : "opacity-[0.8]"
                       } w-full px-2 py-1 rounded-md textSmall2 hover:bg-secondary cursor-pointer`}
-                      href={`/${topCategory.id}/${
-                        category.categoryId ? category.categoryId : category.id
-                      }`}
+                      href={buildCategoryPath(topCategory, category)}
                     >
                       {category.name}
                     </Link>

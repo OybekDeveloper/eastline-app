@@ -23,3 +23,12 @@ export const stringifyStructuredData = (value) => {
     return "";
   }
 };
+
+export const normalizeSeoImageField = (value) => {
+  if (!value) return "";
+  if (typeof value === "string") return value;
+  if (typeof value === "object" && typeof value.url === "string") {
+    return value.url;
+  }
+  return "";
+};

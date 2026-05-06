@@ -1,16 +1,30 @@
 import db from "@/db/db";
+import { generateUniqueSlug } from "@/lib/catalog";
 import { normalizeMediaPayload } from "@/lib/media";
 import { prepareSeoPayload } from "@/lib/seo";
 
 export async function GET(req) {
   const id = await req.nextUrl.searchParams.get("id");
+  const slug = await req.nextUrl.searchParams.get("slug");
   const topCategoryId = await req.nextUrl.searchParams.get("topCategoryId");
+
+  if (slug) {
+    const getTopCategroies = await db.category.findMany({
+      where: { slug: String(slug) },
+      include: {
+        products: true,
+        topCategory: true,
+      },
+    });
+    return Response.json({ data: normalizeMediaPayload(getTopCategroies) });
+  }
 
   if (id) {
     const getTopCategroies = await db.category.findMany({
       where: { id: String(id) },
       include: {
         products: true,
+        topCategory: true,
       },
     });
     return Response.json({ data: normalizeMediaPayload(getTopCategroies) });
@@ -19,6 +33,7 @@ export async function GET(req) {
       where: { topCategoryId: String(topCategoryId) },
       include: {
         products: true,
+        topCategory: true,
       },
     });
     return Response.json({ data: normalizeMediaPayload(getTopCategroies) });
@@ -26,6 +41,7 @@ export async function GET(req) {
     const getTopCategroies = await db.category.findMany({
       include: {
         products: true,
+        topCategory: true,
       },
     });
     return Response.json({ data: normalizeMediaPayload(getTopCategroies) });
@@ -55,10 +71,12 @@ export async function POST(req) {
   const data = await req.json();
   console.log(data);
   const seo = prepareSeoPayload(data);
+  const slug = await generateUniqueSlug("category", data.name);
 
   const createCategory = await db.category.create({
     data: {
       name: data.name,
+      slug,
       topCategory: {
         connect: {
           id: String(data.topCategoryId),
@@ -78,11 +96,13 @@ export async function PATCH(req) {
   const seo = prepareSeoPayload(data);
   try {
     const id = await req.nextUrl.searchParams.get("id");
+    const slug = await generateUniqueSlug("category", data.name, String(id));
 
     const updateCategory = await db.category.update({
       where: { id: String(id) },
       data: {
         name: data.name,
+        slug,
         topCategory: {
           connect: {
             id: String(data.topCategoryId),

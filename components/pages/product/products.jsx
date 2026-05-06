@@ -29,6 +29,8 @@ import {
   PaginationNext,
 } from "@/components/ui/pagination";
 import { f, truncateText } from "@/lib/utils";
+import { buildCategoryPath, buildProductPath } from "@/lib/slugs";
+import { orderCatalogTree } from "@/lib/catalog-order";
 
 const Products = ({
   productsData,
@@ -86,45 +88,10 @@ const Products = ({
     setActiveCategory((prev) => (prev === categoryId ? null : categoryId));
   };
 
-  // Sort top categories by uniqueId from topCategoriesSort
-  const topCategorySort = topCategoryData
-    .map((category) => {
-      const sortEntry = topCategoriesSort.find(
-        (item) => String(item.topCategoryId) === String(category.id)
-      );
-      return {
-        ...category,
-        sortId: sortEntry?.id || null,
-        sortOrder: Number(sortEntry?.uniqueId ?? Number.MAX_SAFE_INTEGER),
-      };
-    })
-    .sort((a, b) => a.sortOrder - b.sortOrder);
-
-  // Add sorted subcategories to top categories
-  const updatedTopCategorySort = topCategorySort.map((item) => {
-    const baseCategories = item?.categories || [];
-    const sortedCategories = categorySortData
-      .filter((category) => {
-        const hasValidSortId = String(category.topCategorySortId) === String(item.sortId);
-        const hasLegacySortId = String(category.topCategorySortId) === String(item.id);
-        return hasValidSortId || hasLegacySortId;
-      })
-      .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId));
-    const mappedCategoryIds = new Set(
-      sortedCategories.map((category) => String(category.categoryId ?? category.id))
-    );
-    const missingCategories = baseCategories.filter(
-      (category) => !mappedCategoryIds.has(String(category.id))
-    );
-    const filterCategories = sortedCategories.length
-      ? [...sortedCategories, ...missingCategories]
-      : baseCategories;
-
-    return {
-      ...item,
-      categories: filterCategories,
-    };
-  });
+  const orderedTopCategories = useMemo(
+    () => orderCatalogTree(topCategoryData, topCategoriesSort, categorySortData),
+    [topCategoryData, topCategoriesSort, categorySortData]
+  );
 
   // Sort productsData based on productsSort uniqueId
   const sortedProducts = useMemo(() => {
@@ -228,7 +195,7 @@ const Products = ({
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="max-w-xs md:hidden">
-              {updatedTopCategorySort?.map((topCategory, idx) => {
+              {orderedTopCategories?.map((topCategory, idx) => {
                 if (topCategory?.categories.length <= 0) {
                   return null;
                 }
@@ -249,11 +216,7 @@ const Products = ({
                             <DropdownMenuItem asChild key={idx}>
                               <Link
                                 className="textSmall2"
-                                href={`/${topCategory.id}/${
-                                  category.categoryId
-                                    ? category.categoryId
-                                    : category.id
-                                }`}
+                                href={buildCategoryPath(topCategory, category)}
                               >
                                 {category.name}
                               </Link>
@@ -271,9 +234,7 @@ const Products = ({
                             <Link
                               key={category.id}
                               className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall3 hover:bg-secondary cursor-pointer"
-                              href={`/${topCategory.id}/${
-                                category.categoryId ? category.categoryId : category.id
-                              }`}
+                              href={buildCategoryPath(topCategory, category)}
                             >
                               {category.name}
                             </Link>
@@ -325,7 +286,11 @@ const Products = ({
               const item = row.original;
               return (
                 <Link
-                  href={`/${topProductsData[0]?.id}/${item.categoryId}/${item.id}`}
+                  href={buildProductPath(
+                    topProductsData[0],
+                    item.category,
+                    item
+                  )}
                   key={item.id}
                   className="relative w-full flex max-md:bg-secondary rounded-md flex-col gap-4 p-5 border"
                 >

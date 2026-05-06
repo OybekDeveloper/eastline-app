@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import { buildCategoryPath } from "@/lib/slugs";
+import { orderCatalogTree } from "@/lib/catalog-order";
 
 export function HeaderDropdown({
   topCategory = [],
@@ -24,46 +26,11 @@ export function HeaderDropdown({
     setActiveCategory((prev) => (prev === categoryId ? null : categoryId));
   };
 
-  const topCategorySort = topCategory
-    .map((category) => {
-      const sortEntry = topCategoriesSort.find(
-        (item) => String(item.topCategoryId) === String(category.id)
-      );
-
-      return {
-        ...category,
-        sortId: sortEntry?.id || null,
-        sortOrder: Number(sortEntry?.uniqueId ?? Number.MAX_SAFE_INTEGER),
-      };
-    })
-    .sort((a, b) => a.sortOrder - b.sortOrder);
-
-  const updatedTopCategorySort = topCategorySort.map((item) => {
-    const baseCategories = item?.categories || [];
-    const sortedCategories = categorySortData?.length
-      ? categorySortData
-          .filter((category) => {
-            const hasValidSortId = String(category.topCategorySortId) === String(item.sortId);
-            const hasLegacySortId = String(category.topCategorySortId) === String(item.id);
-            return hasValidSortId || hasLegacySortId;
-          })
-          .sort((a, b) => Number(a.uniqueId) - Number(b.uniqueId))
-      : [];
-    const mappedCategoryIds = new Set(
-      sortedCategories.map((category) => String(category.categoryId ?? category.id))
-    );
-    const missingCategories = baseCategories.filter(
-      (category) => !mappedCategoryIds.has(String(category.id))
-    );
-    const categories = sortedCategories.length
-      ? [...sortedCategories, ...missingCategories]
-      : baseCategories;
-
-    return {
-      ...item,
-      categories,
-    };
-  });
+  const orderedTopCategories = orderCatalogTree(
+    topCategory,
+    topCategoriesSort,
+    categorySortData
+  );
 
   return (
     <DropdownMenu>
@@ -75,7 +42,7 @@ export function HeaderDropdown({
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-xs">
-        {updatedTopCategorySort.map((topCategory, idx) => (
+        {orderedTopCategories.map((topCategory, idx) => (
           <DropdownMenuSub key={idx}>
             <DropdownMenuSubTrigger
               arrow={topCategory.categories.length > 0}
@@ -93,11 +60,7 @@ export function HeaderDropdown({
                     <DropdownMenuItem asChild key={idx}>
                       <Link
                         className="textSmall"
-                        href={`/${topCategory.id}/${
-                          category.categoryId
-                            ? category?.categoryId
-                            : category?.id
-                        }`}
+                        href={buildCategoryPath(topCategory, category)}
                       >
                         {category.name}
                       </Link>
@@ -116,11 +79,7 @@ export function HeaderDropdown({
                       <DropdownMenuItem asChild key={category.id}>
                         <Link
                           className="w-full px-2 py-1 rounded-md opacity-[0.8] textSmall1 hover:bg-secondary cursor-pointer"
-                          href={`/${topCategory.id}/${
-                            category.categoryId
-                              ? category?.categoryId
-                              : category?.id
-                          }`}
+                          href={buildCategoryPath(topCategory, category)}
                         >
                           {category.name}
                         </Link>

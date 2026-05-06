@@ -16,11 +16,11 @@ import { SelectItem } from "../ui/select";
 import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import Todo from "../shared/note/NotePicker";
-import { revalidatePath } from "@/lib/revalidate";
 import { patchData, postData, revalidateUpdate } from "@/lib/api.services";
 import SeoMetadataForm, { createSeoDefaults } from "./seoMetadata";
 import {
   mapCustomMetaEntries,
+  normalizeSeoImageField,
   stringifyStructuredData,
   toCustomMetaArray,
 } from "./seoFormHelpers";
@@ -139,24 +139,25 @@ const ProductForm = ({ categories }) => {
           },
           "product"
         );
-        if (res) {
-          toast.success("Товар изменена успешно!");
-          router.back();
+        if (!res?.success || res?.error) {
+          throw new Error(res?.error || "Не удалось обновить товар");
         }
+        toast.success("Товар изменен успешно!");
+        router.back();
       } else {
-        await postData(
+        const res = await postData(
           "/api/product",
           { ...payload, images: imagesUpload },
           "product"
         );
+        if (!res?.data || res?.error) {
+          throw new Error(res?.error || "Не удалось создать товар");
+        }
         toast.success("Товар создан успешно!");
       }
-      await revalidateUpdate("category");
-      await revalidateUpdate("topCategory");
+      await revalidateUpdate(["category", "topCategory"]);
 
       form.reset();
-      revalidatePath("product");
-      revalidatePath("changeProduct");
       setImages([]);
       setIsLoading(false);
       setContent("");
@@ -216,7 +217,7 @@ const ProductForm = ({ categories }) => {
         );
         form.setValue(
           "seo.open_graph.og_image",
-          seoData.open_graph?.og_image || ""
+          normalizeSeoImageField(seoData.open_graph?.og_image)
         );
         form.setValue(
           "seo.open_graph.og_type",
@@ -237,7 +238,7 @@ const ProductForm = ({ categories }) => {
         );
         form.setValue(
           "seo.twitter.twitter_image",
-          seoData.twitter?.twitter_image || ""
+          normalizeSeoImageField(seoData.twitter?.twitter_image)
         );
         form.setValue(
           "seo.structured_data",

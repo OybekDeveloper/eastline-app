@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import { f, getLastItems, truncateText } from "@/lib/utils";
 import CustomImage from "./customImage";
 import Link from "next/link";
+import { buildProductPath } from "@/lib/slugs";
 
 const AllProducts = ({
   productVisibility,
@@ -144,12 +145,13 @@ const Cards = memo(
     const { name, image, price } = props;
     const primaryImage = Array.isArray(image) ? image[0] : image;
     const findCategory = categories?.find((c) => c?.id == props?.categoryId);
+    const findTopCategory = findCategory?.topCategory;
 
     return (
       <>
         {variant === "second" ? (
           <Link
-            href={`/${findCategory?.topCategoryId}/${findCategory?.id}/${props?.id}`}
+            href={buildProductPath(findTopCategory, findCategory, props)}
             className="border rounded-xl flex flex-col items-center justify-center py-5 gap-4 md:h-[400px] 2xl:h-[500px] 4xl:h-[600px]"
           >
             <p>{truncateText(name, 15)}</p>
@@ -167,7 +169,7 @@ const Cards = memo(
           </Link>
         ) : (
           <Link
-            href={`/${findCategory?.topCategoryId}/${findCategory?.id}/${props?.id}`}
+            href={buildProductPath(findTopCategory, findCategory, props)}
             className="border w-full rounded-xl flex items-center justify-center p-5 gap-5 textNormal md:h-[400px] 2xl:h-[500px] 4xl:h-[600px]"
           >
             <div className="relative w-full flex justify-center items-center">

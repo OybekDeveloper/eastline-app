@@ -14,6 +14,8 @@ import {
   siteConfig,
 } from "@/lib/seo";
 import { getServerData } from "@/lib/server-data";
+import { orderCategoriesFlat } from "@/lib/catalog-order";
+import { buildCategoryPath } from "@/lib/slugs";
 
 export const metadata = buildMetadata({
   title: siteConfig.name,
@@ -36,6 +38,8 @@ async function Home() {
       banner,
       bannerSort,
       productVisibility,
+      categorySortData,
+      topCategoriesSort,
     ] = await Promise.all([
       getServerData("/api/product").catch(() => []),
       getServerData("/api/category").catch(() => []),
@@ -49,11 +53,18 @@ async function Home() {
       getServerData("/api/banner").catch(() => []),
       getServerData("/api/bannerSort").catch(() => []),
       getServerData("/api/product-visibility").catch(() => []),
+      getServerData("/api/categorySort").catch(() => []),
+      getServerData("/api/topCategorySort").catch(() => []),
     ]);
 
     const randomLicense = getRandomItems(license);
     const lastProducts = getLastItems(products, 4);
     const lastNews = getLastItems(newsData, 10);
+    const orderedCategories = orderCategoriesFlat(
+      topCategories,
+      topCategoriesSort,
+      categorySortData
+    );
 
     const collectionSchema = buildCollectionPageJsonLd({
       name: `${siteConfig.name} – каталог`,
@@ -62,7 +73,7 @@ async function Home() {
       url: "/",
       items: categories.slice(0, 10).map((category) => ({
         name: category.name,
-        path: `/${category.topCategoryId}/${category.id}`,
+        path: buildCategoryPath(category.topCategory, category),
       })),
     });
 
@@ -70,12 +81,17 @@ async function Home() {
       <div className="min-h-[50%] w-full flex flex-col space-y-2 items-center justify-center">
         <JsonLd id="home-collection-schema" data={collectionSchema} />
         <Suspense fallback={<div>Loading banner...</div>}>
-          <Banner banner={banner} bannerSort={bannerSort} />
+          <Banner
+            banner={banner}
+            bannerSort={bannerSort}
+            categories={categories}
+            topCategories={topCategories}
+            products={products}
+          />
         </Suspense>
         <div className="w-full space-y-6">
           <AllCategories
-            categories={categories}
-            topCategories={topCategories}
+            categories={orderedCategories}
           />
           <AllProducts
             productVisibility={productVisibility}

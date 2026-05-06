@@ -12,7 +12,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
-import { revalidatePath } from "@/lib/revalidate";
 import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import { getData, patchData, postData } from "@/lib/api.services";
@@ -103,7 +102,6 @@ const BackgroundForm = () => {
 
       form.reset();
       setImage([]);
-      revalidatePath("background"); // Add revalidation if needed
     } catch (error) {
       console.error("Error processing background:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");

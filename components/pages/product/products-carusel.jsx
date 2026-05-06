@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -12,7 +12,11 @@ import CustomImage from "@/components/shared/customImage";
 import ZoomImage from "@/components/shared/zoom-image";
 
 const ProductCarousel = ({ item }) => {
-  const [mainImage, setMainImage] = useState(item.image[0]);
+  const images = useMemo(
+    () => (Array.isArray(item?.image) ? item.image.filter(Boolean) : []),
+    [item?.image]
+  );
+  const [mainImage, setMainImage] = useState(images[0] || null);
   const [selectImage, setSelectImage] = useState(null);
   const [zoom, setZoom] = useState(false);
   const handleClick = (img) => {
@@ -42,7 +46,7 @@ const ProductCarousel = ({ item }) => {
         </div>
         {/* Thumbnail Images */}
         <div className="flex flex-col gap-4 mt-2 w-1/5">
-          {item.image.map((image, index) => (
+          {images.map((image, index) => (
             <div
               key={index}
               className={`bg-white border-2 rounded-md relative h-[60px] w-[60px] m-2 overflow-hidden cursor-pointer ${
@@ -50,10 +54,11 @@ const ProductCarousel = ({ item }) => {
               }`}
               onClick={() => handleClick(image)}
             >
-              <CustomImage
+              <img
                 src={image}
                 alt={item.name}
                 className="w-full h-full object-cover rounded-md"
+                loading="lazy"
               />
             </div>
           ))}
@@ -66,7 +71,7 @@ const ProductCarousel = ({ item }) => {
         >
           <CarouselPrevious className="absolute left-2 top-1/2 rounded-full p-0 z-50" />
           <CarouselContent className="min-h-[300px] lg:h-full">
-            {item.image.map((c, idx) => (
+            {images.map((c, idx) => (
               <CarouselItem
                 key={idx}
                 className="bg-white rounded-md basis-full flex justify-center items-center p-2"

@@ -6,6 +6,7 @@ const ALL_TAGS = [
   "admin",
   "background",
   "banner",
+  "bannerSort",
   "category",
   "categorySort",
   "contact",
@@ -20,6 +21,7 @@ const ALL_TAGS = [
   "selectReview",
   "sertificate",
   "topCategory",
+  "topCategorySort",
 ];
 
 const ALL_PATHS = ["/", "/sitemap.xml", "/robots.txt"];
@@ -69,7 +71,7 @@ export async function GET(req) {
 
 export async function POST(req) {
   try {
-    const { tag, all } = await req.json();
+    const { tag, tags: requestedTags, all } = await req.json();
 
     if (all || tag === "all") {
       const tags = [...new Set(ALL_TAGS)];
@@ -81,16 +83,22 @@ export async function POST(req) {
       return NextResponse.json({ success: true, tags, paths: ALL_PATHS });
     }
 
-    if (!tag) {
+    const tags = [
+      ...new Set(
+        (Array.isArray(requestedTags) ? requestedTags : [tag]).filter(Boolean)
+      ),
+    ];
+
+    if (!tags.length) {
       return NextResponse.json(
         { success: false, error: "Tag is required" },
         { status: 400 }
       );
     }
-    console.log(tag);
+    console.log(tags);
 
-    revalidateTag(tag);
-    return NextResponse.json({ success: true });
+    tags.forEach((currentTag) => revalidateTag(currentTag));
+    return NextResponse.json({ success: true, tags });
   } catch (error) {
     console.error("Revalidation error:", error);
     return NextResponse.json(

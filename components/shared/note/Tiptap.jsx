@@ -13,7 +13,8 @@ const Tiptap = ({ onChange, content }) => {
 
   const editor = useEditor({
     extensions: [StarterKit, Underline],
-    content: content || "",  // Initialize with content if provided
+    content: content || "",
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
@@ -26,8 +27,13 @@ const Tiptap = ({ onChange, content }) => {
   });
 
   useEffect(() => {
-    if (editor && content) {
-      editor.commands.setContent(content);  // Update editor content if prop changes
+    if (!editor) {
+      return;
+    }
+
+    const normalizedContent = content || "";
+    if (editor.getHTML() !== normalizedContent) {
+      editor.commands.setContent(normalizedContent, { emitUpdate: false });
     }
   }, [content, editor]);
 

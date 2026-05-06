@@ -12,11 +12,31 @@ import {
 import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import CustomImage from "./customImage";
+import { buildCategoryPath, buildProductPath } from "@/lib/slugs";
 
-const Banner = ({ banner, bannerSort }) => {
+const Banner = ({ banner, bannerSort, categories, topCategories, products }) => {
   const filterBanner = bannerSort
     .filter((category) => category.uniqueId) // Faqat uniqueId mavjud bo'lganlarni qoldirish
     .sort((a, b) => a.uniqueId - b.uniqueId);
+  const getHref = (item) => {
+    const topCategory = topCategories?.find((row) => row.id === item.topCategoryId);
+    const category = categories?.find((row) => row.id === item.categoryId);
+    const product = products?.find((row) => row.id === item.productId);
+
+    if (product && category) {
+      return buildProductPath(topCategory || category.topCategory, category, product);
+    }
+
+    if (category) {
+      return buildCategoryPath(topCategory || category.topCategory, category);
+    }
+
+    if (topCategory) {
+      return `/${topCategory.slug || topCategory.id}`;
+    }
+
+    return "/";
+  };
   const getBannerAlt = (item) => {
     if (item.productId) return `Промо баннер товара ${item.productId}`;
     if (item.categoryId) return `Промо баннер категории ${item.categoryId}`;
@@ -51,11 +71,7 @@ const Banner = ({ banner, bannerSort }) => {
                   <CarouselItem key={i} className="md:basis-1/2">
                     <Link
                       className="mt-1"
-                      href={`/${item.topCategoryId}/${item.categoryId}/${
-                        item.productId && item?.productId != undefined
-                          ? item.productId
-                          : ""
-                      }`}
+                      href={getHref(item)}
                     >
                       <div className="relative max-sm:h-[250px] overflow-hidden">
                         <CustomImage
@@ -98,11 +114,7 @@ const Banner = ({ banner, bannerSort }) => {
                   >
                     <Link
                       className="mt-1 w-full rounded-xl overflow-hidden relative"
-                      href={`/${item.topCategoryId}/${item.categoryId}/${
-                        item.productId && item?.productId != undefined
-                          ? item.productId
-                          : ""
-                      }`}
+                      href={getHref(item)}
                     >
                       <div className="relative">
                         <CustomImage

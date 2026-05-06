@@ -12,7 +12,6 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
-import { revalidatePath } from "@/lib/revalidate";
 import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import { getData, patchData, postData } from "@/lib/api.services";
@@ -103,8 +102,6 @@ const LicenseForm = () => {
 
       form.reset();
       setImage([]);
-      revalidatePath("changelicense");
-      revalidatePath("license");
     } catch (error) {
       console.error("Error processing license:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");

@@ -2,10 +2,30 @@
 
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const CustomImage = ({ loadingRoot, src, fill, alt, className, object }) => {
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+  }, [src]);
+
+  const handleImageReady = () => {
+    setLoading(false);
+  };
+
+  const imageClasses = cn(
+    object ? object : fill ? "object-contain h-full" : "object-contain h-auto",
+    "duration-700 ease-in-out group-hover:opacity-75",
+    !fill && "w-full",
+    loading ? "scale-105 blur-2xl grayscale" : "scale-100 blur-0 grayscale-0"
+  );
+
+  if (!src) {
+    return <div className={cn(className, "flex justify-center items-center")} />;
+  }
+
   return (
     <div className={cn(className, "flex justify-center items-center")}>
       {fill ? (
@@ -15,15 +35,10 @@ const CustomImage = ({ loadingRoot, src, fill, alt, className, object }) => {
           loading={loadingRoot ? loadingRoot : "lazy"}
           fill
           sizes="100vw"
-          className={`${
-            object ? `${object}` : "object-contain h-full"
-          } duration-700 ease-in-out group-hover:opacity-75 ${
-            loading
-              ? "slice-110 blur-2xl grayscale"
-              : "scale-100 blur-0 grayscale-0"
-          }
-        `}
-          onLoad={() => setLoading(false)}
+          className={imageClasses}
+          onLoad={handleImageReady}
+          onError={handleImageReady}
+          onLoadingComplete={handleImageReady}
         />
       ) : (
         <Image
@@ -34,15 +49,10 @@ const CustomImage = ({ loadingRoot, src, fill, alt, className, object }) => {
           height={100}
           sizes="100vw"
           quality={100}
-          className={cn(
-            `${
-              object ? `${object}` : "object-contain h-auto"
-            } duration-700 ease-in-out group-hover:opacity-75 w-full`,
-            loading
-              ? "slice-110 blur-2xl grayscale"
-              : "scale-100 blur-0 grayscale-0"
-          )}
-          onLoad={() => setLoading(false)}
+          className={imageClasses}
+          onLoad={handleImageReady}
+          onError={handleImageReady}
+          onLoadingComplete={handleImageReady}
         />
       )}
     </div>

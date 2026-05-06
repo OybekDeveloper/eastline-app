@@ -95,6 +95,43 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const body = await req.json();
+    const products = Array.isArray(body) ? body : body.products;
+
+    if (Array.isArray(products)) {
+      const savedProducts = [];
+
+      for (const product of products) {
+        const { productId, categoryId, uniqueId, name } = product;
+
+        if (!productId || !categoryId || !uniqueId || !name) {
+          return new Response(
+            JSON.stringify({ success: false, error: "Missing required fields" }),
+            { status: 400 }
+          );
+        }
+
+        const saved = await prisma.sortProduct.upsert({
+          where: {
+            productId_categoryId: { productId, categoryId },
+          },
+          update: { uniqueId },
+          create: {
+            name,
+            productId,
+            categoryId,
+            uniqueId,
+          },
+        });
+        savedProducts.push(saved);
+      }
+
+      return Response.json({
+        success: true,
+        message: "Product sort order saved",
+        data: savedProducts,
+      });
+    }
+
     const { productId, categoryId, uniqueId, name } = body;
 
     if (!productId || !categoryId || !uniqueId || !name) {

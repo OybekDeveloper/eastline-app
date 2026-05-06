@@ -245,6 +245,10 @@ export function DataTable({
                               (item) => item.id == cell.getValue()
                             );
                         }
+                        const imageValue = cell.getValue();
+                        const resolvedImage = Array.isArray(imageValue)
+                          ? imageValue[0]
+                          : imageValue;
 
                         return (
                           <TableCell key={cell.id}>
@@ -270,8 +274,11 @@ export function DataTable({
                             ) : cell.column.columnDef.accessorKey == "image" ? (
                               <CustomImage
                                 className={"w-14"}
-                                src={`${cell.getValue()}`}
-                                alt={`${cell.getValue()}`}
+                                src={resolvedImage}
+                                alt={
+                                  row.original?.name ||
+                                  String(resolvedImage || "image")
+                                }
                               />
                             ) : (
                               flexRender(

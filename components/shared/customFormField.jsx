@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   FormControl,
   FormField,
@@ -19,6 +20,61 @@ import { cn } from "@/lib/utils";
 import CurrencyInput from "react-currency-input-field";
 import { PasswordInput } from "../ui/password-input";
 import TagsInput from "../shared/tagsInput";
+
+const SelectField = ({ field, className, props }) => {
+  const [mounted, setMounted] = useState(false);
+  const handleValueChange = (value) => {
+    field.onChange(value);
+    props.onValueChange?.(value, field);
+  };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <FormControl>
+        <div
+          className={cn(
+            "shad-select-trigger flex h-10 w-full items-center rounded-md border border-input bg-background px-3 py-2 text-xs lg:text-base text-muted-foreground",
+            props.className,
+            className
+          )}
+        >
+          {props.placeholder}
+        </div>
+      </FormControl>
+    );
+  }
+
+  return (
+    <FormControl>
+      <Select value={field.value ?? ""} onValueChange={handleValueChange}>
+        <FormControl>
+          <SelectTrigger
+            className={cn(
+              "shad-select-trigger",
+              props.className,
+              className
+            )}
+          >
+            <SelectValue placeholder={props.placeholder} />
+          </SelectTrigger>
+        </FormControl>
+        <SelectContent
+          className={cn(
+            "shad-select-content z-[99999]",
+            props.className,
+            className
+          )}
+        >
+          {props.children}
+        </SelectContent>
+      </Select>
+    </FormControl>
+  );
+};
 
 export const FormFieldType = {
   INPUT: "input",
@@ -82,31 +138,7 @@ const RenderInput = ({ field, className, props }) => {
         </FormControl>
       );
     case FormFieldType.SELECT:
-      return (
-        <FormControl>
-          <Select
-            value={field.value || ""} // Ensure the select is controlled
-            onValueChange={field.onChange}
-          >
-            <FormControl>
-              <SelectTrigger
-                className={cn(
-                  "shad-select-trigger",
-                  props.className,
-                  className
-                )}
-              >
-                <SelectValue placeholder={props.placeholder} />
-              </SelectTrigger>
-            </FormControl>
-            <SelectContent
-              className={cn("shad-select-content z-[99999]", props.className, className)}
-            >
-              {props.children}
-            </SelectContent>
-          </Select>
-        </FormControl>
-      );
+      return <SelectField field={field} className={className} props={props} />;
     case FormFieldType.PHONE_INPUT:
       return (
         <FormControl>

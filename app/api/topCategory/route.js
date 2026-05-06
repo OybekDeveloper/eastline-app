@@ -1,4 +1,5 @@
 import db from "@/db/db";
+import { generateUniqueSlug } from "@/lib/catalog";
 
 export async function DELETE(req) {
   try {
@@ -21,8 +22,13 @@ export async function DELETE(req) {
 
 export async function GET(req) {
   const rawId = await req.nextUrl.searchParams.get("id");
+  const rawSlug = await req.nextUrl.searchParams.get("slug");
   const id =
     rawId && rawId !== "undefined" && rawId !== "null" ? String(rawId) : null;
+  const slug =
+    rawSlug && rawSlug !== "undefined" && rawSlug !== "null"
+      ? String(rawSlug)
+      : null;
 
   const queryOptions = {
     include: {
@@ -30,7 +36,11 @@ export async function GET(req) {
     },
   };
 
-  if (id) {
+  if (slug) {
+    queryOptions.where = {
+      slug,
+    };
+  } else if (id) {
     queryOptions.where = {
       id,
     };
@@ -43,8 +53,22 @@ export async function GET(req) {
 
 export async function POST(req) {
   const data = await req.json();
+  const name = String(data?.name ?? "").trim();
+
+  if (!name) {
+    return new Response(
+      JSON.stringify({ success: false, error: "Name is required" }),
+      { status: 400 }
+    );
+  }
+
+  const slug = await generateUniqueSlug("topCategory", name);
   const createTopCategory = await db.topCategory.create({
-    data,
+    data: {
+      ...data,
+      name,
+      slug,
+    },
   });
   return Response.json({ data: createTopCategory });
 }
@@ -53,10 +77,30 @@ export async function PATCH(req) {
   try {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
+    const name = String(data?.name ?? "").trim();
+
+    if (!id) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Missing ID" }),
+        { status: 400 }
+      );
+    }
+
+    if (!name) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Name is required" }),
+        { status: 400 }
+      );
+    }
+
+    const slug = await generateUniqueSlug("topCategory", name, String(id));
 
     const updateTopCategory = await db.topCategory.update({
       where: { id: String(id) },
-      data: { name: data.name },
+      data: {
+        name,
+        slug,
+      },
     });
 
     return new Response(

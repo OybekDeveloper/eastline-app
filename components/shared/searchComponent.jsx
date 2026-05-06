@@ -11,8 +11,8 @@ import clsx from "clsx";
 import { Search } from "lucide-react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import axios from "axios";
 import { getData } from "@/lib/api.services";
+import { buildProductPath } from "@/lib/slugs";
 
 export default function SearchComponent({ productsData }) {
   const [query, setQuery] = useState("");
@@ -24,7 +24,7 @@ export default function SearchComponent({ productsData }) {
     const fetchCategories = async () => {
       try {
         const res = await getData("/api/category", "category");
-        setCategories(res.data);
+        setCategories(res);
       } catch (error) {
         console.error("Failed to fetch categories", error);
       }
@@ -75,7 +75,8 @@ export default function SearchComponent({ productsData }) {
         ) : (
           <div className="max-h-[400px]">
             {filteredProducts.map((product) => {
-              const href = `/top/${product.categoryId}/${product.id}`;
+              const category = categories.find((item) => item.id === product.categoryId);
+              const href = buildProductPath(category?.topCategory, category, product);
               return (
                 <Link key={product.id} href={href}>
                   <ComboboxOption

@@ -9,6 +9,7 @@ import {
 import { f, truncateText } from "@/lib/utils";
 import emblaCarouselAutoplay from "embla-carousel-autoplay";
 import Link from "next/link";
+import { buildProductPath } from "@/lib/slugs";
 
 const BannerProducts = ({
   productVisibility,
@@ -30,9 +31,11 @@ const BannerProducts = ({
     <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
       {randomProducts[0] && (
         <Link
-          href={`/${
-            findCategory(randomProducts[0]?.categoryId)?.topCategoryId || "top"
-          }/${randomProducts[0]?.categoryId}/${randomProducts[0]?.id}`}
+          href={buildProductPath(
+            findCategory(randomProducts[0]?.categoryId)?.topCategory,
+            findCategory(randomProducts[0]?.categoryId),
+            randomProducts[0]
+          )}
           className="max-lg:hidden p-5 flex justify-between gap-y-1 border-2 rounded-xl"
         >
           <div className="relative w-full">
@@ -94,9 +97,11 @@ const BannerProducts = ({
                   className="text-center text-black basis-full md:basis-[45%] min-h-[300px] border-2 py-3 rounded-xl mr-2"
                 >
                   <Link
-                    href={`/${
-                      findCategory(item.categoryId)?.topCategoryId || "top"
-                    }/${item?.categoryId}/${item?.id}`}
+                    href={buildProductPath(
+                      findCategory(item.categoryId)?.topCategory,
+                      findCategory(item.categoryId),
+                      item
+                    )}
                     className="h-full px-3 flex flex-col gap-y-1 rounded-md justify-between"
                   >
                     <h1 className="textSmall3 font-bold">

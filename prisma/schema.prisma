@@ -19,6 +19,7 @@ model Reviews {
 model TopCategory {
   id         String     @id @default(auto()) @map("_id") @db.ObjectId
   name       String
+  slug       String?
   createdAt  DateTime   @default(now())
   updateAt   DateTime   @updatedAt
   categories Category[] @relation("TopCategoryToCategory")
@@ -27,6 +28,7 @@ model TopCategory {
 model Category {
   id                String       @id @default(auto()) @map("_id") @db.ObjectId
   name              String
+  slug              String?
   image             String
   meta_title        String?
   meta_description  String?
@@ -42,6 +44,7 @@ model Category {
 model Product {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
+  slug        String?
   description String
   feature     String
   price       String

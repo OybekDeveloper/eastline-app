@@ -83,7 +83,7 @@ export default function DragDropComponent({
             item.topCategoryId ? item.topCategoryId : item.id
           ),
         }));
-        await postData("/api/topCategorySort", filterData, "topCategory");
+        await postData("/api/topCategorySort", filterData, "topCategorySort");
       } else if (param === "categorySort") {
         const filterData = updatedUsersList.map((item) => ({
           id: item.id,
@@ -92,7 +92,7 @@ export default function DragDropComponent({
           categoryId: item.categoryId ? item.categoryId : item.id,
           topCategorySortId: item.topCategorySortId ? item.topCategorySortId : id,
         }));
-        await patchData("/api/categorySort?all=true", filterData, "category");
+        await patchData("/api/categorySort?all=true", filterData, "categorySort");
       } else if (param === "productSort") {
         const filterData = updatedUsersList.map((item) => ({
           uniqueId: item.uniqueId,
@@ -101,13 +101,7 @@ export default function DragDropComponent({
           name: item.name,
         }));
 
-        await Promise.all(
-          filterData.map((product) =>
-            postData("/api/productSort", product, "product").then((res) => {
-              console.log({ productS: res });
-            })
-          )
-        );
+        await postData("/api/productSort", filterData, "productSort");
       }
       toast.success("Изменено успешно!");
     } catch (error) {
@@ -125,9 +119,9 @@ export default function DragDropComponent({
         if (param === "changeBanner") {
           res = await getData("/api/bannerSort", "banner");
         } else if (param === "changeTopCategory") {
-          res = await getData("/api/topCategorySort", "topCategory");
+          res = await getData("/api/topCategorySort", "topCategorySort");
         } else if (param === "productSort") {
-          res = await getData("/api/productSort", "product");
+          res = await getData("/api/productSort", "productSort");
           res = res.filter((rs) => String(rs.categoryId) == String(id));
           console.log({ data, res });
         }

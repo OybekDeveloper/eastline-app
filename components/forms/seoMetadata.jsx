@@ -190,10 +190,6 @@ const SeoMetadataForm = ({ form }) => {
     setAdvancedOpen((prev) => !prev);
   };
 
-  const advancedContainerClasses = advancedOpen
-    ? "max-h-[2200px] opacity-100"
-    : "max-h-0 opacity-0 pointer-events-none";
-
   return (
     <div className="space-y-4">
       <Section title="SEO / Metadata" hint="Задать основные теги">
@@ -253,10 +249,8 @@ const SeoMetadataForm = ({ form }) => {
           </button>
         </div>
       </Section>
-      <div
-        className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${advancedContainerClasses}`}
-        aria-hidden={!advancedOpen}
-      >
+      {advancedOpen && (
+      <div className="space-y-4">
         <Section title="Advanced SEO" hint="Дополнительные теги и директивы">
           <div className="space-y-4">
             <CustomFormField
@@ -453,6 +447,7 @@ const SeoMetadataForm = ({ form }) => {
           </details>
         </div>
       </div>
+      )}
     </div>
   );
 };

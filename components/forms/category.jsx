@@ -14,7 +14,6 @@ import toast from "react-hot-toast";
 import Container from "../shared/container";
 import { ChevronLeft } from "lucide-react";
 import { SelectItem } from "../ui/select";
-import { revalidatePath } from "@/lib/revalidate";
 import DropTarget from "../shared/fileDnd";
 import { sanitizeString } from "@/lib/utils";
 import { getData, patchData, postData } from "@/lib/api.services";
@@ -22,6 +21,7 @@ import DragDropComponent from "../shared/dragDropComponent";
 import SeoMetadataForm, { createSeoDefaults } from "./seoMetadata";
 import {
   mapCustomMetaEntries,
+  normalizeSeoImageField,
   stringifyStructuredData,
   toCustomMetaArray,
 } from "./seoFormHelpers";
@@ -131,7 +131,7 @@ const CategoryForm = () => {
     if (id) {
         const categorySort = await getData(
           `/api/categorySort?categoryId=${id}`,
-          "category"
+          "categorySort"
         );
         await patchData(
           `/api/category?id=${id}`,
@@ -151,7 +151,7 @@ const CategoryForm = () => {
               name: values.name,
               uniqueId: uniqueId,
             },
-            "category"
+            "categorySort"
           );
         }
         toast.success("Категория изменена успешно!");
@@ -175,7 +175,7 @@ const CategoryForm = () => {
               categoryId: id,
               uniqueId: 9999,
             },
-            "category"
+            "categorySort"
           );
           if (ress) {
             toast.success("Категория создана успешно!");
@@ -184,7 +184,6 @@ const CategoryForm = () => {
           }
         }
       }
-      revalidatePath("category"); // Revalidate category path
     } catch (error) {
       console.error("Error processing category:", error);
       toast.error("Что-то пошло не так. Пожалуйста, повторите попытку позже.");
@@ -231,7 +230,7 @@ const CategoryForm = () => {
           );
           form.setValue(
             "seo.open_graph.og_image",
-            seo.open_graph?.og_image || ""
+            normalizeSeoImageField(seo.open_graph?.og_image)
           );
           form.setValue(
             "seo.open_graph.og_type",
@@ -255,7 +254,7 @@ const CategoryForm = () => {
           );
           form.setValue(
             "seo.twitter.twitter_image",
-            seo.twitter?.twitter_image || ""
+            normalizeSeoImageField(seo.twitter?.twitter_image)
           );
           form.setValue(
             "seo.structured_data",

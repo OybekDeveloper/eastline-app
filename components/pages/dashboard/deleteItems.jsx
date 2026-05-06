@@ -19,18 +19,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { useEvent } from "@/store/event";
-import { revalidatePath } from "@/lib/revalidate";
 import { deleteData, getData } from "@/lib/api.services";
 
 const DeleteItem = ({ payment, only }) => {
   const { setTableData, changeTableData } = useEvent();
 
   const pathname = usePathname();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const deleteItem = async (payment) => {
@@ -38,10 +36,7 @@ const DeleteItem = ({ payment, only }) => {
       pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
       pathname.split("/")[2].slice(6).slice(1);
     try {
-      const response = await deleteData(
-        `/api/${pathName}?id=${payment.id}`,
-        pathName
-      );
+      await deleteData(`/api/${pathName}?id=${payment.id}`, pathName);
 
       if (pathName == "topCategory") {
         const topCategorySortData = await getData(
@@ -50,48 +45,42 @@ const DeleteItem = ({ payment, only }) => {
         );
         const delId = topCategorySortData.find(
           (c) => String(c.topCategoryId) === String(payment.id)
-        ).id;
+        )?.id;
         if (delId) {
-          await deleteData(`/api/topCategorySort?id=${delId}`, "topCategory");
+          await deleteData(
+            `/api/topCategorySort?id=${delId}`,
+            "topCategorySort"
+          );
         }
       }
       if (pathName == "banner") {
         const bannerSortData = await getData(`/api/bannerSort`, "banner");
         const delId = bannerSortData.find(
           (c) => String(c.bannerId) === String(payment.id)
-        ).id;
+        )?.id;
         if (delId) {
           await deleteData(`/api/bannerSort?id=${delId}`, "banner");
         }
       }
       if (pathName == "category") {
-        const categorySort = await getData(`/api/categorySort`, "category");
+        const categorySort = await getData(`/api/categorySort`, "categorySort");
         const delId = categorySort.find(
           (c) => String(c.categoryId) === String(payment.id)
-        ).id;
+        )?.id;
         if (delId) {
-          await deleteData(`/api/categorySort?id=${delId}`, "category");
+          await deleteData(`/api/categorySort?id=${delId}`, "categorySort");
         }
       }
-      if (response) {
-        // Force refresh by navigating to the same page
-        router.push(pathname);
-      }
-
       setOpen(false); // Close dialog after successful deletion
     } catch (error) {
       console.error(error); // Handle any errors during deletion
     }
   };
   const handleDelete = () => {
-    revalidatePath(
-      `${
-        pathname.split("/")[2].slice(6).toLowerCase().slice(0, 1) +
-        pathname.split("/")[2].slice(6).slice(1)
-      }`
-    );
     const callFunction = deleteItem(payment);
-    const filterData = changeTableData.filter((c) => +c.id !== +payment.id);
+    const filterData = changeTableData.filter(
+      (c) => String(c.id) !== String(payment.id)
+    );
     setTableData(filterData);
     toast.promise(callFunction, {
       loading: "Данные удаляются...",

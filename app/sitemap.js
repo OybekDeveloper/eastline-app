@@ -1,5 +1,6 @@
 import { absoluteUrl } from "@/lib/seo";
 import { getServerData } from "@/lib/server-data";
+import { buildCategoryPath, buildProductPath } from "@/lib/slugs";
 
 export default async function sitemap() {
   const now = new Date().toISOString();
@@ -24,7 +25,7 @@ export default async function sitemap() {
   }
 
   const categoryEntries = categories.map((category) => ({
-    url: absoluteUrl(`/${category.topCategoryId}/${category.id}`),
+    url: absoluteUrl(buildCategoryPath(category.topCategory, category)),
     lastModified: category.updateAt || category.createdAt || now,
   }));
 
@@ -33,10 +34,10 @@ export default async function sitemap() {
   );
 
   const productEntries = products.map((product) => {
-    const category = categoryMap.get(product.categoryId);
-    const topCategoryId = category?.topCategoryId || "top";
+    const category = product.category || categoryMap.get(product.categoryId);
+    const topCategory = category?.topCategory;
     return {
-      url: absoluteUrl(`/${topCategoryId}/${product.categoryId}/${product.id}`),
+      url: absoluteUrl(buildProductPath(topCategory, category, product)),
       lastModified: product.updateAt || product.createdAt || now,
       images: (product.image || []).map((image) => ({
         url: image,
